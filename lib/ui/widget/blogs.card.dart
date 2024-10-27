@@ -28,13 +28,14 @@ class BlogsCard extends StatelessWidget {
                     color: colorTextCateBlog, fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                width: 320,
+                width: 300,
                 child: Text(
                   "Nếu một ngày bạn cảm thấy như muốn gục ngã thì...",
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(height: 10),

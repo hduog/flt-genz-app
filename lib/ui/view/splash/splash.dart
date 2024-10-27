@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
 import 'package:flutter_application_1/ui/view/home/home.dart';
+import 'package:flutter_application_1/ui/view/intro/intro.dart';
 import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
 import 'package:flutter_application_1/ui/view/profile/profile.dart';
 import 'package:flutter_application_1/ui/widget/bottom_bar.dart';
@@ -18,24 +19,15 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _navigateIntroSreen();
   }
-
-  final Map<int, Widget> routes = {
-    0: Home(),
-    1: Blogs(),
-    3: NotificationsPage(),
-    4: ProfileScreen()
-  };
-  _navigateToHome() async {
+  _navigateIntroSreen() async {
     await Future.delayed(Duration(milliseconds: 4000), () {});
     // ignore: use_build_context_synchronously
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (_) => SafeArea(
-              child: Scaffold(
-                bottomNavigationBar: BottomBar(routes: routes),
-              ),
-            )));
+        builder: (_) => IntroScreen()
+    )
+    );
   }
 
   @override
@@ -43,6 +35,7 @@ class _SplashState extends State<Splash> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Column(

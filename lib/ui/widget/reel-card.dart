@@ -19,16 +19,16 @@ class ReelCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Image(
+                const Image(
                   height: 60,
                   image: AssetImage('assets/images/quote.png'),
                   fit: BoxFit.fitHeight,
                 ),
-                SizedBox(width: 20),
-                Column(
+                const SizedBox(width: 20),
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -42,6 +42,21 @@ class ReelCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(width: 20),
+                SizedBox(
+                  width: 80,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children:  [
+                       SvgPicture.asset(
+                        'assets/icons/dots-horizontal.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             SizedBox(
@@ -53,90 +68,82 @@ class ReelCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
-                  width: 90,
+                  width: 80,
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/like.svg',
-                          width: 24,
-                          height: 24,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/like.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "1,810",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "1,810",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 80,
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/comment.svg',
-                          width: 24,
-                          height: 24,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/comment.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "810",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "810",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   width: 80,
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/share.svg',
-                          width: 24,
-                          height: 24,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/share.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text(
+                        "10",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        const Text(
-                          "10",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(
-                  width: 10,
+                SvgPicture.asset(
+                  'assets/icons/save.svg',
+                  width: 24,
+                  height: 24,
                 ),
-                SizedBox(
-                  width: 80,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/save.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ]),
-                )
               ],
             )
           ],

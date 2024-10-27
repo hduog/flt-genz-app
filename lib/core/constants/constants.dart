@@ -12,6 +12,8 @@ const colorTextCateBlog = Color.fromRGBO(4, 91, 206, 1);
 const colorTextHeader = Color.fromRGBO(15, 101, 214, 1);
 const colorIconButtonOverlay = Color.fromRGBO(188, 217, 255, 1);
 
+const colorButton = Color.fromRGBO(0, 84, 255, 1);
+
 class Constants {
   const Constants._();
   static final navigatorKey = GlobalKey<NavigatorState>();
