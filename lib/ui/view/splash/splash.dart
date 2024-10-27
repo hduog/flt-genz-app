@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
 import 'package:flutter_application_1/ui/view/home/home.dart';
+import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
 import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
-import 'package:flutter_application_1/ui/view/profile/profile.dart';
+import 'package:flutter_application_1/ui/view/menu/menu.dart';
 import 'package:flutter_application_1/ui/widget/bottom_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -24,8 +25,9 @@ class _SplashState extends State<Splash> {
   final Map<int, Widget> routes = {
     0: Home(),
     1: Blogs(),
+    2: SendSorrow(),
     3: NotificationsPage(),
-    4: ProfileScreen()
+    4: MenuPage()
   };
   _navigateToHome() async {
     await Future.delayed(Duration(milliseconds: 4000), () {});
