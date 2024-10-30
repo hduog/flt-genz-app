@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
-import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
-import 'package:flutter_application_1/ui/view/profile/profile.dart';
-import 'package:flutter_application_1/ui/widget/bottom_bar.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,32 +14,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-   
-    Future.delayed(Duration.zero, () {
-    _navigateToBottomBar();
-  });
-  
-  }
-
-  final Map<int, Widget> routes = {
-    0:  ProfileScreen(),
-    1:  const Blogs(),
-    3:  NotificationsPage(),
-    4:  ProfileScreen()
-  };
-
-  _navigateToBottomBar() async {
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => SafeArea(
-            child: Scaffold(
-              bottomNavigationBar: BottomBar(routes: routes),
-            ),
-          ),
-        ),
-      );
-    }
   }
 
   @override
@@ -138,18 +108,19 @@ class _HomeState extends State<Home> {
                                   height: 170,
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Flexible(
                                         child: SizedBox(
                                           width: 250,
                                           child: Column(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                             children: [
-                                              Text('Thông điệp hôm nay của bạn là :'),
+                                              Text(
+                                                  'Thông điệp hôm nay của bạn là :'),
                                               SizedBox(height: 10),
                                               Text(
                                                 '“ Hôm nay, hãy cho phép bản thân được nghỉ ngơi, bạn xứng đáng với điều đó! “',
@@ -170,7 +141,8 @@ class _HomeState extends State<Home> {
                                       Image(
                                         width: 120,
                                         fit: BoxFit.fitWidth,
-                                        image: AssetImage('assets/images/quote.png'),
+                                        image: AssetImage(
+                                            'assets/images/quote.png'),
                                       ),
                                     ],
                                   ),
@@ -189,16 +161,18 @@ class _HomeState extends State<Home> {
                                   height: 130,
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
                                       const Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           Image(
                                             height: 60,
-                                            image: AssetImage('assets/images/quote.png'),
+                                            image: AssetImage(
+                                                'assets/images/quote.png'),
                                             fit: BoxFit.fitHeight,
                                           ),
                                           SizedBox(width: 20),
@@ -216,15 +190,15 @@ class _HomeState extends State<Home> {
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
                                           SizedBox(
                                             width: 90,
                                             child: Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   SvgPicture.asset(
                                                     'assets/icons/upload-pic.svg',
@@ -241,9 +215,9 @@ class _HomeState extends State<Home> {
                                             width: 80,
                                             child: Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   SvgPicture.asset(
                                                     'assets/icons/upload-video.svg',
@@ -260,9 +234,9 @@ class _HomeState extends State<Home> {
                                             width: 80,
                                             child: Row(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   SvgPicture.asset(
                                                     'assets/icons/upload-file.svg',
@@ -282,10 +256,10 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               // LIST REELS
-                               ReelCard(),
-                               ReelCard(),
-                               ReelCard(),
-                               ReelCard(),
+                              ReelCard(),
+                              ReelCard(),
+                              ReelCard(),
+                              ReelCard(),
                             ],
                           ),
                         ),

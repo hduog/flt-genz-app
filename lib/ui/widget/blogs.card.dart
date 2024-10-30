@@ -34,8 +34,7 @@ class BlogsCard extends StatelessWidget {
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(height: 10),
@@ -56,7 +55,7 @@ class BlogsCard extends StatelessWidget {
             ],
           ),
           SvgPicture.asset(
-            'assets/icons/dots-vertival.svg',
+            'assets/icons/dots-vertical.svg',
             width: 20,
             height: 20,
           ),

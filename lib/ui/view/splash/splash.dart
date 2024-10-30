@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
-import 'package:flutter_application_1/ui/view/home/home.dart';
 import 'package:flutter_application_1/ui/view/intro/intro.dart';
-import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
-import 'package:flutter_application_1/ui/view/profile/profile.dart';
-import 'package:flutter_application_1/ui/widget/bottom_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Splash extends StatefulWidget {
@@ -19,15 +14,14 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    _navigateIntroSreen();
+    _navigateIntroScreen();
   }
-  _navigateIntroSreen() async {
-    await Future.delayed(Duration(milliseconds: 4000), () {});
+
+  _navigateIntroScreen() async {
+    await Future.delayed(const Duration(milliseconds: 4000), () {});
     // ignore: use_build_context_synchronously
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (_) => IntroScreen()
-    )
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const IntroScreen()));
   }
 
   @override

@@ -12,34 +12,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios), 
-          onPressed: () {
-            Navigator.of(context).pop(); 
-          },
-        ),
-        title: const Text(
-          'Hồ sơ',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 2,
-        iconTheme: const IconThemeData(color: Colors.black),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(0.1),
-          child: Divider(
-            color: Colors.grey,
-            height: 0.1,
-            thickness: 0.1,
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -95,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => EditProfileScreen()),
@@ -116,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(width: 10),
                 InkWell(
                   onTap: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => InforProfileScreen()),

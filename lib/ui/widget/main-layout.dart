@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
+import 'package:flutter_application_1/ui/view/home/home.dart';
+import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
+import 'package:flutter_application_1/ui/view/profile/profile.dart';
 
-class BottomBar extends StatefulWidget {
-  final Map<int, Widget> routes;
-  const BottomBar({Key? key, required this.routes}) : super(key: key);
+class MainLayout extends StatefulWidget {
   @override
-  _BottomBarState createState() => _BottomBarState();
+  _MainLayoutState createState() => _MainLayoutState();
 }
 
-class _BottomBarState extends State<BottomBar> {
+class _MainLayoutState extends State<MainLayout> {
   int _selectedTab = 0;
 
   _changeTab(int index) {
@@ -19,8 +21,15 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<int, Widget> routes = {
+      0: Home(),
+      1: const Blogs(),
+      3: NotificationsPage(),
+      4: ProfileScreen()
+    };
+
     return Scaffold(
-      body: widget.routes[_selectedTab],
+      body: routes[_selectedTab],
       bottomNavigationBar: Theme(
         data: ThemeData(canvasColor: colorBackground),
         child: BottomNavigationBar(

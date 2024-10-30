@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/ui/view/home/home.dart';
 import 'package:flutter_application_1/ui/view/login/login.dart';
 import 'package:flutter_application_1/ui/widget/intro/info_intro.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,12 +25,12 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> checkIfFirstTime() async {
+    // check the first initial launching app, show intro
     final prefs = await SharedPreferences.getInstance();
     final bool? onboardingSeen = prefs.getBool('onboarding');
 
     if (onboardingSeen == true) {
-
-      Navigator.pushReplacement(
+      Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
   }
@@ -46,42 +45,42 @@ class _IntroScreenState extends State<IntroScreen> {
         child: isLastPage
             ? getStarted()
             : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Skip Button
-            TextButton(
-                onPressed: () => pageController
-                    .jumpToPage(controller.items.length - 1),
-                child: const Text("Skip")),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Skip Button
+                  TextButton(
+                      onPressed: () => pageController
+                          .jumpToPage(controller.items.length - 1),
+                      child: const Text("Bỏ qua")),
 
-            // Indicator
-            SmoothPageIndicator(
-              controller: pageController,
-              count: controller.items.length,
-              onDotClicked: (index) => pageController.animateToPage(index,
-                  duration: const Duration(milliseconds: 600),
-                  curve: Curves.easeIn),
-              effect: const WormEffect(
-                dotHeight: 12,
-                dotWidth: 12,
-                activeDotColor: Colors.blueAccent,
+                  // Indicator
+                  SmoothPageIndicator(
+                    controller: pageController,
+                    count: controller.items.length,
+                    onDotClicked: (index) => pageController.animateToPage(index,
+                        duration: const Duration(milliseconds: 600),
+                        curve: Curves.easeIn),
+                    effect: const WormEffect(
+                      dotHeight: 12,
+                      dotWidth: 12,
+                      activeDotColor: Colors.blueAccent,
+                    ),
+                  ),
+
+                  // Next Button
+                  TextButton(
+                      onPressed: () => pageController.nextPage(
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.easeIn),
+                      child: const Text("Tiếp tục")),
+                ],
               ),
-            ),
-
-            // Next Button
-            TextButton(
-                onPressed: () => pageController.nextPage(
-                    duration: const Duration(milliseconds: 600),
-                    curve: Curves.easeIn),
-                child: const Text("Next")),
-          ],
-        ),
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
         child: PageView.builder(
             onPageChanged: (index) => setState(
-                    () => isLastPage = controller.items.length - 1 == index),
+                () => isLastPage = controller.items.length - 1 == index),
             itemCount: controller.items.length,
             controller: pageController,
             itemBuilder: (context, index) {
@@ -120,14 +119,14 @@ class _IntroScreenState extends State<IntroScreen> {
       child: TextButton(
         onPressed: () async {
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool("onboarding", true);  // Đánh dấu đã xem intro
+          await prefs.setBool("onboarding", true);
 
           if (!mounted) return;
-          Navigator.pushReplacement(
+          Navigator.push(
               context, MaterialPageRoute(builder: (context) => LoginPage()));
         },
         child: const Text(
-          "Get started",
+          "Bắt đầu",
           style: TextStyle(color: Colors.white),
         ),
       ),

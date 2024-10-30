@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/ui/view/home/home.dart';
+import 'package:flutter_application_1/ui/widget/main-layout.dart';
 import 'package:flutter_svg/svg.dart';
 
 class LoginComponent extends StatelessWidget {
@@ -10,27 +10,27 @@ class LoginComponent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         TextField(
           decoration: InputDecoration(
             labelText: 'E-mail',
             hintText: 'Nhập Email',
-            hintStyle: TextStyle(
-              color: Colors.grey, // Màu cho hintText
+            hintStyle: const TextStyle(
+              color: Colors.grey,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         TextField(
           decoration: InputDecoration(
             labelText: 'Mật khẩu',
             hintText: 'Nhập mật khẩu',
-            hintStyle: TextStyle(
+            hintStyle: const TextStyle(
               color: Colors.grey, // Màu cho hintText
             ),
             border: OutlineInputBorder(
@@ -39,22 +39,22 @@ class LoginComponent extends StatelessWidget {
           ),
           obscureText: true,
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         ElevatedButton(
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => MainLayout()),
             );
           },
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 12),
             backgroundColor: Colors.blue,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: Center(
+          child: const Center(
             child: Text(
               'Đăng nhập',
               style: TextStyle(
@@ -64,10 +64,10 @@ class LoginComponent extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         TextButton(
           onPressed: () {},
-          child: Text(
+          child: const Text(
             'Quên mật khẩu?',
             style: TextStyle(
               color: Colors.blue,
@@ -76,32 +76,32 @@ class LoginComponent extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 10),
-        Text(
+        const SizedBox(height: 10),
+        const Text(
           'hoặc đăng nhập với',
           style: TextStyle(
             color: Colors.black54,
             fontSize: 18,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
         // Google Sign-in Button
         ElevatedButton.icon(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
               backgroundColor: Colors.white,
-              side: BorderSide(color: Colors.black12),
+              side: const BorderSide(color: Colors.black12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              minimumSize: Size(double.infinity, 50)),
+              minimumSize: const Size(double.infinity, 50)),
           icon: SvgPicture.asset(
             'assets/icons/google.svg', // Replace with your Google logo asset
             height: 40,
           ),
-          label: Text(
+          label: const Text(
             'Google',
             style: TextStyle(
               color: Colors.black54,
@@ -109,17 +109,17 @@ class LoginComponent extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
         // Sign Up Text
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Không có tài khoản?'),
+            const Text('Không có tài khoản?'),
             TextButton(
               onPressed: () {},
-              child: Text(
-                'Sign up',
+              child: const Text(
+                'Đăng kí',
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: 18,

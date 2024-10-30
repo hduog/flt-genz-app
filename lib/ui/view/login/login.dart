@@ -23,15 +23,14 @@ class _LoginPageState extends State<LoginPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SingleChildScrollView( // Sử dụng SingleChildScrollView để cuộn nội dung
+        body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
-                // Logo and App Name
+                const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -40,23 +39,21 @@ class _LoginPageState extends State<LoginPage> {
                       width: 50,
                       height: 50,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     SvgPicture.asset(
                       'assets/icons/logo-string.svg',
                       width: 250,
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                // Tab for Login and Register
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          isLogin = true; // Hiển thị màn hình đăng nhập
+                          isLogin = true;
                         });
                       },
                       child: Text(
@@ -67,11 +64,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    VerticalDivider(width: 20, color: Colors.black),
+                    const VerticalDivider(width: 20, color: Colors.black),
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          isLogin = false; // Hiển thị màn hình đăng ký
+                          isLogin = false;
                         });
                       },
                       child: Text(
@@ -84,13 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                // Hiển thị màn hình tương ứng
+                const SizedBox(height: 20),
                 if (isLogin)
-                  LoginComponent() // Hiển thị màn hình đăng nhập
+                  const LoginComponent()
                 else
-                  RegisterComponent(), // Hiển thị màn hình đăng ký
+                  const RegisterComponent(),
               ],
             ),
           ),
