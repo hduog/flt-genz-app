@@ -4,13 +4,15 @@ import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
 import 'package:flutter_application_1/ui/view/home/home.dart';
 import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
 import 'package:flutter_application_1/ui/view/profile/profile.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainLayout extends StatefulWidget {
+class MainLayout extends ConsumerStatefulWidget {
   @override
-  _MainLayoutState createState() => _MainLayoutState();
+  ConsumerState<MainLayout> createState() => _MainLayoutState();
 }
 
-class _MainLayoutState extends State<MainLayout> {
+class _MainLayoutState extends ConsumerState<MainLayout> {
   int _selectedTab = 0;
 
   _changeTab(int index) {
@@ -21,6 +23,7 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final userInfo = ref.watch(userProvider.notifier).getData();
     final Map<int, Widget> routes = {
       0: Home(),
       1: const Blogs(),
@@ -37,16 +40,28 @@ class _MainLayoutState extends State<MainLayout> {
           onTap: (index) => _changeTab(index),
           selectedItemColor: colorIconActive,
           unselectedItemColor: colorIconDefault,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "trang chủ"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.newspaper), label: "bản tin"),
-            BottomNavigationBarItem(
+          items: [
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.home), label: "trang chủ"),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.newspaper), label: "Bản tin"),
+            const BottomNavigationBarItem(
                 icon: Icon(Icons.favorite), label: "Yêu thích"),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
                 icon: Icon(Icons.notifications_active), label: "Thông báo"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: "Cài đặt"),
+                icon: userInfo?.avata != null
+                    ? Image.network(Constants.awsUrl + (userInfo?.avata ?? ''))
+                    : const SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              AssetImage('assets/images/reels-test.png'),
+                        ),
+                      ),
+                label: userInfo?.fullName.split(' ')[0] ?? 'Thông tin'),
           ],
         ),
       ),

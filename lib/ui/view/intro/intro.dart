@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/ui/view/login/login.dart';
 import 'package:flutter_application_1/ui/widget/intro/info_intro.dart';
+import 'package:flutter_application_1/ui/widget/main-layout.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class IntroScreen extends StatefulWidget {
+class IntroScreen extends ConsumerStatefulWidget {
   const IntroScreen({super.key});
 
   @override
-  State<IntroScreen> createState() => _IntroScreenState();
+  ConsumerState<IntroScreen> createState() => _IntroScreenState();
 }
 
-class _IntroScreenState extends State<IntroScreen> {
+class _IntroScreenState extends ConsumerState<IntroScreen> {
   final controller = InfoItems();
   final pageController = PageController();
 
@@ -25,18 +29,33 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> checkIfFirstTime() async {
-    // check the first initial launching app, show intro
     final prefs = await SharedPreferences.getInstance();
     final bool? onboardingSeen = prefs.getBool('onboarding');
-
     if (onboardingSeen == true) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+
+    Future<void> getInfoUserProvider() async {
+      final prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('access_token');
+      if (token!.isNotEmpty) {
+        final data = await authService.getBasicInfo(token);
+        if (data != null) {
+          ref.read(userProvider.notifier).setInfoByToken(data);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainLayout()));
+        }
+      }
+    }
+
+    getInfoUserProvider();
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomSheet: Container(
@@ -67,7 +86,6 @@ class _IntroScreenState extends State<IntroScreen> {
                     ),
                   ),
 
-                  // Next Button
                   TextButton(
                       onPressed: () => pageController.nextPage(
                           duration: const Duration(milliseconds: 600),
