@@ -28,7 +28,7 @@ class BlogsCard extends StatelessWidget {
                     color: colorTextCateBlog, fontWeight: FontWeight.w500),
               ),
               SizedBox(
-                width: 320,
+                width: 300,
                 child: Text(
                   "Nếu một ngày bạn cảm thấy như muốn gục ngã thì...",
                   softWrap: true,
@@ -55,7 +55,7 @@ class BlogsCard extends StatelessWidget {
             ],
           ),
           SvgPicture.asset(
-            'assets/icons/dots-vertival.svg',
+            'assets/icons/dots-vertical.svg',
             width: 20,
             height: 20,
           ),

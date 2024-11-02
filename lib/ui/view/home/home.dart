@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/ui/view/createPost/createPost.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +44,7 @@ class Home extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            width: 210,
+                          Flexible(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -85,11 +93,7 @@ class Home extends StatelessWidget {
                       // MAIN CONTENT
                       Padding(
                         padding: const EdgeInsets.only(
-                          left: 5,
-                          bottom: 3,
-                          top: 3,
-                          right: 5,
-                        ),
+                            left: 5, bottom: 3, top: 3, right: 5),
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: Column(
@@ -105,33 +109,40 @@ class Home extends StatelessWidget {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      SizedBox(
-                                        width: 250,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text('Thông điệp hôm nay của bạn là :'),
-                                            SizedBox(height: 10),
-                                            Text(
-                                              '“ Hôm nay, hãy cho phép bản thân được nghỉ ngơi, bạn xứng đáng với điều đó! “',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: colorIconActive,
-                                                fontStyle: FontStyle.italic,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                      Flexible(
+                                        child: SizedBox(
+                                          width: 250,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                  'Thông điệp hôm nay của bạn là :'),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                '“ Hôm nay, hãy cho phép bản thân được nghỉ ngơi, bạn xứng đáng với điều đó! “',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: colorIconActive,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Image(
                                         width: 120,
                                         fit: BoxFit.fitWidth,
-                                        image: AssetImage('assets/images/quote.png'),
+                                        image: AssetImage(
+                                            'assets/images/quote.png'),
                                       ),
                                     ],
                                   ),
@@ -139,61 +150,51 @@ class Home extends StatelessWidget {
                               ),
                               const SizedBox(height: 10),
                               // CONTAINER OF UPLOAD REEL
-                              InkWell(
-                                onTap: () {
-                                  // Navigate to CreatePost page when tapped
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CreatePost(),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                    left: 5,
-                                    bottom: 3,
-                                    top: 3,
-                                    right: 5,
-                                  ),
-                                  decoration: BoxDecoration(
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    left: 5, bottom: 3, top: 3, right: 5),
+                                decoration: BoxDecoration(
                                     color: colorBackgroundCard,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 130,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Image(
-                                              height: 60,
-                                              image: AssetImage(
-                                                  'assets/images/quote.png'),
-                                              fit: BoxFit.fitHeight,
-                                            ),
-                                            SizedBox(width: 20),
-                                            Text(
-                                              "Chia sẻ suy nghĩ của bạn vào đây...",
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 130,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Image(
+                                            height: 60,
+                                            image: AssetImage(
+                                                'assets/images/quote.png'),
+                                            fit: BoxFit.fitHeight,
+                                          ),
+                                          SizedBox(width: 20),
+                                          Flexible(
+                                            child: Text(
+                                              "Hãy chia sẻ suy nghĩ của bạn...",
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: colorIconDefault,
                                               ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            SizedBox(
-                                              width: 90,
-                                              child: Row(
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          SizedBox(
+                                            width: 90,
+                                            child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 crossAxisAlignment:
@@ -208,12 +209,11 @@ class Home extends StatelessWidget {
                                                     child: Text(" | "),
                                                   ),
                                                   const Text("Hình Ảnh"),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Row(
+                                                ]),
+                                          ),
+                                          SizedBox(
+                                            width: 80,
+                                            child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 crossAxisAlignment:
@@ -228,12 +228,11 @@ class Home extends StatelessWidget {
                                                     child: Text(" | "),
                                                   ),
                                                   const Text("Videos"),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Row(
+                                                ]),
+                                          ),
+                                          SizedBox(
+                                            width: 80,
+                                            child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 crossAxisAlignment:
@@ -248,13 +247,11 @@ class Home extends StatelessWidget {
                                                     child: Text(" | "),
                                                   ),
                                                   const Text("Tệp"),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                                ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),

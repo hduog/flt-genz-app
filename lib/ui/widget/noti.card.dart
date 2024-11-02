@@ -48,16 +48,19 @@ class NotiCard extends StatelessWidget {
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Nguyễn Lê Huữ Duy đã yêu thích bạn."),
-              SizedBox(height: 3),
-              Text(
-                "DD/MM/YYYY hh:mm",
-                style: TextStyle(fontSize: 13, color: colorTextSubPart),
-              )
-            ],
+          SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Nguyễn Lê Hữu Duy đã yêu thích bạn hehe hehe hehe ."),
+                SizedBox(height: 3),
+                Text(
+                  "DD/MM/YYYY hh:mm",
+                  style: TextStyle(fontSize: 13, color: colorTextSubPart),
+                )
+              ],
+            ),
           ),
           Image(
             image: AssetImage('assets/images/quote.png'),
