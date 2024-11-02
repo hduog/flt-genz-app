@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/ui/view/blogs/blogs.dart';
 import 'package:flutter_application_1/ui/view/home/home.dart';
+import 'package:flutter_application_1/ui/view/menu/menu.dart';
 import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
 import 'package:flutter_application_1/ui/view/profile/profile.dart';
+import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,8 +29,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final Map<int, Widget> routes = {
       0: Home(),
       1: const Blogs(),
+      2: SendSorrow(),
       3: NotificationsPage(),
-      4: ProfileScreen()
+      // 4: ProfileScreen(),
+      4: MenuPage(),
     };
 
     return Scaffold(

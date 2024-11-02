@@ -48,7 +48,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
         final data = await authService.getBasicInfo(token);
         if (data != null) {
           ref.read(userProvider.notifier).setInfoByToken(data);
-          Navigator.push(
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => MainLayout()));
         }
       }
