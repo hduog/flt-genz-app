@@ -5,4 +5,5 @@ class ApiEndPointConstants {
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
   static String apiGetBasicInfoAccountByToken = "$_baseUrl/auth/profile";
+  static String apiGetValidPost = "$_baseUrl/post/valid-post";
 }
