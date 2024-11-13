@@ -15,6 +15,7 @@ class UserNotifier extends StateNotifier<BasicInfoGet?> {
   BasicInfoGet? getData() {
     return state;
   }
+  
 }
 
 final userProvider = StateNotifierProvider<UserNotifier, BasicInfoGet?>((ref) {

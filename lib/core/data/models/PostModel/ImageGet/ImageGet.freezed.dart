@@ -21,7 +21,7 @@ ImageGet _$ImageGetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ImageGet {
   @JsonKey(name: 'accountId')
-  int get accountId => throw _privateConstructorUsedError; //DEFINE ENTITY
+  String get accountId => throw _privateConstructorUsedError; //DEFINE ENTITY
   @JsonKey(name: 'postId')
   String get postId => throw _privateConstructorUsedError; //DEFINE ENTITY
   @JsonKey(name: 'path')
@@ -43,7 +43,7 @@ abstract class $ImageGetCopyWith<$Res> {
       _$ImageGetCopyWithImpl<$Res, ImageGet>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'accountId') int accountId,
+      {@JsonKey(name: 'accountId') String accountId,
       @JsonKey(name: 'postId') String postId,
       @JsonKey(name: 'path') String path});
 }
@@ -71,7 +71,7 @@ class _$ImageGetCopyWithImpl<$Res, $Val extends ImageGet>
       accountId: null == accountId
           ? _value.accountId
           : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       postId: null == postId
           ? _value.postId
           : postId // ignore: cast_nullable_to_non_nullable
@@ -93,7 +93,7 @@ abstract class _$$ImageGetImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'accountId') int accountId,
+      {@JsonKey(name: 'accountId') String accountId,
       @JsonKey(name: 'postId') String postId,
       @JsonKey(name: 'path') String path});
 }
@@ -119,7 +119,7 @@ class __$$ImageGetImplCopyWithImpl<$Res>
       accountId: null == accountId
           ? _value.accountId
           : accountId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       postId: null == postId
           ? _value.postId
           : postId // ignore: cast_nullable_to_non_nullable
@@ -145,7 +145,7 @@ class _$ImageGetImpl implements _ImageGet {
 
   @override
   @JsonKey(name: 'accountId')
-  final int accountId;
+  final String accountId;
 //DEFINE ENTITY
   @override
   @JsonKey(name: 'postId')
@@ -193,7 +193,7 @@ class _$ImageGetImpl implements _ImageGet {
 
 abstract class _ImageGet implements ImageGet {
   factory _ImageGet(
-      {@JsonKey(name: 'accountId') required final int accountId,
+      {@JsonKey(name: 'accountId') required final String accountId,
       @JsonKey(name: 'postId') required final String postId,
       @JsonKey(name: 'path') required final String path}) = _$ImageGetImpl;
 
@@ -202,7 +202,7 @@ abstract class _ImageGet implements ImageGet {
 
   @override
   @JsonKey(name: 'accountId')
-  int get accountId; //DEFINE ENTITY
+  String get accountId; //DEFINE ENTITY
   @override
   @JsonKey(name: 'postId')
   String get postId; //DEFINE ENTITY

@@ -6,7 +6,7 @@ part 'PermissionPostGet.g.dart';
 @freezed
 class PermissionPostGet with _$PermissionPostGet {
   factory PermissionPostGet({
-    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'id') required String id,
     @JsonKey(name: 'description')  String? description, 
     @JsonKey(name: 'code')  String? code, 
   }) = _PermissionPostGet;

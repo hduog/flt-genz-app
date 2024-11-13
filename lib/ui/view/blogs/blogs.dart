@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
-import 'package:flutter_application_1/ui/widget/cate_image.card.dart';
 import 'package:flutter_application_1/ui/widget/cate_text_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

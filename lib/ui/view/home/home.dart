@@ -1,45 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
 
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends ConsumerState<Home> {
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    // Fetch post data
+    _fetchPostData();
+  }
+
+  Future<void> _fetchPostData() async {
+    String token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6eyJlbWFpbCI6Im5oZHVvbmdAZ21haWwuY29tIiwiZnVsbE5hbWUiOiJOZ3V54buFbiBI4bqjaSBExrDGoW5nIiwiaWQiOiJ1c2VyZ2VuemlkOTY3ODkwNyIsInJvbGVzIjpbIlVTRVIiXX0sImlhdCI6MTczMTQxNzI1NCwiZXhwIjoxNzMxNTAzNjU0LCJhdWQiOiIqKioqKipnZW56LW1lbnRhbC1oZWF0aCoqKioqKioqIiwiaXNzIjoiaHR0cHM6Ly9nZW56LW1lbnRhbC1oZWF0aCoqKioqKioqIiwic3ViIjoidXNlcmdlbnppZDk2Nzg5MDcifQ.qqBbGBi4tg0OfBEnNsFDyVB4bcxjUV6B8_tI3r25d98";
+
+    // Call API to fetch post data
+    await PostService().getValidPost(token).then((postInfo) {
+      if (postInfo != null) {
+        ref.read(postProvider.notifier).setPostValid(postInfo);
+      }
+      setState(() {
+        isLoading = false; // Set loading to false after the data is fetched
+      });
+      print('Post data fetched: $postInfo');
+    }).catchError((e) {
+      print("Error fetching post dataaaa: $e");
+
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final postData = ref.watch(postProvider);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              const Positioned(
-                left: -200,
-                top: -200,
-                child: Image(
-                  image: AssetImage('assets/images/bg-top.png'),
-                  width: 500,
-                ),
-              ),
-              SingleChildScrollView(
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10, top: 20),
                   child: Column(
                     children: [
-                      // TOP MENU
+                      // Top menu
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,7 +111,7 @@ class _HomeState extends State<Home> {
                           ),
                         ],
                       ),
-                      // MAIN CONTENT
+                      // Main content
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 5, bottom: 3, top: 3, right: 5),
@@ -98,7 +119,7 @@ class _HomeState extends State<Home> {
                           width: MediaQuery.of(context).size.width,
                           child: Column(
                             children: [
-                              // QUOTE IN DAY
+                              // Quote in Day
                               Container(
                                 decoration: BoxDecoration(
                                   color: colorBackgroundCard,
@@ -255,11 +276,14 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                              // LIST REELS
-                              ReelCard(),
-                              ReelCard(),
-                              ReelCard(),
-                              ReelCard(),
+                              // List Reels
+                              if (postData != null)
+                                ...postData.data.map((post) {
+                                  return ReelCard(
+                                    post:
+                                        post, // Truyền đối tượng post (kiểu DataGet) vào
+                                  );
+                                }).toList(),
                             ],
                           ),
                         ),
@@ -268,9 +292,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

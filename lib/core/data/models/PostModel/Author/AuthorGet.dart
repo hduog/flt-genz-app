@@ -6,7 +6,7 @@ part 'AuthorGet.g.dart';
 @freezed
 class AuthorGet with _$AuthorGet {
   factory AuthorGet({
-    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'id') required String id,
     @JsonKey(name: 'fullName') required String fullName,
     @JsonKey(name: 'phone') String? phone,
     @JsonKey(name: 'aboutMe') String? aboutMe,

@@ -21,9 +21,9 @@ PermissionPostGet _$PermissionPostGetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$PermissionPostGet {
   @JsonKey(name: 'id')
-  int get id => throw _privateConstructorUsedError; //DEFINE ENTITY
+  String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'description')
-  String? get description => throw _privateConstructorUsedError; //DEFINE ENTITY
+  String? get description => throw _privateConstructorUsedError;
   @JsonKey(name: 'code')
   String? get code => throw _privateConstructorUsedError;
 
@@ -44,7 +44,7 @@ abstract class $PermissionPostGetCopyWith<$Res> {
       _$PermissionPostGetCopyWithImpl<$Res, PermissionPostGet>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'description') String? description,
       @JsonKey(name: 'code') String? code});
 }
@@ -72,7 +72,7 @@ class _$PermissionPostGetCopyWithImpl<$Res, $Val extends PermissionPostGet>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -94,7 +94,7 @@ abstract class _$$PermissionPostGetImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'description') String? description,
       @JsonKey(name: 'code') String? code});
 }
@@ -120,7 +120,7 @@ class __$$PermissionPostGetImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -146,12 +146,10 @@ class _$PermissionPostGetImpl implements _PermissionPostGet {
 
   @override
   @JsonKey(name: 'id')
-  final int id;
-//DEFINE ENTITY
+  final String id;
   @override
   @JsonKey(name: 'description')
   final String? description;
-//DEFINE ENTITY
   @override
   @JsonKey(name: 'code')
   final String? code;
@@ -195,7 +193,7 @@ class _$PermissionPostGetImpl implements _PermissionPostGet {
 
 abstract class _PermissionPostGet implements PermissionPostGet {
   factory _PermissionPostGet(
-      {@JsonKey(name: 'id') required final int id,
+      {@JsonKey(name: 'id') required final String id,
       @JsonKey(name: 'description') final String? description,
       @JsonKey(name: 'code') final String? code}) = _$PermissionPostGetImpl;
 
@@ -204,10 +202,10 @@ abstract class _PermissionPostGet implements PermissionPostGet {
 
   @override
   @JsonKey(name: 'id')
-  int get id; //DEFINE ENTITY
+  String get id;
   @override
   @JsonKey(name: 'description')
-  String? get description; //DEFINE ENTITY
+  String? get description;
   @override
   @JsonKey(name: 'code')
   String? get code;

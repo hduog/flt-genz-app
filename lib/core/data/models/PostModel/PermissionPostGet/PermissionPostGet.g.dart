@@ -9,7 +9,7 @@ part of 'PermissionPostGet.dart';
 _$PermissionPostGetImpl _$$PermissionPostGetImplFromJson(
         Map<String, dynamic> json) =>
     _$PermissionPostGetImpl(
-      id: (json['id'] as num).toInt(),
+      id: json['id'] as String,
       description: json['description'] as String?,
       code: json['code'] as String?,
     );

@@ -21,7 +21,7 @@ AuthorGet _$AuthorGetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthorGet {
   @JsonKey(name: 'id')
-  int get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'fullName')
   String get fullName => throw _privateConstructorUsedError;
   @JsonKey(name: 'phone')
@@ -53,7 +53,7 @@ abstract class $AuthorGetCopyWith<$Res> {
       _$AuthorGetCopyWithImpl<$Res, AuthorGet>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'fullName') String fullName,
       @JsonKey(name: 'phone') String? phone,
       @JsonKey(name: 'aboutMe') String? aboutMe,
@@ -91,7 +91,7 @@ class _$AuthorGetCopyWithImpl<$Res, $Val extends AuthorGet>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       fullName: null == fullName
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
@@ -133,7 +133,7 @@ abstract class _$$AuthorGetImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'fullName') String fullName,
       @JsonKey(name: 'phone') String? phone,
       @JsonKey(name: 'aboutMe') String? aboutMe,
@@ -169,7 +169,7 @@ class __$$AuthorGetImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       fullName: null == fullName
           ? _value.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
@@ -220,7 +220,7 @@ class _$AuthorGetImpl implements _AuthorGet {
 
   @override
   @JsonKey(name: 'id')
-  final int id;
+  final String id;
   @override
   @JsonKey(name: 'fullName')
   final String fullName;
@@ -288,7 +288,7 @@ class _$AuthorGetImpl implements _AuthorGet {
 
 abstract class _AuthorGet implements AuthorGet {
   factory _AuthorGet(
-      {@JsonKey(name: 'id') required final int id,
+      {@JsonKey(name: 'id') required final String id,
       @JsonKey(name: 'fullName') required final String fullName,
       @JsonKey(name: 'phone') final String? phone,
       @JsonKey(name: 'aboutMe') final String? aboutMe,
@@ -302,7 +302,7 @@ abstract class _AuthorGet implements AuthorGet {
 
   @override
   @JsonKey(name: 'id')
-  int get id;
+  String get id;
   @override
   @JsonKey(name: 'fullName')
   String get fullName;

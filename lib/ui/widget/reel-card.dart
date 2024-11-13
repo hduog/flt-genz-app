@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ReelCard extends StatelessWidget {
+  final DataGet post;  // Sử dụng DataGet thay vì các tham số riêng biệt
+
+  const ReelCard({
+    Key? key,
+    required this.post,  // Dữ liệu từ PostInfoGet
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,17 +36,13 @@ class ReelCard extends StatelessWidget {
                   fit: BoxFit.fitHeight,
                 ),
                 const SizedBox(width: 20),
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Nguyễn Văn A",
+                      post.account.fullName,  // Dùng thông tin tác giả từ post
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: colorTextDefault),
-                    ),
-                    Text(
-                      "DD/MM/YYYY HH:mm",
-                      style: TextStyle(color: colorTextSubPart),
                     ),
                   ],
                 ),
@@ -48,8 +52,8 @@ class ReelCard extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children:  [
-                       SvgPicture.asset(
+                    children: [
+                      SvgPicture.asset(
                         'assets/icons/dots-horizontal.svg',
                         width: 24,
                         height: 24,
@@ -60,9 +64,9 @@ class ReelCard extends StatelessWidget {
               ],
             ),
             SizedBox(
-              child: Image(
-                  fit: BoxFit.fitWidth,
-                  image: AssetImage('assets/images/reels-test.png')),
+              child: post.images != null && post.images!.isNotEmpty
+                  ? Image.network(post.images!.first.path)  // Hiển thị ảnh đầu tiên nếu có
+                  : const Text("No image"),  // Nếu không có ảnh
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -81,13 +85,7 @@ class ReelCard extends StatelessWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text(
-                        "1,810",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                      Text(post.totalReaction.toString()),  // Hiển thị tổng số lượt thích
                     ],
                   ),
                 ),
@@ -98,20 +96,14 @@ class ReelCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SvgPicture.asset(
-                        'assets/icons/comment.svg',
+                        'assets/icons/chat-left.svg',
                         width: 24,
                         height: 24,
                       ),
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text(
-                        "810",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                      Text(post.totalComment.toString()),  // Hiển thị tổng số bình luận
                     ],
                   ),
                 ),
@@ -129,23 +121,12 @@ class ReelCard extends StatelessWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text(
-                        "10",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                      Text(post.totalShare.toString()),  // Hiển thị tổng số lượt chia sẻ
                     ],
                   ),
                 ),
-                SvgPicture.asset(
-                  'assets/icons/save.svg',
-                  width: 24,
-                  height: 24,
-                ),
               ],
-            )
+            ),
           ],
         ),
       ),

@@ -11,8 +11,9 @@ class PostNotifier extends StateNotifier<PostInfoGet?> {
   PostInfoGet? getData() {
     return state;
   }
+
 }
 
-final userProvider = StateNotifierProvider<PostNotifier, PostInfoGet?>((ref) {
+final postProvider = StateNotifierProvider<PostNotifier, PostInfoGet?>((ref) {
   return PostNotifier();
 });
