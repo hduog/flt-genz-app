@@ -25,7 +25,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = ref.watch(userProvider.notifier).getData();
+    final userInfo = ref.watch(userProvider);
     final Map<int, Widget> routes = {
       0: Home(),
       1: const Blogs(),

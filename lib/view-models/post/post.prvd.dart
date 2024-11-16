@@ -1,18 +1,18 @@
-import 'package:flutter_application_1/core/data/models/PostModel/PostInfoGet/PostInfoGet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet.dart';
 
-class PostNotifier extends StateNotifier<PostInfoGet?> {
-  PostNotifier() : super(null);
+class PostNotifier extends StateNotifier<List<DataGet>> {
+  PostNotifier() : super([]);
 
-  void setPostValid(PostInfoGet data) {
-    state = data;
+  void setPosts(List<DataGet> posts) {
+    state = posts;
   }
 
-  PostInfoGet? getData() {
+  List<DataGet> getData() {
     return state;
   }
 }
 
-final userProvider = StateNotifierProvider<PostNotifier, PostInfoGet?>((ref) {
+final postProvider = StateNotifierProvider<PostNotifier, List<DataGet>>((ref) {
   return PostNotifier();
 });

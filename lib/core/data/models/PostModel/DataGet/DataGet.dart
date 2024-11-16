@@ -12,7 +12,7 @@ class DataGet with _$DataGet {
   factory DataGet({
     @JsonKey(name: 'account') required AuthorGet account,
     @JsonKey(name: 'accountId') required String accountId,
-    @JsonKey(name: 'contentText') String? contentText,
+    @JsonKey(name: 'contentText') required String contentText,
     @JsonKey(name: 'created_at') String? created_at,
     @JsonKey(name: 'id') required String id,
     @JsonKey(name: 'isSave') bool? isSave,

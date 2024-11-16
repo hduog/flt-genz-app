@@ -154,8 +154,9 @@ class _HomeState extends State<Home> {
                                 padding: const EdgeInsets.only(
                                     left: 5, bottom: 3, top: 3, right: 5),
                                 decoration: BoxDecoration(
-                                    color: colorBackgroundCard,
-                                    borderRadius: BorderRadius.circular(10)),
+                                  color: colorBackgroundCard,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height: 130,
@@ -195,59 +196,62 @@ class _HomeState extends State<Home> {
                                           SizedBox(
                                             width: 90,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-pic.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Hình Ảnh"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-pic.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Hình Ảnh"),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 80,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-video.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Videos"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-video.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Videos"),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 80,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-file.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Tệp"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-file.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Tệp"),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -255,10 +259,8 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 10),
                               // LIST REELS
-                              ReelCard(),
-                              ReelCard(),
-                              ReelCard(),
                               ReelCard(),
                             ],
                           ),
