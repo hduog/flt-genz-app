@@ -90,7 +90,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               ),
               const SizedBox(height: 10),
               Text(
-                post.contentText,
+                post.contentText ?? "",
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   color: Colors.black,
