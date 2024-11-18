@@ -8,7 +8,7 @@ part of 'AuthorGet.dart';
 
 _$AuthorGetImpl _$$AuthorGetImplFromJson(Map<String, dynamic> json) =>
     _$AuthorGetImpl(
-      id: (json['id'] as num).toInt(),
+      id: json['id'] as String,
       fullName: json['fullName'] as String,
       phone: json['phone'] as String?,
       aboutMe: json['aboutMe'] as String?,

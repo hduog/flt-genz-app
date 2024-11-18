@@ -21,7 +21,7 @@ AccountComment _$AccountCommentFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AccountComment {
   @JsonKey(name: 'id')
-  int get id => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'avata')
   String? get avata => throw _privateConstructorUsedError;
   @JsonKey(name: 'name')
@@ -46,7 +46,7 @@ abstract class $AccountCommentCopyWith<$Res> {
       _$AccountCommentCopyWithImpl<$Res, AccountComment>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'avata') String? avata,
       @JsonKey(name: 'name') String name,
       @JsonKey(name: 'nick_name') String? nick_name});
@@ -76,7 +76,7 @@ class _$AccountCommentCopyWithImpl<$Res, $Val extends AccountComment>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       avata: freezed == avata
           ? _value.avata
           : avata // ignore: cast_nullable_to_non_nullable
@@ -102,7 +102,7 @@ abstract class _$$AccountCommentImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'id') int id,
+      {@JsonKey(name: 'id') String id,
       @JsonKey(name: 'avata') String? avata,
       @JsonKey(name: 'name') String name,
       @JsonKey(name: 'nick_name') String? nick_name});
@@ -130,7 +130,7 @@ class __$$AccountCommentImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String,
       avata: freezed == avata
           ? _value.avata
           : avata // ignore: cast_nullable_to_non_nullable
@@ -161,7 +161,7 @@ class _$AccountCommentImpl implements _AccountComment {
 
   @override
   @JsonKey(name: 'id')
-  final int id;
+  final String id;
   @override
   @JsonKey(name: 'avata')
   final String? avata;
@@ -212,7 +212,7 @@ class _$AccountCommentImpl implements _AccountComment {
 
 abstract class _AccountComment implements AccountComment {
   factory _AccountComment(
-          {@JsonKey(name: 'id') required final int id,
+          {@JsonKey(name: 'id') required final String id,
           @JsonKey(name: 'avata') final String? avata,
           @JsonKey(name: 'name') required final String name,
           @JsonKey(name: 'nick_name') final String? nick_name}) =
@@ -223,7 +223,7 @@ abstract class _AccountComment implements AccountComment {
 
   @override
   @JsonKey(name: 'id')
-  int get id;
+  String get id;
   @override
   @JsonKey(name: 'avata')
   String? get avata;

@@ -21,10 +21,9 @@ CommentForGet _$CommentForGetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CommentForGet {
   @JsonKey(name: 'account')
-  List<AccountComment> get account =>
-      throw _privateConstructorUsedError; //DEFINE ENTITY
+  List<AccountComment> get account => throw _privateConstructorUsedError;
   @JsonKey(name: 'content')
-  String get content => throw _privateConstructorUsedError; //DEFINE ENTITY
+  String get content => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get created_at => throw _privateConstructorUsedError;
 
@@ -155,11 +154,9 @@ class _$CommentForGetImpl implements _CommentForGet {
     return EqualUnmodifiableListView(_account);
   }
 
-//DEFINE ENTITY
   @override
   @JsonKey(name: 'content')
   final String content;
-//DEFINE ENTITY
   @override
   @JsonKey(name: 'created_at')
   final String? created_at;
@@ -213,10 +210,10 @@ abstract class _CommentForGet implements CommentForGet {
 
   @override
   @JsonKey(name: 'account')
-  List<AccountComment> get account; //DEFINE ENTITY
+  List<AccountComment> get account;
   @override
   @JsonKey(name: 'content')
-  String get content; //DEFINE ENTITY
+  String get content;
   @override
   @JsonKey(name: 'created_at')
   String? get created_at;

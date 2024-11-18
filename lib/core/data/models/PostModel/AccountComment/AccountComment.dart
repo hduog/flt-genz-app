@@ -6,7 +6,7 @@ part 'AccountComment.g.dart';
 @freezed
 class AccountComment with _$AccountComment {
   factory AccountComment({
-    @JsonKey(name: 'id') required int id, 
+    @JsonKey(name: 'id') required String id, 
     @JsonKey(name: 'avata')  String? avata, 
     @JsonKey(name: 'name') required String name, 
     @JsonKey(name: 'nick_name')  String? nick_name, 

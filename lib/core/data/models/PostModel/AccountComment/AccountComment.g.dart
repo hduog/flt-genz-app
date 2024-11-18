@@ -8,7 +8,7 @@ part of 'AccountComment.dart';
 
 _$AccountCommentImpl _$$AccountCommentImplFromJson(Map<String, dynamic> json) =>
     _$AccountCommentImpl(
-      id: (json['id'] as num).toInt(),
+      id: json['id'] as String,
       avata: json['avata'] as String?,
       name: json['name'] as String,
       nick_name: json['nick_name'] as String?,

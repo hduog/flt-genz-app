@@ -8,7 +8,7 @@ part of 'ImageGet.dart';
 
 _$ImageGetImpl _$$ImageGetImplFromJson(Map<String, dynamic> json) =>
     _$ImageGetImpl(
-      accountId: (json['accountId'] as num).toInt(),
+      accountId: json['accountId'] as String,
       postId: json['postId'] as String,
       path: json['path'] as String,
     );
