@@ -7,9 +7,9 @@ part 'CommentForGet.g.dart';
 @freezed
 class CommentForGet with _$CommentForGet {
   factory CommentForGet({
-    @JsonKey(name: 'account') required List<AccountComment> account, 
-    @JsonKey(name: 'content') required String content, 
-    @JsonKey(name: 'created_at') String? created_at, 
+    @JsonKey(name: 'account') required AccountComment account,
+    @JsonKey(name: 'content') required String content,
+    @JsonKey(name: 'created_at') String? created_at,
   }) = _CommentForGet;
   factory CommentForGet.fromJson(Map<String, Object?> json) =>
       _$CommentForGetFromJson(json);

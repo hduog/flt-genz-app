@@ -21,7 +21,7 @@ CommentForGet _$CommentForGetFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$CommentForGet {
   @JsonKey(name: 'account')
-  List<AccountComment> get account => throw _privateConstructorUsedError;
+  AccountComment get account => throw _privateConstructorUsedError;
   @JsonKey(name: 'content')
   String get content => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -44,9 +44,11 @@ abstract class $CommentForGetCopyWith<$Res> {
       _$CommentForGetCopyWithImpl<$Res, CommentForGet>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'account') List<AccountComment> account,
+      {@JsonKey(name: 'account') AccountComment account,
       @JsonKey(name: 'content') String content,
       @JsonKey(name: 'created_at') String? created_at});
+
+  $AccountCommentCopyWith<$Res> get account;
 }
 
 /// @nodoc
@@ -72,7 +74,7 @@ class _$CommentForGetCopyWithImpl<$Res, $Val extends CommentForGet>
       account: null == account
           ? _value.account
           : account // ignore: cast_nullable_to_non_nullable
-              as List<AccountComment>,
+              as AccountComment,
       content: null == content
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
@@ -82,6 +84,16 @@ class _$CommentForGetCopyWithImpl<$Res, $Val extends CommentForGet>
           : created_at // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
+  }
+
+  /// Create a copy of CommentForGet
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AccountCommentCopyWith<$Res> get account {
+    return $AccountCommentCopyWith<$Res>(_value.account, (value) {
+      return _then(_value.copyWith(account: value) as $Val);
+    });
   }
 }
 
@@ -94,9 +106,12 @@ abstract class _$$CommentForGetImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'account') List<AccountComment> account,
+      {@JsonKey(name: 'account') AccountComment account,
       @JsonKey(name: 'content') String content,
       @JsonKey(name: 'created_at') String? created_at});
+
+  @override
+  $AccountCommentCopyWith<$Res> get account;
 }
 
 /// @nodoc
@@ -118,9 +133,9 @@ class __$$CommentForGetImplCopyWithImpl<$Res>
   }) {
     return _then(_$CommentForGetImpl(
       account: null == account
-          ? _value._account
+          ? _value.account
           : account // ignore: cast_nullable_to_non_nullable
-              as List<AccountComment>,
+              as AccountComment,
       content: null == content
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
@@ -137,23 +152,16 @@ class __$$CommentForGetImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CommentForGetImpl implements _CommentForGet {
   _$CommentForGetImpl(
-      {@JsonKey(name: 'account') required final List<AccountComment> account,
+      {@JsonKey(name: 'account') required this.account,
       @JsonKey(name: 'content') required this.content,
-      @JsonKey(name: 'created_at') this.created_at})
-      : _account = account;
+      @JsonKey(name: 'created_at') this.created_at});
 
   factory _$CommentForGetImpl.fromJson(Map<String, dynamic> json) =>
       _$$CommentForGetImplFromJson(json);
 
-  final List<AccountComment> _account;
   @override
   @JsonKey(name: 'account')
-  List<AccountComment> get account {
-    if (_account is EqualUnmodifiableListView) return _account;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_account);
-  }
-
+  final AccountComment account;
   @override
   @JsonKey(name: 'content')
   final String content;
@@ -171,7 +179,7 @@ class _$CommentForGetImpl implements _CommentForGet {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CommentForGetImpl &&
-            const DeepCollectionEquality().equals(other._account, _account) &&
+            (identical(other.account, account) || other.account == account) &&
             (identical(other.content, content) || other.content == content) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
@@ -179,8 +187,7 @@ class _$CommentForGetImpl implements _CommentForGet {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_account), content, created_at);
+  int get hashCode => Object.hash(runtimeType, account, content, created_at);
 
   /// Create a copy of CommentForGet
   /// with the given fields replaced by the non-null parameter values.
@@ -200,17 +207,17 @@ class _$CommentForGetImpl implements _CommentForGet {
 
 abstract class _CommentForGet implements CommentForGet {
   factory _CommentForGet(
-      {@JsonKey(name: 'account') required final List<AccountComment> account,
-      @JsonKey(name: 'content') required final String content,
-      @JsonKey(name: 'created_at')
-      final String? created_at}) = _$CommentForGetImpl;
+          {@JsonKey(name: 'account') required final AccountComment account,
+          @JsonKey(name: 'content') required final String content,
+          @JsonKey(name: 'created_at') final String? created_at}) =
+      _$CommentForGetImpl;
 
   factory _CommentForGet.fromJson(Map<String, dynamic> json) =
       _$CommentForGetImpl.fromJson;
 
   @override
   @JsonKey(name: 'account')
-  List<AccountComment> get account;
+  AccountComment get account;
   @override
   @JsonKey(name: 'content')
   String get content;

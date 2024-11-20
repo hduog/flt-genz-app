@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 const colorBackground = Color.fromRGBO(255, 255, 255, 1);
 const colorBackgoundNavBar = Color.fromRGBO(255, 255, 255, 1);
@@ -35,4 +36,11 @@ class Constants {
   static const int errorCode504 = 504;
   static const String awsUrl =
       'https://mygenzmentalheath.s3.ap-southeast-2.amazonaws.com/';
+}
+
+String? formatDate(String? dateStr) {
+  if (dateStr == null) return null;
+  final dateTime = DateTime.parse(dateStr);
+  final formatter = DateFormat('dd/MM/yyyy HH:mm');
+  return formatter.format(dateTime);
 }

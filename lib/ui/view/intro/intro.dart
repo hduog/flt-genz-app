@@ -3,7 +3,6 @@ import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/ui/view/login/login.dart';
 import 'package:flutter_application_1/ui/widget/intro/info_intro.dart';
 import 'package:flutter_application_1/ui/widget/main-layout.dart';
-import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,7 +46,6 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
       if (token!.isNotEmpty) {
         final data = await authService.getBasicInfo(token);
         if (data != null) {
-          ref.read(userProvider.notifier).setInfoByToken(data);
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => MainLayout()));
         }
