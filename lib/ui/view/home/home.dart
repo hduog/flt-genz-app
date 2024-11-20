@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Home extends StatefulWidget {
+class Home extends ConsumerStatefulWidget {
   const Home({super.key});
-
   @override
-  _HomeState createState() => _HomeState();
+  ConsumerState<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends ConsumerState<Home> {
   @override
   void initState() {
     super.initState();
+    fetchPosts();
+  }
+
+  Future<void> fetchPosts() async {
+    final postService = PostService();
+    final posts = await postService.getPosts(ref);
+    if (posts != null) {
+      ref.read(postProvider.notifier).setPosts(posts);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final postData = ref.watch(postProvider);
+
+    if (postData.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -154,8 +171,9 @@ class _HomeState extends State<Home> {
                                 padding: const EdgeInsets.only(
                                     left: 5, bottom: 3, top: 3, right: 5),
                                 decoration: BoxDecoration(
-                                    color: colorBackgroundCard,
-                                    borderRadius: BorderRadius.circular(10)),
+                                  color: colorBackgroundCard,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height: 130,
@@ -195,59 +213,62 @@ class _HomeState extends State<Home> {
                                           SizedBox(
                                             width: 90,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-pic.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Hình Ảnh"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-pic.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Hình Ảnh"),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 80,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-video.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Videos"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-video.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Videos"),
+                                              ],
+                                            ),
                                           ),
                                           SizedBox(
                                             width: 80,
                                             child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icons/upload-file.svg',
-                                                    width: 13,
-                                                    height: 13,
-                                                  ),
-                                                  const SizedBox(
-                                                    child: Text(" | "),
-                                                  ),
-                                                  const Text("Tệp"),
-                                                ]),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/upload-file.svg',
+                                                  width: 13,
+                                                  height: 13,
+                                                ),
+                                                const SizedBox(
+                                                  child: Text(" | "),
+                                                ),
+                                                const Text("Tệp"),
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -255,11 +276,17 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 10),
                               // LIST REELS
-                              ReelCard(),
-                              ReelCard(),
-                              ReelCard(),
-                              ReelCard(),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: postData.length,
+                                itemBuilder: (context, index) {
+                                  final post = postData[index];
+                                  return ReelCard(postItem: post);
+                                },
+                              ),
                             ],
                           ),
                         ),
