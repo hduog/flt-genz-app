@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/cateBlog/cateBlog_service.dart';
 import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
-import 'package:flutter_application_1/ui/widget/cate_image.card.dart';
-import 'package:flutter_application_1/ui/widget/cate_text_button.dart';
+import 'package:flutter_application_1/ui/widget/cateBlog-card.dart';
+import 'package:flutter_application_1/view-models/cateBlog/cateBlog.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Blogs extends StatelessWidget {
+class Blogs extends ConsumerStatefulWidget {
   const Blogs({super.key});
+  @override
+  ConsumerState<Blogs> createState() => _CateBlog();
+}
+
+class _CateBlog extends ConsumerState<Blogs> {
+  @override
+  void initState() {
+    super.initState();
+    fetchPosts();
+  }
+
+  Future<void> fetchPosts() async {
+    final cateBlogService = CateBlogService();
+    final cateBlog = await cateBlogService.getCateBlogs(ref);
+    if (cateBlog != null) {
+      ref.read(cateBlogProvider.notifier).setCateBlogs(cateBlog);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final cateBlogData = ref.watch(cateBlogProvider);
+
+    if (cateBlogData.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return (SafeArea(
         child: Scaffold(
       backgroundColor: Colors.white,
@@ -52,20 +77,20 @@ class Blogs extends StatelessWidget {
                             ],
                           )),
                     ),
-                    Text(
+                    const Text(
                       "CHIA SẺ VÀ TÂM SỰ",
                       style: TextStyle(
                           fontSize: 22,
                           color: colorTextHeader,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       "Nơi khám phá và chia sẻ về sức khỏe tình thần",
                       style: TextStyle(color: colorTextSubPart),
                     ),
                     Container(
                       height: 40,
-                      margin: EdgeInsets.only(top: 20, bottom: 10),
+                      margin: EdgeInsets.only(top: 20, bottom: 5),
                       padding: EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           border: Border.all(color: colorIconActive),
@@ -103,30 +128,27 @@ class Blogs extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: SingleChildScrollView(
+                      height: 23,
+                      child: ListView.builder(
+                        shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton()
-                          ],
-                        ),
+                        itemCount: cateBlogData.length,
+                        itemBuilder: (context, index) {
+                          final cateBlogs = cateBlogData[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(),
+                            child: CateBlogCard(cateBlogItem: cateBlogs),
+                          );
+                        },
                       ),
                     ),
-                    Text(
+                    const Text(
                       "Bài viết nổi bật",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                     BlogsImageCard(),
-                    Text(
+                    const Text(
                       "Đề xuất cho bạn",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
