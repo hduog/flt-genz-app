@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/NotificationModel/NotificationData/NotificationData.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NotiCard extends StatelessWidget {
-  const NotiCard({super.key});
+  final NotificationData notificationItem;
+  const NotiCard({super.key, required this.notificationItem});
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +27,12 @@ class NotiCard extends StatelessWidget {
               SizedBox(width: 5),
               Stack(
                 children: [
-                  Image(
-                    image: AssetImage('assets/images/quote.png'),
-                    width: 50,
-                    height: 50,
-                  ),
+                Image.network(
+                '${Constants.awsUrl}${notificationItem.typeNotification!.thumbnailNoti ?? "assets/images/quote.png"}',
+                fit: BoxFit.cover,
+                width: 50,
+                height: 50,
+              ),
                   Positioned(
                       right: 0,
                       top: 0,
@@ -53,10 +56,10 @@ class NotiCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Nguyễn Lê Hữu Duy đã yêu thích bạn hehe hehe hehe ."),
+                Text(notificationItem.messageNotifications ?? ""),
                 SizedBox(height: 3),
-                Text(
-                  "DD/MM/YYYY hh:mm",
+                 Text(
+                   formatDate(notificationItem.created_at) ??  "DD/MM/YYYY hh:mm",
                   style: TextStyle(fontSize: 13, color: colorTextSubPart),
                 )
               ],

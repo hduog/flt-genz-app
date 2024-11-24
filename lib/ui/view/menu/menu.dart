@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/auth/auth_service.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/ui/view/menu/setting.dart';
+import 'package:flutter_application_1/core/data/models/UserModel/BasicInfoGet/BasicInfoGet.dart';
 
-class MenuPage extends StatelessWidget {
+
+class MenuPage extends ConsumerStatefulWidget {
+  ConsumerState<MenuPage> createState() => _MenuPageState(); }
+class _MenuPageState extends ConsumerState<MenuPage> {
+   @override
+  void initState() {
+    super.initState();
+    fetchBlogs();
+  }
+    Future<void> fetchBlogs() async {
+    final authService = AuthService();
+    final user =   await authService.infoUser(ref);
+    if (user != null) {
+      ref.read(userProvider.notifier).setInfoByToken(user);
+    }
+  }
   @override
+  
   Widget build(BuildContext context) {
+    final userInfo = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu'),
@@ -15,7 +37,6 @@ class MenuPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              // Điều hướng đến trang MySettingsPage khi nhấn vào nút Cài đặt ở góc trên
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MySettingsPage()),
@@ -29,10 +50,8 @@ class MenuPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Phần Hồ Sơ
-            _buildProfileSection(),
-
-            // Menu dạng lưới
+            _buildProfileSection(userInfo),
+            // Các phần khác trong menu
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -41,19 +60,16 @@ class MenuPage extends StatelessWidget {
               ),
             ),
             _buildGridMenu(),
-
             Divider(thickness: 1),
-
-            // Các phần mở rộng
             _buildListTile(Icons.settings, 'Cài đặt & quyền riêng tư', context),
             _buildListTile(Icons.help_outline, 'Trợ giúp & hỗ trợ', context),
-
-            // Nút đăng xuất
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref.read(userProvider.notifier).logout();
+                  },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
                   ),
@@ -67,14 +83,26 @@ class MenuPage extends StatelessWidget {
     );
   }
 
-  // Phần hiển thị hồ sơ người dùng
-  Widget _buildProfileSection() {
+  // Hiển thị thông tin hồ sơ người dùng
+  Widget _buildProfileSection(BasicInfoGet? userInfo) {
+    if (userInfo == null) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Text(
+            'Chưa có thông tin người dùng.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/images/quote.png'), // Thêm ảnh hồ sơ của bạn
+            backgroundImage: NetworkImage('${Constants.awsUrl}${userInfo.avata ?? ''}'),
             radius: 30,
           ),
           SizedBox(width: 12),
@@ -82,7 +110,7 @@ class MenuPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Nguyễn Lê Hữu Duy',
+                userInfo.fullName ?? "", 
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               TextButton(
@@ -99,7 +127,7 @@ class MenuPage extends StatelessWidget {
     );
   }
 
-  // Phần menu dạng lưới
+  // Các phần trong menu dạng lưới
   Widget _buildGridMenu() {
     return GridView.count(
       shrinkWrap: true,
@@ -121,7 +149,6 @@ class MenuPage extends StatelessWidget {
     );
   }
 
-  // Phần hiển thị mỗi mục trong menu lưới
   Widget _buildMenuItem(IconData icon, String title) {
     return Container(
       decoration: BoxDecoration(
@@ -139,14 +166,12 @@ class MenuPage extends StatelessWidget {
     );
   }
 
-  // Phần ListTile cho các mục dưới cùng
   Widget _buildListTile(IconData icon, String title, BuildContext context) {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
       onTap: () {
-        if (title == 'Cài đặt & quyền riêng tư')  {
-          // Điều hướng đến trang MySettingsPage
+        if (title == 'Cài đặt & quyền riêng tư') {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => MySettingsPage()),

@@ -1,17 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/blog/blog_service.dart';
 import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
-import 'package:flutter_application_1/ui/widget/cate_image.card.dart';
 import 'package:flutter_application_1/ui/widget/cate_text_button.dart';
+import 'package:flutter_application_1/view-models/blog/blog.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Blogs extends StatelessWidget {
+class Blogs extends ConsumerStatefulWidget {
   const Blogs({super.key});
+ ConsumerState<Blogs> createState() => _BlogsState(); }
+class _BlogsState extends ConsumerState<Blogs> {
+  @override
+  void initState() {
+    super.initState();
+    fetchBlogs();
+  }
+    Future<void> fetchBlogs() async {
+    final blogService = BlogService();
+    final blogs =   await blogService.getBlogs(ref);
+    if (blogs != null) {
+      ref.read(blogProvider.notifier).setBlogs(blogs);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return (SafeArea(
+    final blogData = ref.watch(blogProvider);
+
+    if (blogData.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return SafeArea(
         child: Scaffold(
       backgroundColor: Colors.white,
       body: SizedBox(
@@ -131,11 +152,15 @@ class Blogs extends StatelessWidget {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                    BlogsCard(),
-                    BlogsCard(),
-                    BlogsCard(),
-                    BlogsCard(),
-                    BlogsCard(),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: blogData.length,
+                      itemBuilder: (context, index) {
+                        final blog = blogData[index];
+                        return BlogsCard(blogItem: blog);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -143,6 +168,7 @@ class Blogs extends StatelessWidget {
           ],
         ),
       ),
-    )));
+    ));
+
   }
 }

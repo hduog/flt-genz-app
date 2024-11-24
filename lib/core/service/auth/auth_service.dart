@@ -43,4 +43,16 @@ class AuthService {
       return null;
     }
   }
+  Future<BasicInfoGet?> infoUser(WidgetRef ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('access_token');
+
+  if (token != null) {
+    final userInfo = await getBasicInfo(token);
+    if (userInfo != null) {
+      ref.read(userProvider.notifier).setInfoByToken(userInfo);
+    }
+  }
+}
+
 }
