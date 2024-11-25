@@ -13,9 +13,9 @@ class _MenuPageState extends ConsumerState<MenuPage> {
    @override
   void initState() {
     super.initState();
-    fetchBlogs();
+    fetchUser();
   }
-    Future<void> fetchBlogs() async {
+    Future<void> fetchUser() async {
     final authService = AuthService();
     final user =   await authService.infoUser(ref);
     if (user != null) {
