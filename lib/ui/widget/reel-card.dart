@@ -25,11 +25,11 @@ class ReelCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Image(
-                height: 60,
-                image: AssetImage('assets/images/quote.png'),
-                fit: BoxFit.fitHeight,
-              ),
+              CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage(
+                        '${Constants.awsUrl}${postItem.account.avata ?? ''}'), // Replace with user's profile image
+                  ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -94,7 +94,6 @@ class ReelCard extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }
 

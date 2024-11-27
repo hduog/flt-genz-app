@@ -11,7 +11,7 @@ class PostService {
     // final token = ref.read(authProvider);
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
-    if (token != null) {
+    if (token.isNotEmpty) {
       final response = await postRepo.getPostValid(token);
       if (response?.statusCode == 200) {
         PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
@@ -23,4 +23,5 @@ class PostService {
       return null;
     }
   }
+
 }
