@@ -1,38 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/cateBlog/cateBlog_service.dart';
 import 'package:flutter_application_1/core/service/blog/blog_service.dart';
 import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
-import 'package:flutter_application_1/ui/widget/cate_text_button.dart';
-import 'package:flutter_application_1/view-models/blog/blog.prvd.dart';
+import 'package:flutter_application_1/ui/widget/cateBlog-card.dart';
+import 'package:flutter_application_1/view-models/cateBlog/cateBlog.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_application_1/view-models/blog/blog.prvd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Blogs extends ConsumerStatefulWidget {
   const Blogs({super.key});
- ConsumerState<Blogs> createState() => _BlogsState(); }
+  ConsumerState<Blogs> createState() => _BlogsState();
+}
+
 class _BlogsState extends ConsumerState<Blogs> {
   @override
   void initState() {
     super.initState();
     fetchBlogs();
+    fetchCate();
   }
-    Future<void> fetchBlogs() async {
+
+  Future<void> fetchBlogs() async {
     final blogService = BlogService();
-    final blogs =   await blogService.getBlogs(ref);
+    final blogs = await blogService.getBlogs(ref);
     if (blogs != null) {
       ref.read(blogProvider.notifier).setBlogs(blogs);
     }
   }
 
+  Future<void> fetchCate() async {
+    final cateBlogService = CateBlogService();
+    final cateBlog = await cateBlogService.getCateBlogs(ref);
+    if (cateBlog != null) {
+      ref.read(cateBlogProvider.notifier).setCateBlogs(cateBlog);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cateBlogData = ref.watch(cateBlogProvider);
     final blogData = ref.watch(blogProvider);
 
-    if (blogData.isEmpty) {
+    if (cateBlogData.isEmpty || blogData.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    return SafeArea(
+
+    return (SafeArea(
         child: Scaffold(
       backgroundColor: Colors.white,
       body: SizedBox(
@@ -73,20 +89,20 @@ class _BlogsState extends ConsumerState<Blogs> {
                             ],
                           )),
                     ),
-                    Text(
+                    const Text(
                       "CHIA SẺ VÀ TÂM SỰ",
                       style: TextStyle(
                           fontSize: 22,
                           color: colorTextHeader,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       "Nơi khám phá và chia sẻ về sức khỏe tình thần",
                       style: TextStyle(color: colorTextSubPart),
                     ),
                     Container(
                       height: 40,
-                      margin: EdgeInsets.only(top: 20, bottom: 10),
+                      margin: EdgeInsets.only(top: 20, bottom: 5),
                       padding: EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           border: Border.all(color: colorIconActive),
@@ -124,30 +140,28 @@ class _BlogsState extends ConsumerState<Blogs> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: SingleChildScrollView(
+                      height: 40,
+                      margin: const EdgeInsets.only(bottom: 15.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton(),
-                            CateTextButton()
-                          ],
-                        ),
+                        itemCount: cateBlogData.length,
+                        itemBuilder: (context, index) {
+                          final cateBlogs = cateBlogData[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(),
+                            child: CateBlogCard(cateBlogItem: cateBlogs),
+                          );
+                        },
                       ),
                     ),
-                    Text(
+                    const Text(
                       "Bài viết nổi bật",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                     BlogsImageCard(),
-                    Text(
+                    const Text(
                       "Đề xuất cho bạn",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
@@ -168,7 +182,6 @@ class _BlogsState extends ConsumerState<Blogs> {
           ],
         ),
       ),
-    ));
-
+    )));
   }
 }
