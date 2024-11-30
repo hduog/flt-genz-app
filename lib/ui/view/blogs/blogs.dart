@@ -128,7 +128,8 @@ class _CateBlog extends ConsumerState<Blogs> {
                       ),
                     ),
                     Container(
-                      height: 23,
+                      height: 40,
+                      margin: const EdgeInsets.only(bottom: 15.0),
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,

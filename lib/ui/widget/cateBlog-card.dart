@@ -9,10 +9,9 @@ class CateBlogCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       child: ElevatedButton(
         onPressed: () {
-          // Xử lý khi nhấn vào loại blog
           print('Selected category: ${cateBlogItem.title}');
         },
         style: ElevatedButton.styleFrom(
@@ -23,26 +22,9 @@ class CateBlogCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        child: Row(
-          children: [
-            if (cateBlogItem.thumbnailCateBlog != null &&
-                cateBlogItem.thumbnailCateBlog!.startsWith('http'))
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Image.network(
-                  cateBlogItem.thumbnailCateBlog!,
-                  width: 30,
-                  height: 30,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image, size: 30),
-                ),
-              ),
-            Text(
-              cateBlogItem.title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-            ),
-          ],
+        child: Text(
+          cateBlogItem.title,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
       ),
     );
