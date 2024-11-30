@@ -25,7 +25,6 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = ref.watch(userProvider);
     final Map<int, Widget> routes = {
       0: Home(),
       1: const Blogs(),
@@ -53,19 +52,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 icon: Icon(Icons.favorite), label: "Yêu thích"),
             const BottomNavigationBarItem(
                 icon: Icon(Icons.notifications_active), label: "Thông báo"),
-            BottomNavigationBarItem(
-                icon: userInfo?.avata != null
-                    ? Image.network(Constants.awsUrl + (userInfo?.avata ?? ''))
-                    : const SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundImage:
-                              AssetImage('assets/images/reels-test.png'),
-                        ),
-                      ),
-                label: userInfo?.fullName.split(' ')[0] ?? 'Thông tin'),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.menu), label: "Menu"),
           ],
         ),
       ),

@@ -7,4 +7,6 @@ class ApiEndPointConstants {
   static String apiGetBasicInfoAccountByToken = "$_baseUrl/auth/profile";
   static String apiGetValidPost = "$_baseUrl/post/valid-post";
   static String apiGetCateBlog = "$_baseUrl/category-blog";
+  static String apiGetBlog = "$_baseUrl/blog";
+  static String apiGetNotification = "$_baseUrl/notifications";
 }
