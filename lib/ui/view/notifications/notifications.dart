@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/notification/notification_service.dart';
 import 'package:flutter_application_1/ui/widget/noti.card.dart';
+import 'package:flutter_application_1/view-models/notification/notification.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class NotificationsPage extends StatelessWidget {
+class NotificationsPage extends ConsumerStatefulWidget {
+  const NotificationsPage({super.key});
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends ConsumerState<NotificationsPage> {
+  @override
+  void initState() {
+    super.initState();
+    fetchNotifications();
+  }
+
+  Future<void> fetchNotifications() async {
+    final notificationService = NotificationService();
+    final blogs = await notificationService.getNotifications(ref);
+    if (blogs != null) {
+      ref.read(notificationProvider.notifier).setNotifications(blogs);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final notificationData = ref.watch(notificationProvider);
+
+    if (notificationData.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -44,12 +71,12 @@ class NotificationsPage extends StatelessWidget {
                             ],
                           )),
                       Container(
-                        margin: EdgeInsets.only(top: 20),
-                        padding: EdgeInsets.only(right: 20, bottom: 20),
+                        margin: const EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(right: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
+                            const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -89,11 +116,15 @@ class NotificationsPage extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: notificationData.length,
+                            itemBuilder: (context, index) {
+                              final notification = notificationData[index];
+                              return NotiCard(notificationItem: notification);
+                            },
+                          ),
                         ],
                       ),
                       SizedBox(height: 20),
@@ -103,11 +134,15 @@ class NotificationsPage extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
-                          NotiCard(),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: notificationData.length,
+                            itemBuilder: (context, index) {
+                              final notification = notificationData[index];
+                              return NotiCard(notificationItem: notification);
+                            },
+                          ),
                         ],
                       )
                     ],
