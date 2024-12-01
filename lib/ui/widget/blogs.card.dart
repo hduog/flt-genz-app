@@ -67,7 +67,7 @@ class BlogsCard extends StatelessWidget {
                         color: colorTextSubPart,
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 3),
                     Text("${blogItem.views ?? 0} lượt xem",
                         style: const TextStyle(
                             fontSize: 12, color: colorTextSubPart))
