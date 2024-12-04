@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class InforProfileScreen extends StatelessWidget {
-  const InforProfileScreen({super.key});
+  final ProfileData profile;
+  const InforProfileScreen({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios), 
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); 
+            Navigator.of(context).pop();
           },
         ),
         title: const Text(
@@ -46,10 +49,10 @@ class InforProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/people.svg',
-                  width: 20,
-                  height: 20,
-                ),
+                    'assets/icons/people.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +66,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'nguyenlehuuduy',
+                        profile.user.nickName ?? "",
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -77,10 +80,10 @@ class InforProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/email.svg',
-                  width: 18,
-                  height: 18,
-                ),
+                    'assets/icons/email.svg',
+                    width: 18,
+                    height: 18,
+                  ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +97,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'mybridge@gmail.com',
+                        profile.user.email ?? "",
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -108,15 +111,15 @@ class InforProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/phone.svg',
-                  width: 20,
-                  height: 20,
-                ),
+                    'assets/icons/phone.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    Text(
+                      Text(
                         'Số điện thoại',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -125,7 +128,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '123456587',
+                        profile.user.phone ?? "",
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -139,10 +142,10 @@ class InforProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/world.svg',
-                  width: 20,
-                  height: 20,
-                ),
+                    'assets/icons/world.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,10 +173,10 @@ class InforProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/birthday.svg',
-                  width: 20,
-                  height: 20,
-                ),
+                    'assets/icons/birthday.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   SizedBox(width: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +190,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '31 October 1994',
+                        formatBirth(profile.user.birth) ?? "",
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -202,10 +205,10 @@ class InforProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SvgPicture.asset(
-                  'assets/icons/human.svg',
-                  width: 20,
-                  height: 20,
-                ),
+                    'assets/icons/human.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   SizedBox(width: 20),
                   Expanded(
                     child: Column(
@@ -221,32 +224,15 @@ class InforProfileScreen extends StatelessWidget {
                         SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
-                          children: [
-                            Chip(
-                              label: Text('Game'),
-                              backgroundColor: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20), 
-                              ),
-                            ),
-                            Chip(
-                              label: Text('Song'),
-                              backgroundColor: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20),
-                              ),
-                            ),
-                            Chip(
-                              label: Text('Reading'),
-                              backgroundColor: Colors.grey[200],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    20),
-                              ),
-                            ),
-                          ],
+                          children: profile.user.favorite!
+                              .map((favoriteData) => Chip(
+                                    label: Text(favoriteData.nameFavorite),
+                                    backgroundColor: Colors.grey[200],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ))
+                              .toList(), // Chuyển thành danh sách các Widget
                         ),
                       ],
                     ),
@@ -274,7 +260,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Bạn nghĩ gì về chữa lành? Với tôi chữa lành chính là làm điều tôi cảm thấy là chính mình nhất',
+                        profile.user.aboutMe ?? "",
                         style: TextStyle(fontSize: 14),
                       ),
                     ],

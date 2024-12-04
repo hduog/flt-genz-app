@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/core/service/auth/auth_service.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
+import 'package:flutter_application_1/core/service/profile/profile_service.dart';
+import 'package:flutter_application_1/ui/view/profile/profile.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/ui/view/menu/setting.dart';
-import 'package:flutter_application_1/core/data/models/UserModel/BasicInfoGet/BasicInfoGet.dart';
-
 
 class MenuPage extends ConsumerStatefulWidget {
-  ConsumerState<MenuPage> createState() => _MenuPageState(); }
+  ConsumerState<MenuPage> createState() => _MenuPageState();
+}
+
 class _MenuPageState extends ConsumerState<MenuPage> {
-   @override
+  @override
   void initState() {
     super.initState();
-    fetchUser();
+    fetchProfile();
   }
-    Future<void> fetchUser() async {
-    final authService = AuthService();
-    final user =   await authService.infoUser(ref);
-    if (user != null) {
-      ref.read(userProvider.notifier).setInfoByToken(user);
-    }
+
+  Future<void> fetchProfile() async {
+    final profileService = ProfileService();
+    final profile = await profileService.getMyProfile(ref);
+    ref.read(profileProvider.notifier).setMyProfile(profile);
   }
+
   @override
-  
   Widget build(BuildContext context) {
-    final userInfo = ref.watch(userProvider);
+    final profileInfo = ref.watch(profileProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text('Menu'),
@@ -50,7 +52,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileSection(userInfo),
+            _buildProfileSection(profileInfo),
             // Các phần khác trong menu
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -84,8 +86,8 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   }
 
   // Hiển thị thông tin hồ sơ người dùng
-  Widget _buildProfileSection(BasicInfoGet? userInfo) {
-    if (userInfo == null) {
+  Widget _buildProfileSection(ProfileData? profileInfo) {
+    if (profileInfo == null) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -102,7 +104,8 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage('${Constants.awsUrl}${userInfo.avata ?? ''}'),
+            backgroundImage:
+                NetworkImage('${Constants.awsUrl}${profileInfo.user.avata ?? ''}'),
             radius: 30,
           ),
           SizedBox(width: 12),
@@ -110,11 +113,17 @@ class _MenuPageState extends ConsumerState<MenuPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                userInfo.fullName ?? "", 
+                profileInfo.user.fullName ?? "",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()),
+                  );
+                },
                 child: Text(
                   'Xem hồ sơ',
                   style: TextStyle(color: Colors.blue),

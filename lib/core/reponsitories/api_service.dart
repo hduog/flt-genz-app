@@ -47,4 +47,19 @@ class ApiService {
       return null;
     }
   }
+  Future<Response?> patch(String path, dynamic data, String? token) async {
+  try {
+    if (token != null && token.isNotEmpty) {
+      _dio.options.headers["Authorization"] = "Bearer $token";
+    } else {
+      _dio.options.headers.remove("Authorization"); 
+    }
+    _dio.options.headers['Content-Type'] = 'application/json';
+    final response = await _dio.patch(path, data: data);
+    return response;
+  } catch (e) {
+    print('Unexpected error: $e');
+    return null;
+  }
+}
 }

@@ -7,4 +7,7 @@ class PostRepo {
   Future getPostValid(String token) async {
     return await apiService.get(ApiEndPointConstants.apiGetValidPost, token);
   }
+  Future getPostMySelf(String token) async {
+    return await apiService.get(ApiEndPointConstants.apiGetPostMySelf, token);
+  }
 }

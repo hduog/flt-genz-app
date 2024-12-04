@@ -7,4 +7,8 @@ class BlogRepo {
   Future getBlog(String token) async {
     return await apiService.get(ApiEndPointConstants.apiGetBlog, token);
   }
+  Future getBlogById(String token, String id) async {
+  final path = ApiEndPointConstants.apiGetBlogById.replaceFirst(':id', id);
+  return await apiService.get(path, token);
+}
 }
