@@ -7,4 +7,8 @@ class BlogRepo {
   Future getBlog(String token) async {
     return await apiService.get(ApiEndPointConstants.apiGetBlog, token);
   }
+
+  Future getHotBlog(String token) async {
+    return await apiService.get(ApiEndPointConstants.apiGetHotBlog, token);
+  }
 }
