@@ -66,7 +66,7 @@ class _HomeState extends ConsumerState<Home> {
               SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20),
+                  padding: const EdgeInsets.only(left: 5, top: 20, right: 5),
                   child: Column(
                     children: [
                       // TOP MENU
@@ -306,9 +306,7 @@ class _HomeState extends ConsumerState<Home> {
                                 itemCount: postData.length,
                                 itemBuilder: (context, index) {
                                   final post = postData[index];
-                                  final comments = post.comment_recent ??
-                                      []; // Lấy danh sách comments từ post
-
+                                  final comments = post.comment_recent ?? [];
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -316,8 +314,7 @@ class _HomeState extends ConsumerState<Home> {
                                         MaterialPageRoute(
                                           builder: (context) => PostDetailPage(
                                             postItem: post,
-                                            comments:
-                                                comments, // Truyền danh sách comments thực tế
+                                            comments: comments,
                                           ),
                                         ),
                                       );
