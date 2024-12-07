@@ -82,7 +82,7 @@ class BlogsImageCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Blog categories
                 Text(
-                  hotBlogItem.cateBlog.map((cate) => cate.title).join(', ') ?? 'No Categories',
+                  hotBlogItem.cateBlog.map((cate) => cate.title).join(', ') ?? '',
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
