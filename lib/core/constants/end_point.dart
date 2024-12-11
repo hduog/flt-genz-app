@@ -10,4 +10,5 @@ class ApiEndPointConstants {
   static String apiGetBlog = "$_baseUrl/blog";
   static String apiGetNotification = "$_baseUrl/notifications";
   static String apiGetHotBlog = "$_baseUrl/blog/list-hot-blog";
+  static String apiGetAllFeatures = "$_baseUrl/feature";
 }
