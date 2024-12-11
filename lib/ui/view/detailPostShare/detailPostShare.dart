@@ -10,31 +10,28 @@ import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
-class PostDetailPage extends ConsumerStatefulWidget {
+class PostShareDetailPage extends ConsumerStatefulWidget {
   final DataGet postItem;
   final List<CommentForGet>? comments;
-  const PostDetailPage({
+  const PostShareDetailPage({
     super.key,
     required this.postItem,
     this.comments = const [],
   });
 
   @override
-  ConsumerState<PostDetailPage> createState() => _PostDetailPageState();
+  ConsumerState<PostShareDetailPage> createState() =>
+      _PostShareDetailPageState();
 }
 
-class _PostDetailPageState extends ConsumerState<PostDetailPage> {
+class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   final postService = PostService();
   bool isLiked = false;
   int countLike = 0;
   int countComment = 0;
   List<CommentFullGet> listComment = [];
-  int _currentIndex = 0;
   bool _isExpanded = false;
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
   final TextEditingController _contentCmtController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _showAllComments = false;
@@ -56,25 +53,13 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     super.dispose();
   }
 
-  void _showFullScreenImage(BuildContext context, String imageUrl) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FullScreenImage(
-          imageUrl: imageUrl,
-          content: widget.postItem.contentText ?? '',
-        ),
-      ),
-    );
-  }
-
   Future<void> _likePost() async {
     setState(() {
       isLiked ? countLike-- : countLike++;
       isLiked = !isLiked;
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
-    await postService.updateStatusReaction(data);
+    await postService.updateStatusReactionPostShare(data);
   }
 
   void _showKeyboard() {
@@ -108,7 +93,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         _contentCmtController.clear();
         listComment = [newComment, ...listComment];
       });
-      await postService.commentReelPost(data);
+      await postService.commentReelPostShare(data);
     }
   }
 
@@ -118,7 +103,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
   Future<void> getAllComment() async {
     final comments =
-        await postService.getAllCommentReelPost(widget.postItem.id);
+        await postService.getAllCommentReelPostShare(widget.postItem.id);
     if (comments!.isNotEmpty) {
       setState(() {
         listComment = comments;
@@ -210,96 +195,84 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                         ),
                       )),
                   const SizedBox(height: 10),
-                  if (widget.postItem.images != null &&
-                      widget.postItem.images!.isNotEmpty)
-                    Column(
+                  // POSTSHARED
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: Colors.grey.shade100,
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CarouselSlider(
-                              items: widget.postItem.images!.map((url) {
-                                return GestureDetector(
-                                  onTap: () => _showFullScreenImage(
-                                      context, Constants.awsUrl + url.path),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
-                                        Constants.awsUrl + url.path,
-                                        fit: BoxFit.contain,
-                                        height:
-                                            MediaQuery.of(context).size.height,
-                                        width:
-                                            MediaQuery.of(context).size.width),
+                            CircleAvatar(
+                              radius: 20.0,
+                              backgroundImage: NetworkImage(
+                                '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.author.avata ?? ''}',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.postItem.infoAuthorAndPost!.author
+                                            .fullName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                enlargeCenterPage: true,
-                                viewportFraction: 1.0,
-                                height: 400,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _currentIndex = index;
-                                  });
-                                },
-                              ),
-                              carouselController: _carouselController,
-                            ),
-                            // Left navigation button
-                            Positioned(
-                              left: 1,
-                              top: 0,
-                              bottom: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_back_ios,
-                                    color: colorIconActive),
-                                onPressed: () =>
-                                    _carouselController.previousPage(),
+                                  Text(
+                                    formatDate(
+                                          widget.postItem.infoAuthorAndPost!
+                                              .postInf.created_at,
+                                        ) ??
+                                        "DD/MM/YYYY HH:mm",
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                ],
                               ),
                             ),
-                            // Right navigation button
-                            Positioned(
-                              right: 1,
-                              top: 0,
-                              bottom: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_forward_ios,
-                                    color: colorIconActive),
-                                onPressed: () => _carouselController.nextPage(),
-                              ),
+                            SvgPicture.asset(
+                              'assets/icons/dots-horizontal.svg',
+                              width: 24,
+                              height: 24,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: widget.postItem.images!
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            return GestureDetector(
-                              onTap: () => setState(() {
-                                _currentIndex = entry.key;
-                              }),
-                              child: Container(
-                                width: 8.0,
-                                height: 8.0,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _currentIndex == entry.key
-                                      ? Colors.blueAccent
-                                      : Colors.grey,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.postItem.infoAuthorAndPost!.postInf
+                                  .contentText ??
+                              "Nội dung bài viết được chia sẻ",
+                          style: const TextStyle(color: Colors.black),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        if (widget.postItem.infoAuthorAndPost!.postInf.images !=
+                                null &&
+                            widget.postItem.infoAuthorAndPost!.postInf.images!
+                                .isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Image.network(
+                              '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.postInf.images!.first.path}',
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
                       ],
                     ),
-                  const SizedBox(height: 5),                             // totalReaction (like, comment, share)
+                  ),
+
+                  const SizedBox(
+                      height: 5), // totalReaction (like, comment, share)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

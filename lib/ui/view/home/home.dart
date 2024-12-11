@@ -4,6 +4,7 @@ import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/ui/view/createPost/createPost.dart';
 import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
+import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
@@ -21,6 +22,7 @@ class _HomeState extends ConsumerState<Home> {
   void initState() {
     super.initState();
     fetchPosts();
+    // fetchPostShare();
     fetchUser();
   }
 
@@ -212,7 +214,7 @@ class _HomeState extends ConsumerState<Home> {
                                               radius: 20.0,
                                               backgroundImage: NetworkImage(
                                                   '${Constants.awsUrl}${userInfo?.avata ?? ''}'), // Replace with user's profile image
-                                            ), // Repl
+                                            ),
                                             SizedBox(width: 20),
                                             Flexible(
                                               child: Text(
@@ -301,28 +303,43 @@ class _HomeState extends ConsumerState<Home> {
                               const SizedBox(height: 10),
                               // LIST REELS
                               ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: postData.length,
-                                itemBuilder: (context, index) {
-                                  final post = postData[index];
-                                  final comments = post.comment_recent ?? [];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PostDetailPage(
-                                            postItem: post,
-                                            comments: comments,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: ReelCard(postItem: post),
-                                  );
-                                },
-                              )
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: postData.length,
+  itemBuilder: (context, index) {
+    final post = postData[index];
+    final comments = post.comment_recent ?? [];
+
+    return GestureDetector(
+      onTap: () {
+        if (post.is_share ?? false) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostShareDetailPage(
+                postItem: post,
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostDetailPage(
+                postItem: post,
+                comments: comments,
+              ),
+            ),
+          );
+        }
+      },
+      child: ReelCard(
+        postItem: post,
+        is_share: post.is_share ?? false,
+      ),
+    );
+  },
+),
                             ],
                           ),
                         ),

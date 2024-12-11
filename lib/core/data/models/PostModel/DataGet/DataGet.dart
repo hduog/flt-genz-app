@@ -2,6 +2,7 @@ import 'package:flutter_application_1/core/data/models/PostModel/Author/AuthorGe
 import 'package:flutter_application_1/core/data/models/PostModel/Comment/CommentForGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/ImageGet/ImageGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PermissionPostGet/PermissionPostGet.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/InforAuthorAndPostShared/InforAuthorAndPostShared.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'DataGet.freezed.dart';
@@ -22,8 +23,11 @@ class DataGet with _$DataGet {
     @JsonKey(name: 'totalReaction') int? totalReaction,
     @JsonKey(name: 'totalShare') int? totalShare,
     @JsonKey(name: 'updated_at') String? updated_at,
+    @JsonKey(name: 'is_share') bool? is_share,
     @JsonKey(name: 'permissionPost') required PermissionPostGet permissionPost,
     @JsonKey(name: 'comment_recent') List<CommentForGet>? comment_recent,
+    @JsonKey(name: 'infoAuthorAndPost') InforAuthorAndPostShared? infoAuthorAndPost,
+
 
   }) = _DataGet;
   factory DataGet.fromJson(Map<String, Object?> json) =>
