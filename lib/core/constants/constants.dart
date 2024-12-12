@@ -36,6 +36,7 @@ class Constants {
   static const int errorCode504 = 504;
   static const String awsUrl =
       'https://mygenzmentalheath.s3.ap-southeast-2.amazonaws.com/';
+  static const String typeSoundSendSorrowId = 'genzmth@786e342ade';
 }
 
 String? formatDate(String? dateStr) {

@@ -61,7 +61,7 @@ class BlogsCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      formatDate(blogItem.created_at) ?? "DD/MM/YYYY HH:mm",
+                      formatDate(blogItem.created_at) ?? '',
                       style: const TextStyle(
                         fontSize: 12,
                         color: colorTextSubPart,

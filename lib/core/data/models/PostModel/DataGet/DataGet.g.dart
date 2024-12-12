@@ -22,11 +22,16 @@ _$DataGetImpl _$$DataGetImplFromJson(Map<String, dynamic> json) =>
       totalReaction: (json['totalReaction'] as num?)?.toInt(),
       totalShare: (json['totalShare'] as num?)?.toInt(),
       updated_at: json['updated_at'] as String?,
+      is_share: json['is_share'] as bool?,
       permissionPost: PermissionPostGet.fromJson(
           json['permissionPost'] as Map<String, dynamic>),
       comment_recent: (json['comment_recent'] as List<dynamic>?)
           ?.map((e) => CommentForGet.fromJson(e as Map<String, dynamic>))
           .toList(),
+      infoAuthorAndPost: json['infoAuthorAndPost'] == null
+          ? null
+          : InforAuthorAndPostShared.fromJson(
+              json['infoAuthorAndPost'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$DataGetImplToJson(_$DataGetImpl instance) =>
@@ -43,6 +48,8 @@ Map<String, dynamic> _$$DataGetImplToJson(_$DataGetImpl instance) =>
       'totalReaction': instance.totalReaction,
       'totalShare': instance.totalShare,
       'updated_at': instance.updated_at,
+      'is_share': instance.is_share,
       'permissionPost': instance.permissionPost,
       'comment_recent': instance.comment_recent,
+      'infoAuthorAndPost': instance.infoAuthorAndPost,
     };

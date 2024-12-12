@@ -7,11 +7,12 @@ class AuthRepo {
   final apiService = ApiService();
 
   Future login(LoginPostModel body) async {
-    return await apiService.post(ApiEndPointConstants.apiLogin, body);
+    return await apiService.post(ApiEndPointConstants.apiLogin, body, null);
   }
 
   Future registration(RegistrationPost body) async {
-    return await apiService.post(ApiEndPointConstants.apiRegistration, body);
+    return await apiService.post(
+        ApiEndPointConstants.apiRegistration, body, null);
   }
 
   Future getBasicInfoByToken(String token) async {

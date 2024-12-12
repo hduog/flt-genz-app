@@ -5,6 +5,9 @@ import 'package:flutter_application_1/ui/view/home/home.dart';
 import 'package:flutter_application_1/ui/view/listFeature/listFeature.dart';
 import 'package:flutter_application_1/ui/view/menu/menu.dart';
 import 'package:flutter_application_1/ui/view/notifications/notifications.dart';
+import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
+import 'package:flutter_application_1/ui/widget/profile/account_avata.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
@@ -30,6 +33,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       3: NotificationsPage(),
       4: MenuPage(),
     };
+    final account = ref.watch(userProvider);
 
     return Scaffold(
       body: routes[_selectedTab],
@@ -49,8 +53,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 icon: Icon(Icons.favorite), label: "Yêu thích"),
             const BottomNavigationBarItem(
                 icon: Icon(Icons.notifications_active), label: "Thông báo"),
-            const BottomNavigationBarItem(
-                icon: Icon(Icons.menu), label: "Menu"),
+            BottomNavigationBarItem(
+                icon: account!.id.isNotEmpty
+                    ? UserAvatar(account: account)
+                    : Icon(Icons.menu),
+                label: "Thông tin"),
           ],
         ),
       ),

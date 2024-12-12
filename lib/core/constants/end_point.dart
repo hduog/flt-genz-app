@@ -9,6 +9,27 @@ class ApiEndPointConstants {
   static String apiGetCateBlog = "$_baseUrl/category-blog";
   static String apiGetBlog = "$_baseUrl/blog";
   static String apiGetNotification = "$_baseUrl/notifications";
+  // API FOR REEL POST
+  static String apiUpdateReactionReel = "$_baseUrl/likes/";
+  static String apiUpdateReactionPostShare = "$_baseUrl/likes/post-share";
+  static String apiCommentReelPost = "$_baseUrl/comment/";
+  static String apiCommentReelPostShare = "$_baseUrl/comment/post-share";
+  static String apiShowAllCommentReelPost(String idPost) {
+    return "$_baseUrl/comment/posts/$idPost";
+  }
+
+  static String apiShowAllCommentReelPostShare(String idPostShare) {
+    return "$_baseUrl/comment/postshare/$idPostShare";
+  }
+
   static String apiGetHotBlog = "$_baseUrl/blog/list-hot-blog";
+
+  // API FOR SEND SORROW
+  static String apiGetSound(String? query) {
+    return "$_baseUrl/sound-system?$query";
+  }
+
+  // API send to AI
+  static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
   static String apiGetAllFeatures = "$_baseUrl/feature";
 }
