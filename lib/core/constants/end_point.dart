@@ -31,4 +31,5 @@ class ApiEndPointConstants {
 
   // API send to AI
   static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
+  static String apiGetAllFeatures = "$_baseUrl/feature";
 }
