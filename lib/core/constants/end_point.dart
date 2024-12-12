@@ -20,4 +20,5 @@ class ApiEndPointConstants {
   static String apiShowAllCommentReelPostShare(String idPostShare) {
     return "$_baseUrl/comment/postshare/$idPostShare";
   }
+  static String apiGetHotBlog = "$_baseUrl/blog/list-hot-blog";
 }
