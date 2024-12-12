@@ -37,6 +37,17 @@ class PostService {
     }
   }
 
+  Future updateStatusReactionPostShare(UpdateReactionReelPost data) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.updateStatusReactionPostShare(token, data);
+      if (response?.statusCode == 201) {
+        return true;
+      }
+    }
+  }
+
   Future commentReelPost(CommentReelPost data) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
@@ -48,11 +59,39 @@ class PostService {
     }
   }
 
+  Future commentReelPostShare(CommentReelPost data) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.commentReelPostShare(token, data);
+      if (response?.statusCode == 201) {
+        return true;
+      }
+    }
+  }
+
   Future<List<CommentFullGet>?> getAllCommentReelPost(String idPost) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token.isNotEmpty) {
       final response = await postRepo.getAllCommentReelPost(token, idPost);
+      if (response?.statusCode == 200) {
+        List<CommentFullGet> commentList = (response.data as List<dynamic>)
+            .map((commentJson) =>
+                CommentFullGet.fromJson(commentJson as Map<String, dynamic>))
+            .toList();
+
+        return commentList;
+      }
+    }
+    return null;
+  }
+
+  Future<List<CommentFullGet>?> getAllCommentReelPostShare(String idPost) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.getAllCommentReelPostShare(token, idPost);
       if (response?.statusCode == 200) {
         List<CommentFullGet> commentList = (response.data as List<dynamic>)
             .map((commentJson) =>
