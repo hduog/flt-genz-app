@@ -37,6 +37,10 @@ class Constants {
   static const String awsUrl =
       'https://mygenzmentalheath.s3.ap-southeast-2.amazonaws.com/';
   static const String typeSoundSendSorrowId = 'genzmth@786e342ade';
+
+    static const String PUBLIC = "genzmth@pms_p_345432";
+  static const String PRIVATE = "genzmth@pms_p_887123";
+  static const String FOLLOW = "genzmth@pms_p_6673892";
 }
 
 String? formatDate(String? dateStr) {

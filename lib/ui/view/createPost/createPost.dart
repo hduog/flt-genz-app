@@ -1,113 +1,236 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
+import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 
 class CreatePost extends ConsumerStatefulWidget {
-  CreatePost({Key? key}) : super(key: key);
+  const CreatePost({Key? key}) : super(key: key);
 
   @override
   _CreatePostState createState() => _CreatePostState();
 }
 
 class _CreatePostState extends ConsumerState<CreatePost> {
-  // List to store selected privacy options
-  List<String> selectedPrivacy = ['Mọi người']; // Default: "Mọi người" selected
+  final TextEditingController _contentController = TextEditingController();
+  final List<XFile> _selectedImages = [];
+  final ImagePicker _picker = ImagePicker();
+  String selectedPrivacy = Constants.PUBLIC;
+  bool isLoading = false;
 
-  // void initState() {
-  //   super.initState();
-  //   fetchUser();
-  // }
+  Future<void> _pickImage() async {
+    try {
+      final List<XFile>? images = await _picker.pickMultiImage();
+      if (images != null && images.isNotEmpty) {
+        setState(() {
+          _selectedImages.addAll(images);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking images: $e')),
+      );
+    }
+  }
 
-  // Future<void> fetchUser() async {
-  //   final authService = AuthService();
-  //   final userInfo = await authService.infoUser(ref);
-  //   if (userInfo != null) {
-  //     ref.read(userProvider.notifier).setInfoByToken(userInfo);
-  //   }
-  // }
+  Future<void> _createPost(PostService postService, userInfo) async {
+    if (_contentController.text.isEmpty || userInfo == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Content cannot be empty')),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final post = PostForCreate(
+        contentText: _contentController.text,
+        accountId: userInfo.id,
+        permissionPostId: selectedPrivacy,
+      );
+
+      final List<File> imageFiles =
+          _selectedImages.map((image) => File(image.path)).toList();
+
+      final success = await postService.createPost(post, imageFiles, ref);
+
+      if (success) {
+        Navigator.pop(context, true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to create post')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error creating post: $e')),
+      );
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userInfo =
-        ref.watch(userProvider); // Sử dụng ref để lấy dữ liệu từ Riverpod
+    final userInfo = ref.watch(userProvider);
+    final postService = PostService();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: SvgPicture.asset(
+            'assets/icons/close.svg',
+            width: 24,
+            height: 24,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('Tạo bài viết'),
         centerTitle: true,
         actions: [
-          GestureDetector(
-            onTap: () {
-              // Handle post upload
-              Navigator.pop(context);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Đăng',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.0,
-                  color: Theme.of(context).colorScheme.secondary,
+          isLoading
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () => _createPost(postService, userInfo),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Đăng',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
         ],
       ),
       body: Column(
         children: [
-          ListTile( 
+          ListTile(
             leading: CircleAvatar(
-                    radius: 20.0,
-                    backgroundImage: NetworkImage(
-                        '${Constants.awsUrl}${userInfo?.avata ?? ''}'), // Replace with user's profile image
-                  ), // Replace with user's profile image
+              radius: 20.0,
+              backgroundImage:
+                  NetworkImage('${Constants.awsUrl}${userInfo?.avata ?? ''}'),
+            ),
             title: Text(userInfo?.fullName ?? ''),
             subtitle: PopupMenuButton<String>(
-              onSelected: (String value) {
-                setState(() {
-                  selectedPrivacy = [value];
-                });
-              },
-              initialValue: selectedPrivacy[0],
+              onSelected: (String value) =>
+                  setState(() => selectedPrivacy = value),
+              initialValue: selectedPrivacy,
               itemBuilder: (BuildContext context) => [
-                const PopupMenuItem<String>(
-                  value: 'Mọi người',
-                  child: Text('Mọi người'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Chỉ mình tôi',
-                  child: Text('Chỉ mình tôi'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Người theo dõi',
-                  child: Text('Người theo dõi'),
-                ),
+                _buildPrivacyMenuItem(
+                    SvgPicture.asset(
+                      'assets/icons/public.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                    'Mọi người',
+                    Constants.PUBLIC),
+                _buildPrivacyMenuItem(
+                    SvgPicture.asset(
+                      'assets/icons/group.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                    'Người theo dõi',
+                    Constants.FOLLOW),
+                _buildPrivacyMenuItem(
+                    SvgPicture.asset(
+                      'assets/icons/lock_grey.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                    'Chỉ mình tôi',
+                    Constants.PRIVATE),
               ],
               child: Row(
                 children: [
-                  const Icon(Icons.public, color: Colors.grey),
-                  const SizedBox(width: 5.0),
-                  Text(selectedPrivacy[0]),
+                  SvgPicture.asset(
+                    selectedPrivacy == Constants.PUBLIC
+                        ? 'assets/icons/public.svg'
+                        : selectedPrivacy == Constants.FOLLOW
+                            ? 'assets/icons/group.svg'
+                            : 'assets/icons/lock_grey.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    selectedPrivacy == Constants.PUBLIC
+                        ? 'Mọi người'
+                        : selectedPrivacy == Constants.FOLLOW
+                            ? 'Người theo dõi'
+                            : 'Chỉ mình tôi',
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 ],
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: TextField(
-              decoration: InputDecoration(
+              controller: _contentController,
+              decoration: const InputDecoration(
                 hintText: 'Bạn đang suy nghĩ điều gì?',
                 border: InputBorder.none,
               ),
               maxLines: null,
             ),
           ),
+          const SizedBox(height: 10),
+          if (_selectedImages.isNotEmpty)
+            SizedBox(
+              height: 200,
+              child: GridView.builder(
+                itemCount: _selectedImages.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 5.0,
+                ),
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      Image.file(
+                        File(_selectedImages[index].path),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedImages.removeAt(index);
+                            });
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/cancel_grey.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           const Spacer(),
           const Divider(height: 1),
           Padding(
@@ -116,32 +239,31 @@ class _CreatePostState extends ConsumerState<CreatePost> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildOptionItem(
-                  icon: Icons.photo,
+                  icon: SvgPicture.asset(
+                    'assets/icons/picture_grey.svg',
+                    width: 24,
+                    height: 24,
+                  ),
                   text: 'Hình ảnh/Video',
-                  onTap: () {
-                    // Handle image or video upload
-                  },
+                  onTap: _pickImage,
                 ),
                 _buildOptionItem(
-                  icon: Icons.emoji_emotions,
+                  icon: SvgPicture.asset(
+                    'assets/icons/emoji_smile_grey.svg',
+                    width: 24,
+                    height: 24,
+                  ),
                   text: 'Cảm xúc',
-                  onTap: () {
-                    // Handle emotions
-                  },
+                  onTap: () {},
                 ),
                 _buildOptionItem(
-                  icon: Icons.gif,
-                  text: 'GIF',
-                  onTap: () {
-                    // Handle GIF selection
-                  },
-                ),
-                _buildOptionItem(
-                  icon: Icons.camera_alt,
+                  icon: SvgPicture.asset(
+                    'assets/icons/photo_grey.svg',
+                    width: 24,
+                    height: 24,
+                  ),
                   text: 'Camera',
-                  onTap: () {
-                    // Handle camera
-                  },
+                  onTap: () {},
                 ),
               ],
             ),
@@ -151,9 +273,22 @@ class _CreatePostState extends ConsumerState<CreatePost> {
     );
   }
 
-  // Helper widget for the option items at the bottom
+  PopupMenuItem<String> _buildPrivacyMenuItem(
+      Widget icon, String text, String value) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Text(text),
+        ],
+      ),
+    );
+  }
+
   Widget _buildOptionItem({
-    required IconData icon,
+    required Widget icon,
     required String text,
     required Function() onTap,
   }) {
@@ -162,7 +297,7 @@ class _CreatePostState extends ConsumerState<CreatePost> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.grey),
+          icon,
           const SizedBox(height: 5),
           Text(
             text,

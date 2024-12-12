@@ -7,7 +7,9 @@ class PostNotifier extends StateNotifier<List<DataGet>> {
   void setPosts(List<DataGet> posts) {
     state = posts;
   }
-
+ void addPost(DataGet newPost) {
+    state = [newPost, ...state]; 
+  }
   List<DataGet> getData() {
     return state;
   }
