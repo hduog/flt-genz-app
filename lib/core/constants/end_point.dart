@@ -17,8 +17,18 @@ class ApiEndPointConstants {
   static String apiShowAllCommentReelPost(String idPost) {
     return "$_baseUrl/comment/posts/$idPost";
   }
+
   static String apiShowAllCommentReelPostShare(String idPostShare) {
     return "$_baseUrl/comment/postshare/$idPostShare";
   }
+
   static String apiGetHotBlog = "$_baseUrl/blog/list-hot-blog";
+
+  // API FOR SEND SORROW
+  static String apiGetSound(String? query) {
+    return "$_baseUrl/sound-system?$query";
+  }
+
+  // API send to AI
+  static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
 }
