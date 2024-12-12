@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
 import 'package:flutter_application_1/ui/view/splash/splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,6 +15,9 @@ class MyApp extends StatelessWidget {
     return ProviderScope(
       child: MaterialApp(
         title: 'genz mental heath',
+        routes: <String, WidgetBuilder>{
+          '/send_sorrow': (BuildContext context) => new SendSorrow(),
+        },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
