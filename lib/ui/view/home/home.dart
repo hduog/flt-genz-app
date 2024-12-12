@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
+import 'package:flutter_application_1/ui/view/createPost/createPost.dart';
+import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
+import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,6 +22,8 @@ class _HomeState extends ConsumerState<Home> {
   void initState() {
     super.initState();
     fetchPosts();
+    // fetchPostShare();
+    fetchUser();
   }
 
   Future<void> fetchPosts() async {
@@ -27,10 +34,18 @@ class _HomeState extends ConsumerState<Home> {
     }
   }
 
+  Future<void> fetchUser() async {
+    final authService = AuthService();
+    final userInfo = await authService.infoUser(ref);
+    if (userInfo != null) {
+      ref.read(userProvider.notifier).setInfoByToken(userInfo);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final postData = ref.watch(postProvider);
-
+    final userInfo = ref.watch(userProvider);
     if (postData.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -53,7 +68,7 @@ class _HomeState extends ConsumerState<Home> {
               SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20),
+                  padding: const EdgeInsets.only(left: 5, top: 20, right: 5),
                   child: Column(
                     children: [
                       // TOP MENU
@@ -174,119 +189,157 @@ class _HomeState extends ConsumerState<Home> {
                                   color: colorBackgroundCard,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 130,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image(
-                                            height: 60,
-                                            image: AssetImage(
-                                                'assets/images/quote.png'),
-                                            fit: BoxFit.fitHeight,
-                                          ),
-                                          SizedBox(width: 20),
-                                          Flexible(
-                                            child: Text(
-                                              "Hãy chia sẻ suy nghĩ của bạn...",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: colorIconDefault,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CreatePost()),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 130,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 20.0,
+                                              backgroundImage: NetworkImage(
+                                                  '${Constants.awsUrl}${userInfo?.avata ?? ''}'), // Replace with user's profile image
+                                            ),
+                                            SizedBox(width: 20),
+                                            Flexible(
+                                              child: Text(
+                                                "Hãy chia sẻ suy nghĩ của bạn...",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: colorIconDefault,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          SizedBox(
-                                            width: 90,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-pic.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Hình Ảnh"),
-                                              ],
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(
+                                              width: 90,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-pic.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Hình Ảnh"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-video.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Videos"),
-                                              ],
+                                            SizedBox(
+                                              width: 80,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-video.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Videos"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-file.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Tệp"),
-                                              ],
+                                            SizedBox(
+                                              width: 80,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-file.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Tệp"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
+
                               const SizedBox(height: 10),
                               // LIST REELS
                               ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: postData.length,
-                                itemBuilder: (context, index) {
-                                  final post = postData[index];
-                                  return ReelCard(postItem: post);
-                                },
-                              ),
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: postData.length,
+  itemBuilder: (context, index) {
+    final post = postData[index];
+    final comments = post.comment_recent ?? [];
+
+    return GestureDetector(
+      onTap: () {
+        if (post.is_share ?? false) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostShareDetailPage(
+                postItem: post,
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostDetailPage(
+                postItem: post,
+                comments: comments,
+              ),
+            ),
+          );
+        }
+      },
+      child: ReelCard(
+        postItem: post,
+        is_share: post.is_share ?? false,
+      ),
+    );
+  },
+),
                             ],
                           ),
                         ),

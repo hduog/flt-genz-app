@@ -5,6 +5,7 @@ class ApiService {
   Future<Response?> get(String path, String? token,
       {Map<String, dynamic>? queryParameters}) async {
     try {
+      print('URL path :' + path);
       _dio.options.headers["Authorization"] =
           token!.isEmpty ? '' : "Bearer $token";
       _dio.options.headers['content-Type'] = 'application/json';
@@ -16,9 +17,14 @@ class ApiService {
     }
   }
 
-  Future<Response?> post(String path, dynamic data) async {
+  Future<Response?> post(String path, dynamic data, dynamic token) async {
     try {
       print('URL path :' + path);
+      if (token != null) {
+        print('setting token...');
+        _dio.options.headers["Authorization"] =
+            token.isEmpty ? '' : "Bearer $token";
+      }
       _dio.options.headers['content-Type'] = 'application/json';
       final response = await _dio.post(path, data: data.toJson());
       return response;
