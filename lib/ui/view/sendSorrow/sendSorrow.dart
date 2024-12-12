@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/QuoteSendSorrow/QuoteSendSorrowPost.dart';
+import 'package:flutter_application_1/core/service/sendSorrow/send_sorrow_service.dart';
+import 'package:flutter_application_1/ui/widget/music-player.dart';
+import 'package:flutter_application_1/view-models/sendSorrow/sendSorrow.prvd.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const LIST_BG = [
   'assets/images/sendsorrow1.png',
@@ -17,14 +24,14 @@ const LIST_BG = [
   'assets/images/sendsorrow10.png',
 ];
 
-class SendSorrow extends StatefulWidget {
+class SendSorrow extends ConsumerStatefulWidget {
   @override
-  _SendSorrowState createState() => _SendSorrowState();
+  ConsumerState createState() => _SendSorrowState();
 }
 
 final AudioPlayer _audioPlayer = AudioPlayer();
 
-class _SendSorrowState extends State<SendSorrow>
+class _SendSorrowState extends ConsumerState<SendSorrow>
     with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   late AnimationController _animationController;
@@ -32,37 +39,64 @@ class _SendSorrowState extends State<SendSorrow>
   late Animation<Offset> _positionAnimation;
 
   String? _displayedText;
-  String _selectedBg = LIST_BG[0]; // Hình nền mặc định
+  String? _displayedMentalHeathText;
+  String _selectedBg = LIST_BG[0];
   bool _isAnimating = false;
-  bool _hasSent = false; // Thêm biến trạng thái gửi đã xong hay chưa
-
-  List<String> listSound = [];
-
+  int _currentPhraseIndex = 0;
+  Timer? _textUpdateTimer;
+  String? _finalHealText;
   @override
   void initState() {
     super.initState();
+    fetchSound();
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
-    );
+      duration: const Duration(seconds: 47),
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _showMessage(_finalHealText ?? "Cảm ơn vì đã chia sẻ cho tôi !");
+          _stopTextUpdate();
+        }
+      });
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.05).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+        curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
       ),
     );
 
-    _positionAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0.0, -2.5),
-    ).animate(
+    _positionAnimation =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0.0, -2.5)).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: const Interval(0.4, 1.0, curve: Curves.easeIn),
       ),
     );
+  }
+
+  void _stopTextUpdate() {
+    if (_textUpdateTimer != null && _textUpdateTimer!.isActive) {
+      _textUpdateTimer!.cancel();
+    }
+  }
+
+  Future<void> _startTextUpdate(List<String> list) async {
+    _textUpdateTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_isAnimating) {
+        setState(() {
+          _displayedMentalHeathText = list[_currentPhraseIndex];
+          _currentPhraseIndex = (_currentPhraseIndex + 1) % list.length;
+        });
+      }
+    });
+  }
+
+  Future<void> fetchSound() async {
+    final soundSendSorrow = SendSorrowService();
+    final sounds = await soundSendSorrow.getAllSoundSendSorrow();
+    ref.read(soundSendSorrowProvider.notifier).setSound(sounds ?? []);
   }
 
   void _startAnimationAndMusic() async {
@@ -71,30 +105,17 @@ class _SendSorrowState extends State<SendSorrow>
         _displayedText = _controller.text;
         _isAnimating = true;
       });
-
-      // Xóa nội dung TextField
-      _controller.clear();
-
-      // Bắt đầu hoạt ảnh
-      _animationController.forward();
-
-      final random = Random();
-      final randomUrl = listSound[random.nextInt(listSound.length)];
-
-      try {
-        // Phát nhạc từ URL
-        await _audioPlayer.play(UrlSource(randomUrl));
-        print("Playing: $randomUrl");
-      } catch (e) {
-        print("Error playing audio: $e");
-      }
-      // Theo dõi trạng thái của animation
-      _animationController.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _showMessage(
-              "Hy vọng rằng bạn sẽ thấy bớt căng thẳng và được kết nối nhiều hơn.");
-        }
+      final soundSendSorrow = SendSorrowService();
+      final data = QuoteSendSorrowPost(
+          contentText: _displayedText ?? 'Một ngày bình thường');
+      final quotes = await soundSendSorrow.sendSorrowToAI(data);
+      final list = quotes?.arrayQuote ?? [];
+      setState(() {
+        _finalHealText = quotes?.mentalHeathQuote ?? '';
       });
+      _startTextUpdate(list);
+      _controller.clear();
+      _animationController.forward();
     }
   }
 
@@ -108,7 +129,6 @@ class _SendSorrowState extends State<SendSorrow>
   void dispose() {
     _controller.dispose();
     _animationController.dispose();
-    _audioPlayer.dispose(); // Hủy AudioPlayer để giải phóng tài nguyên
     super.dispose();
   }
 
@@ -121,11 +141,10 @@ class _SendSorrowState extends State<SendSorrow>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
-          backgroundColor:
-              Colors.transparent, // Đảm bảo rằng nền của Dialog là trong suốt
+          backgroundColor: Colors.transparent,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white, // Màu nền trắng cho phần chứa nội dung
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16.0),
             ),
             padding: const EdgeInsets.all(20),
@@ -165,8 +184,7 @@ class _SendSorrowState extends State<SendSorrow>
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
-                          fontStyle:
-                              FontStyle.italic, // Để nhìn giống lời trích dẫn
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
@@ -175,9 +193,16 @@ class _SendSorrowState extends State<SendSorrow>
                 const SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); // Đóng dialog
+                    _audioPlayer.stop();
+                    setState(() {
+                      _isAnimating = false;
+                      _displayedText = null;
+                    });
+                    _animationController.reset();
+                    Navigator.pop(context);
                   },
-                  child: Text("Đóng"),
+                  child:
+                      Text("kết thúc", style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                   ),
@@ -193,14 +218,19 @@ class _SendSorrowState extends State<SendSorrow>
 
   @override
   Widget build(BuildContext context) {
+    final soundList = ref.watch(soundSendSorrowProvider);
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Gửi muộn phiền"),
+        title: const Text("Gửi muộn phiền",
+            style: TextStyle(fontSize: 14, color: Colors.white)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Stack(
         children: [
-          // Hình nền
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -212,97 +242,185 @@ class _SendSorrowState extends State<SendSorrow>
           Column(
             children: [
               const Spacer(flex: 2),
-              // Hiển thị hình tròn chứa ảnh và văn bản
-              if (_isAnimating)
-                SlideTransition(
-                  position: _positionAnimation,
-                  child: ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: const DecorationImage(
-                          image: AssetImage("assets/images/reels-test.png"),
-                          fit: BoxFit.cover,
+              SlideTransition(
+                position: _positionAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.6),
+                          spreadRadius: 5,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
                         ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          _displayedText ?? "",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        _displayedText ?? "",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
                 ),
-              // Nếu chưa gửi thì sẽ hiển thị TextField để nhập văn bản
-              if (!_isAnimating || _hasSent)
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: const DecorationImage(
-                      image: AssetImage("assets/images/reels-test.png"),
-                      fit: BoxFit.cover,
+              ),
+              if (_displayedMentalHeathText != null && _isAnimating)
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(
+                        color: Colors.blue.withOpacity(0.6),
+                        width: 2.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: Center(
                     child: Text(
-                      _displayedText ?? "",
+                      _displayedMentalHeathText ?? "",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                          fontSize: 16,
+                          color: colorTextHeader,
+                          fontStyle: FontStyle.italic),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 100),
+              if (!_isAnimating)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: "Gửi muộn phiền của bạn vào đây...",
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 20.0),
+                      hintStyle: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: const BorderSide(
+                          color: Colors.blueAccent,
+                          width: 2.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: BorderSide(
+                          color: Colors.grey.withOpacity(0.4),
+                          width: 1.5,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                        borderSide: const BorderSide(
+                          color: Colors.red,
+                          width: 2.0,
+                        ),
                       ),
                     ),
                   ),
                 ),
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Gửi muộn phiền của bạn vào đây...",
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.8),
+              if (!_isAnimating)
+                ElevatedButton(
+                  onPressed: _startAnimationAndMusic,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colorIconActive,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 25.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 5,
+                    shadowColor: Colors.blue.withOpacity(0.3),
+                  ),
+                  child: const Text(
+                    "Gửi đi",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _startAnimationAndMusic,
-                child: const Text("Gửi"),
-              ),
               const Spacer(flex: 1),
+              if (_isAnimating)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text('Gửi phiền muộn',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white,
+                              fontStyle: FontStyle.italic,
+                            )),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        SpinningDiscPlayer(
+                          audioUrl:
+                              '${Constants.awsUrl}${soundList[Random().nextInt(soundList.length)].pathPublic}',
+                          discImageUrl: 'assets/images/reels-test.png',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
-          Align(
-            alignment: Alignment.centerRight, // Căn chỉnh nút vào giữa bên phải
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  right: 1.0), // Căn chỉnh nút cách mép phải một khoảng
-              child: IconButton(
-                onPressed: () {
-                  _showBackgroundPicker(context);
-                },
-                icon: Icon(Icons.arrow_back_ios),
-                iconSize: 24, // Kích thước icon
-                color: const Color.fromARGB(255, 0, 0, 0), // Màu của icon
-                tooltip: 'Chọn background',
+          if (!_isAnimating)
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 1.0),
+                child: IconButton(
+                  onPressed: () {
+                    _showBackgroundPicker(context);
+                  },
+                  icon: Icon(Icons.arrow_back_ios),
+                  iconSize: 24,
+                  color: colorTextHeader,
+                  tooltip: 'Chọn background',
+                ),
               ),
             ),
-          )
         ],
       ),
     );
@@ -311,26 +429,24 @@ class _SendSorrowState extends State<SendSorrow>
   void _showBackgroundPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Để bảng chọn có thể được tùy chỉnh chiều cao
-      backgroundColor: Colors.transparent, // Giữ nguyên nền xung quanh
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Center(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white, // Màu nền trắng cho bảng chọn
-              borderRadius: BorderRadius.circular(20), // Bo góc của bảng chọn
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: 10,
-                  offset: Offset(0, -4), // Tạo bóng đổ hướng lên trên
+                  offset: Offset(0, -4),
                 ),
               ],
             ),
-            width:
-                MediaQuery.of(context).size.width * 0.8, // Chiều rộng bảng chọn
-            height:
-                MediaQuery.of(context).size.height * 0.5, // Chiều cao bảng chọn
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.5,
             child: GridView.builder(
               padding: const EdgeInsets.all(16.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -346,12 +462,11 @@ class _SendSorrowState extends State<SendSorrow>
                     Navigator.pop(context);
                   },
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12), // Bo góc ảnh
+                    borderRadius: BorderRadius.circular(12),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        borderRadius:
-                            BorderRadius.circular(12), // Bo góc khi nhấn
+                        borderRadius: BorderRadius.circular(12),
                         onTap: () {
                           _changeBackground(LIST_BG[index]);
                           Navigator.pop(context);
