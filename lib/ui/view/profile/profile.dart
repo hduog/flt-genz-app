@@ -113,13 +113,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
+                    children: [
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FollowTabScreen(tabFollow: 0,profileInfo: profileInfo),
+                              builder: (context) => FollowTabScreen(
+                                  tabFollow: 0, profileInfo: profileInfo),
                             ),
                           );
                         },
@@ -132,7 +133,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FollowTabScreen(tabFollow: 1, profileInfo: profileInfo),
+                              builder: (context) => FollowTabScreen(
+                                  tabFollow: 1, profileInfo: profileInfo),
                             ),
                           );
                         },
@@ -214,7 +216,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         itemCount: postData.length,
                         itemBuilder: (context, index) {
                           final post = postData[index];
-                          return ReelCard(postItem: post);
+                          // check sau
+                          return ReelCard(postItem: post, is_share: true);
                         },
                       ),
                       GridView.builder(
