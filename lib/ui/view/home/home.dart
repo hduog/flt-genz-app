@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
+import 'package:flutter_application_1/ui/view/createPost/createPost.dart';
+import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
+import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,24 +18,83 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _currentPage = 1;
+  Future<void>? _loadingFuture;
   @override
   void initState() {
     super.initState();
     fetchPosts();
+    fetchUser();
+    _scrollController.addListener(_onScroll);
   }
 
-  Future<void> fetchPosts() async {
-    final postService = PostService();
-    final posts = await postService.getPosts(ref);
-    if (posts != null) {
-      ref.read(postProvider.notifier).setPosts(posts);
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchPosts({int page = 1}) async {
+    try {
+      final postService = PostService();
+      final posts = await postService.getPosts('pageNo=$page');
+
+      if (posts != null) {
+        if (page == 1) {
+          ref.read(postProvider.notifier).setPosts(posts);
+        } else {
+          ref.read(postProvider.notifier).addListPost(posts);
+        }
+        if (posts.isEmpty) {
+          _hasMore = false;
+        }
+      } else {
+        _hasMore = false;
+      }
+    } catch (e) {
+      debugPrint('Error fetching posts: $e');
+    } finally {
+      _isLoadingMore = false;
+    }
+  }
+
+  Future<void> fetchUser() async {
+    final authService = AuthService();
+    final userInfo = await authService.infoUser(ref);
+    if (userInfo != null) {
+      ref.read(userProvider.notifier).setInfoByToken(userInfo);
+    }
+  }
+
+  Future<void> _loadMorePosts() async {
+    if (_isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    _loadingFuture = fetchPosts(page: _currentPage + 1);
+    await _loadingFuture;
+    setState(() {
+      _currentPage++;
+      _isLoadingMore = false;
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 50 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _loadMorePosts();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final postData = ref.watch(postProvider);
+    print(_scrollController);
 
+    final postData = ref.watch(postProvider);
+    final userInfo = ref.watch(userProvider);
     if (postData.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -51,9 +115,10 @@ class _HomeState extends ConsumerState<Home> {
                 ),
               ),
               SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 20),
+                  padding: const EdgeInsets.only(left: 5, top: 20, right: 5),
                   child: Column(
                     children: [
                       // TOP MENU
@@ -174,117 +239,168 @@ class _HomeState extends ConsumerState<Home> {
                                   color: colorBackgroundCard,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 130,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Image(
-                                            height: 60,
-                                            image: AssetImage(
-                                                'assets/images/quote.png'),
-                                            fit: BoxFit.fitHeight,
-                                          ),
-                                          SizedBox(width: 20),
-                                          Flexible(
-                                            child: Text(
-                                              "Hãy chia sẻ suy nghĩ của bạn...",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: colorIconDefault,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => CreatePost()),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 130,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 20.0,
+                                              backgroundImage: NetworkImage(
+                                                  '${Constants.awsUrl}${userInfo?.avata ?? ''}'),
+                                            ),
+                                            const SizedBox(width: 20),
+                                            const Flexible(
+                                              child: Text(
+                                                "Hãy chia sẻ suy nghĩ của bạn...",
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: colorIconDefault,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          SizedBox(
-                                            width: 90,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-pic.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Hình Ảnh"),
-                                              ],
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            SizedBox(
+                                              width: 90,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-pic.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Hình Ảnh"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-video.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Videos"),
-                                              ],
+                                            SizedBox(
+                                              width: 80,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-video.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Videos"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 80,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icons/upload-file.svg',
-                                                  width: 13,
-                                                  height: 13,
-                                                ),
-                                                const SizedBox(
-                                                  child: Text(" | "),
-                                                ),
-                                                const Text("Tệp"),
-                                              ],
+                                            SizedBox(
+                                              width: 80,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icons/upload-file.svg',
+                                                    width: 13,
+                                                    height: 13,
+                                                  ),
+                                                  const SizedBox(
+                                                    child: Text(" | "),
+                                                  ),
+                                                  const Text("Tệp"),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
+
                               const SizedBox(height: 10),
                               // LIST REELS
                               ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: postData.length,
+                                itemCount: postData.length + 1,
                                 itemBuilder: (context, index) {
-                                  final post = postData[index];
-                                  return ReelCard(postItem: post);
+                                  if (index < postData.length) {
+                                    final post = postData[index];
+                                    final comments = post.comment_recent ?? [];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (post.is_share ?? false) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PostShareDetailPage(
+                                                      postItem: post),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PostDetailPage(
+                                                postItem: post,
+                                                comments: comments,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: ReelCard(
+                                        postItem: post,
+                                        is_share: post.is_share ?? false,
+                                      ),
+                                    );
+                                  } else {
+                                    return _hasMore
+                                        ? const Center(
+                                            child: CircularProgressIndicator())
+                                        : const Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: const Center(
+                                                child: Text(
+                                                    'Không còn dữ liệu để hiển thị')),
+                                          );
+                                  }
                                 },
                               ),
                             ],

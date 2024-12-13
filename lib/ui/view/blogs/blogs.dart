@@ -7,6 +7,7 @@ import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
 import 'package:flutter_application_1/ui/widget/cateBlog-card.dart';
 import 'package:flutter_application_1/view-models/cateBlog/cateBlog.prvd.dart';
+import 'package:flutter_application_1/view-models/hotBlog/hotBlog.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/view-models/blog/blog.prvd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +23,15 @@ class _BlogsState extends ConsumerState<Blogs> {
     super.initState();
     fetchBlogs();
     fetchCate();
+    fetchHotBlogs();
+  }
+
+  Future<void> fetchHotBlogs() async {
+    final blogService = BlogService();
+    final hotBlogs = await blogService.getHotBlogs(ref);
+    if (hotBlogs != null) {
+      ref.read(hotBlogProvider.notifier).setHotBlogs(hotBlogs);
+    }
   }
 
   Future<void> fetchBlogs() async {
@@ -44,6 +54,7 @@ class _BlogsState extends ConsumerState<Blogs> {
   Widget build(BuildContext context) {
     final cateBlogData = ref.watch(cateBlogProvider);
     final blogData = ref.watch(blogProvider);
+    final hotBlogData = ref.watch(hotBlogProvider);
 
     if (cateBlogData.isEmpty || blogData.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -161,7 +172,31 @@ class _BlogsState extends ConsumerState<Blogs> {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                    BlogsImageCard(),
+                    Container(
+                      height: 200, // Chiều cao của ListView
+                      margin: const EdgeInsets.only(bottom: 15.0),
+                      child: ListView.builder(
+                        shrinkWrap:
+                            true, // Dùng khi ListView được đặt trong một widget khác có chiều cao cố định
+                        scrollDirection: Axis.horizontal, // Cuộn ngang
+                        itemCount: hotBlogData
+                            .length, // Đảm bảo cung cấp số phần tử cho ListView
+                        itemBuilder: (context, index) {
+                          final hotBlogs = hotBlogData[index];
+                          if (hotBlogData.isEmpty) {
+                            return Center(
+                                child: Text("No hot blogs available"));
+                          } // Truy xuất dữ liệu từ danh sách
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                right: 16.0), // Khoảng cách giữa các Card
+                            child: BlogsImageCard(
+                                hotBlogItems:
+                                    hotBlogData), // Gọi widget BlogsImageCard
+                          );
+                        },
+                      ),
+                    ),
                     const Text(
                       "Đề xuất cho bạn",
                       style:
