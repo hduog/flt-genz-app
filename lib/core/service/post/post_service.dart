@@ -10,13 +10,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PostService {
   final postRepo = PostRepo();
 
-  Future<List<DataGet>?> getPosts(WidgetRef ref) async {
+  Future<List<DataGet>?> getPosts(WidgetRef ref, {int limit = 5, int pageNo = 1}) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token.isNotEmpty) {
       final response = await postRepo.getPostValid(token);
       if (response?.statusCode == 200) {
-        PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
+        PostInfoGet postInfo = PostInfoGet.fromJson(response?.data);
         return postInfo.data;
       } else {
         return null;

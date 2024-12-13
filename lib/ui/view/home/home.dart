@@ -18,21 +18,63 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
+  final ScrollController _scrollController = ScrollController();
+  int pageNo = 1;
+  bool _isLoading = false;
+  bool _hasMore = true;
+
   @override
   void initState() {
     super.initState();
     fetchPosts();
-    // fetchPostShare();
     fetchUser();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 100 &&
+          !_isLoading &&
+          _hasMore) {
+        debugPrint("Fetching more posts...");
+        fetchPosts();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(() {});
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> fetchPosts() async {
+  if (_isLoading || !_hasMore) return;
+  setState(() {
+    _isLoading = true;
+  });
+  debugPrint('Fetching posts, isLoading: $_isLoading');  // Debug log
+  try {
     final postService = PostService();
-    final posts = await postService.getPosts(ref);
-    if (posts != null) {
-      ref.read(postProvider.notifier).setPosts(posts);
+    final posts = await postService.getPosts(ref, limit: 5, pageNo: pageNo);
+    if (posts != null && posts.isNotEmpty) {
+      ref.read(postProvider.notifier).addPosts(posts);
+      setState(() {
+        pageNo++;
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _hasMore = false;
+        _isLoading = false;
+      });
     }
+  } catch (e) {
+    debugPrint("Error fetching posts: $e");
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
 
   Future<void> fetchUser() async {
     final authService = AuthService();
@@ -46,9 +88,9 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     final postData = ref.watch(postProvider);
     final userInfo = ref.watch(userProvider);
-    if (postData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    if (postData.isEmpty && !_isLoading) {
+  return const Center(child: CircularProgressIndicator());
+}
 
     return SafeArea(
       child: Scaffold(
@@ -303,43 +345,54 @@ class _HomeState extends ConsumerState<Home> {
                               const SizedBox(height: 10),
                               // LIST REELS
                               ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: postData.length,
-  itemBuilder: (context, index) {
-    final post = postData[index];
-    final comments = post.comment_recent ?? [];
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: postData.length +
+                                    (_isLoading
+                                        ? 1
+                                        : 0), // Thêm 1 phần tử nữa khi đang tải
+                                itemBuilder: (context, index) {
+                                  if (index >= postData.length) {
+                                    return const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 16),
+                                      child: Center(
+                                          child:
+                                              CircularProgressIndicator()), // Đang tải thêm dữ liệu
+                                    );
+                                  }
 
-    return GestureDetector(
-      onTap: () {
-        if (post.is_share ?? false) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PostShareDetailPage(
-                postItem: post,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PostDetailPage(
-                postItem: post,
-                comments: comments,
-              ),
-            ),
-          );
-        }
-      },
-      child: ReelCard(
-        postItem: post,
-        is_share: post.is_share ?? false,
-      ),
-    );
-  },
-),
+                                  final post = postData[index];
+                                  final comments = post.comment_recent ?? [];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      if (post.is_share ?? false) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PostShareDetailPage(
+                                                    postItem: post),
+                                          ),
+                                        );
+                                      } else {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PostDetailPage(
+                                                    postItem: post,
+                                                    comments: comments),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: ReelCard(
+                                        postItem: post,
+                                        is_share: post.is_share ?? false),
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ),

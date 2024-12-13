@@ -11,6 +11,12 @@ class PostNotifier extends StateNotifier<List<DataGet>> {
   List<DataGet> getData() {
     return state;
   }
+
+  void addPosts(List<DataGet> newPosts) {
+  final existingIds = state.map((post) => post.id).toSet();
+  final filteredPosts = newPosts.where((post) => !existingIds.contains(post.id)).toList();
+  state = [...state, ...filteredPosts];
+}
 }
 
 final postProvider = StateNotifierProvider<PostNotifier, List<DataGet>>((ref) {

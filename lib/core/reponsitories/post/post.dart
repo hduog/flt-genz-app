@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/end_point.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
@@ -6,9 +8,21 @@ import 'package:flutter_application_1/core/reponsitories/api_service.dart';
 class PostRepo {
   final apiService = ApiService();
 
-  Future getPostValid(String token) async {
-    return await apiService.get(ApiEndPointConstants.apiGetValidPost, token);
+  Future<Response?> getPostValid(String token, {int limit = 5, int pageNo = 1}) async {
+  // Xây dựng URL với các tham số query
+  final String url = '${ApiEndPointConstants.apiGetValidPost}?limit=$limit&page=$pageNo';
+
+  try {
+    // Gọi API qua apiService
+    final response = await apiService.get(url, token);
+    return response;
+  } catch (e) {
+    // Log lỗi để debug
+    debugPrint("Error fetching posts from $url: $e");
+    return null;
   }
+}
+
 
   Future updateStatusReactionReel(
       String token, UpdateReactionReelPost data) async {
@@ -39,6 +53,7 @@ class PostRepo {
 
   Future getAllCommentReelPostShare(String token, String idPostShare) async {
     return await apiService.get(
-        ApiEndPointConstants.apiShowAllCommentReelPostShare(idPostShare), token);
+        ApiEndPointConstants.apiShowAllCommentReelPostShare(idPostShare),
+        token);
   }
 }
