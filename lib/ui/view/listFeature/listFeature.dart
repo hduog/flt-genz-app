@@ -126,11 +126,11 @@ class _ListFeatureState extends ConsumerState<ListFeature> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    // Sửa phần GridView
                     SizedBox(
                       height: MediaQuery.of(context).size.height *
-                          0.7, // Đặt chiều cao cho GridView
+                          0.7, 
                       child: GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,

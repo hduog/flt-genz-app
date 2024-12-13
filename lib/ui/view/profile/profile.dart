@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
+import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
+import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/view/profile/follow.dart';
-import 'package:flutter_application_1/ui/widget/profile/follower.dart';
 import 'package:flutter_application_1/ui/widget/profile/infor_profile.dart';
 import 'package:flutter_application_1/ui/widget/profile/tag_profile.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
@@ -24,6 +25,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     fetchProfile();
     fetchPostProfile();
+    fetchPostShareProfile();
   }
 
   Future<void> fetchProfile() async {
@@ -42,10 +44,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
+  Future<void> fetchPostShareProfile() async {
+    final postService = PostService();
+    final postShare = await postService.getMyPostShare(ref);
+    if (postShare != null) {
+      ref.read(postProvider.notifier).setPostShare(postShare);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileInfo = ref.watch(profileProvider);
-    final postData = ref.watch(postProvider);
+    final posts = ref.watch(postProvider).posts;
+    final postShares = ref.watch(postProvider).postShares;
 
     return Scaffold(
       appBar: AppBar(
@@ -86,7 +97,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         },
                       ),
                       Positioned(
-                        top: 150, // Đảm bảo khoảng cách từ trên xuống hợp lý
+                        top: 150,
                         left:
                             (MediaQuery.of(context).size.width - 100) / 2 - 20,
                         child: CircleAvatar(
@@ -99,14 +110,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   const SizedBox(height: 50),
                   Text(
-                    profileInfo.user.fullName ?? "",
+                    profileInfo.user.fullName,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
-                      profileInfo.user.nickName ?? "",
+                      profileInfo.user.nickName,
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 14, color: Colors.black),
                     ),
@@ -204,22 +215,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   unselectedLabelColor: Colors.grey,
                   indicatorColor: Colors.blueAccent,
                   tabs: const [
-                    Tab(text: "All"),
-                    Tab(text: "Photos"),
-                    Tab(text: "Videos"),
+                    Tab(text: "Bài đăng"),
+                    Tab(text: "Bài chia sẻ"),
+                    Tab(text: "Ảnh"),
                   ],
                 ),
                 Expanded(
                   child: TabBarView(
                     children: [
+                      // Tab "Bài đăng"
                       ListView.builder(
-                        itemCount: postData.length,
+                        itemCount: posts.length,
                         itemBuilder: (context, index) {
-                          final post = postData[index];
-                          // check sau
-                          return ReelCard(postItem: post, is_share: true);
+                          final post = posts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PostDetailPage(postItem: post),
+                                ),
+                              );
+                            },
+                            child: ReelCard(postItem: post, is_share: false),
+                          );
                         },
                       ),
+                      // Tab "Bài chia sẻ"
+                      ListView.builder(
+                        itemCount: postShares.length,
+                        itemBuilder: (context, index) {
+                          final postShare = postShares[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PostShareDetailPage(postItem: postShare),
+                                ),
+                              );
+                            },
+                            child:
+                                ReelCard(postItem: postShare, is_share: true),
+                          );
+                        },
+                      ),
+                      // Tab "Ảnh"
                       GridView.builder(
                         padding: const EdgeInsets.all(8.0),
                         gridDelegate:
@@ -229,23 +272,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           crossAxisSpacing: 4.0,
                         ),
                         itemCount: profileInfo!.image!.length,
-                        itemBuilder: (context, index) {
-                          final photo = profileInfo.image![index];
-                          return Image.network(
-                            '${Constants.awsUrl}${photo.path}',
-                            fit: BoxFit.cover,
-                          );
-                        },
-                      ),
-                      GridView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 4.0,
-                          crossAxisSpacing: 4.0,
-                        ),
-                        itemCount: profileInfo.image!.length,
                         itemBuilder: (context, index) {
                           final photo = profileInfo.image![index];
                           return Image.network(

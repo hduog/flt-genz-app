@@ -35,17 +35,16 @@ class ReelCard extends StatelessWidget {
   Widget _buildSharedPostContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: 12.0, vertical: 8.0), // Điều chỉnh khoảng cách padding
+          horizontal: 12.0, vertical: 8.0), 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Thông tin người chia sẻ bài viết
           Row(
             children: [
               CircleAvatar(
                 radius: 20.0,
                 backgroundImage: NetworkImage(
-                  '${Constants.awsUrl}${postItem.account.avata}', // Hình đại diện người chia sẻ
+                  '${Constants.awsUrl}${postItem.account.avata}', 
                 ),
               ),
               const SizedBox(width: 10),
@@ -54,7 +53,7 @@ class ReelCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      postItem.account.fullName, // Tên người chia sẻ
+                      postItem.account.fullName, 
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -67,18 +66,9 @@ class ReelCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              SvgPicture.asset(
-                'assets/icons/more.svg', // Biểu tượng thêm
-                width: 20,
-                height: 20,
-              ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          // Nội dung bài viết chia sẻ
           Text(
             postItem.contentText ?? "",
             style: const TextStyle(
@@ -88,7 +78,6 @@ class ReelCard extends StatelessWidget {
             textAlign: TextAlign.justify,
           ),
           const SizedBox(height: 10),
-
           // PostSharedItem
           Container(
             decoration: BoxDecoration(
