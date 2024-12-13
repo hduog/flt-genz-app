@@ -57,35 +57,53 @@ class ApiService {
   }
 
   Future<Response?> uploadImage(String path, File image, String token) async {
-  try {
-    if (!await image.exists()) return null;
+    try {
+      if (!await image.exists()) return null;
 
-    final formData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(image.path, filename: image.path.split('/').last),
-    });
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path,
+            filename: image.path.split('/').last),
+      });
 
-    _dio.options.headers['Authorization'] = "Bearer $token";
-    return await _dio.post(path, data: formData);
-  } catch (e) {
-    if (e is DioException) {
-      print('Error: ${e.response?.statusCode} - ${e.response?.data}');
-    } else {
-      print('Error: $e');
+      _dio.options.headers['Authorization'] = "Bearer $token";
+      return await _dio.post(path, data: formData);
+    } catch (e) {
+      if (e is DioException) {
+        print('Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Error: $e');
+      }
+      return null;
     }
-    return null;
   }
-}
 
- Future<Response?> postWithToken(String path, dynamic data, String token) async {
-  try {
-    print('URL path: $path');
-    _dio.options.headers['Content-Type'] = 'application/json';
-    _dio.options.headers["Authorization"] = "Bearer $token";
-    final response = await _dio.post(path, data: data.toJson());
-    return response;
-  } catch (e) {
-    print('Unexpected error: $e');
-    return null;
+  Future<Response?> postWithToken(
+      String path, dynamic data, String token) async {
+    try {
+      print('URL path: $path');
+      _dio.options.headers['Content-Type'] = 'application/json';
+      _dio.options.headers["Authorization"] = "Bearer $token";
+      final response = await _dio.post(path, data: data.toJson());
+      return response;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
   }
-}
+
+  Future<Response?> patch(String path, dynamic data, String? token) async {
+    try {
+      if (token != null && token.isNotEmpty) {
+        _dio.options.headers["Authorization"] = "Bearer $token";
+      } else {
+        _dio.options.headers.remove("Authorization");
+      }
+      _dio.options.headers['Content-Type'] = 'application/json';
+      final response = await _dio.patch(path, data: data);
+      return response;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
 }

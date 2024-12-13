@@ -58,4 +58,7 @@ class PostRepo {
     return await apiService.uploadImage(
         ApiEndPointConstants.apiUploadPostImage, file, token);
   }
+  Future getPostMySelf(String token) async {
+    return await apiService.get(ApiEndPointConstants.apiGetPostMySelf, token);
+  }
 }

@@ -38,4 +38,8 @@ class ApiEndPointConstants {
 
   static String apiCreatePost = "$_baseUrl/post";
   static String apiUploadPostImage = "$_baseUrl/file/upload-posts";
+  static String apiGetMyAccountProfile = "$_baseUrl/user/my-account-profile";
+  static String apiPatchMyProfile = "$_baseUrl/user/update-account/:id";
+  static String apiGetBlogById = "$_baseUrl/blog/:id";
+  static String apiGetPostMySelf = "$_baseUrl/post/get-posts-account";
 }

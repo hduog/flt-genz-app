@@ -49,3 +49,9 @@ String? formatDate(String? dateStr) {
   final formatter = DateFormat('dd/MM/yyyy HH:mm');
   return formatter.format(dateTime);
 }
+String? formatBirth(String? dateStr) {
+  if (dateStr == null) return null;
+  final dateTime = DateTime.parse(dateStr).toLocal();
+  final formatter = DateFormat('dd MMMM yyyy');
+  return formatter.format(dateTime);
+}

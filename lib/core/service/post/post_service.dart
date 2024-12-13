@@ -173,4 +173,21 @@ class PostService {
       return false;
     }
   }
+
+  Future<List<DataGet>?> getMyPosts(WidgetRef ref) async {
+    // final token = ref.read(authProvider);
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token != null) {
+      final response = await postRepo.getPostMySelf(token);
+      if (response?.statusCode == 200) {
+        PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
+        return postInfo.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
 }

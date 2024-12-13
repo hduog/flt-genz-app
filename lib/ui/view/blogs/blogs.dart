@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/service/cateBlog/cateBlog_service.dart';
 import 'package:flutter_application_1/core/service/blog/blog_service.dart';
+import 'package:flutter_application_1/ui/view/blogs/detailblog.dart';
 import 'package:flutter_application_1/ui/widget/blog_image.card.dart';
 import 'package:flutter_application_1/ui/widget/blogs.card.dart';
 import 'package:flutter_application_1/ui/widget/cateBlog-card.dart';
@@ -201,15 +202,25 @@ class _BlogsState extends ConsumerState<Blogs> {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                    ListView.builder(
+                      ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: blogData.length,
                       itemBuilder: (context, index) {
                         final blog = blogData[index];
-                        return BlogsCard(blogItem: blog);
+                        return BlogsCard(
+                          blogItem: blog,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlogDetailScreen(blogId: blog.id),
+                              ),
+                            );
+                          },
+                        );
                       },
-                    ),
+                    )
                   ],
                 ),
               ),
