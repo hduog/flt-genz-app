@@ -1,11 +1,14 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://10.0.0.2:3003/api";
+  static const String _baseUrl = "http://172.16.10.196:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
   static String apiGetBasicInfoAccountByToken = "$_baseUrl/auth/profile";
-  static String apiGetValidPost = "$_baseUrl/post/valid-post";
+  static String apiGetValidPost(String? query) {
+    return "$_baseUrl/post/valid-post?$query";
+  }
+
   static String apiGetCateBlog = "$_baseUrl/category-blog";
   static String apiGetBlog = "$_baseUrl/blog";
   static String apiGetNotification = "$_baseUrl/notifications";
@@ -32,4 +35,7 @@ class ApiEndPointConstants {
   // API send to AI
   static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
   static String apiGetAllFeatures = "$_baseUrl/feature";
+
+  static String apiCreatePost = "$_baseUrl/post";
+  static String apiUploadPostImage = "$_baseUrl/file/upload-posts";
 }

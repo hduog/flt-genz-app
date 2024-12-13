@@ -235,6 +235,12 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                               }).toList(),
                               options: CarouselOptions(
                                 enlargeCenterPage: true,
+                                enableInfiniteScroll:
+                                    widget.postItem.images!.length > 1,
+                                scrollPhysics:
+                                    widget.postItem.images!.length > 1
+                                        ? const BouncingScrollPhysics()
+                                        : const NeverScrollableScrollPhysics(),
                                 viewportFraction: 1.0,
                                 height: 400,
                                 onPageChanged: (index, reason) {
@@ -246,28 +252,31 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                               carouselController: _carouselController,
                             ),
                             // Left navigation button
-                            Positioned(
-                              left: 1,
-                              top: 0,
-                              bottom: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_back_ios,
-                                    color: colorIconActive),
-                                onPressed: () =>
-                                    _carouselController.previousPage(),
+                            if (widget.postItem.images!.length > 1)
+                              Positioned(
+                                left: 1,
+                                top: 0,
+                                bottom: 0,
+                                child: IconButton(
+                                  icon: const Icon(Icons.arrow_back_ios,
+                                      color: colorIconActive),
+                                  onPressed: () =>
+                                      _carouselController.previousPage(),
+                                ),
                               ),
-                            ),
                             // Right navigation button
-                            Positioned(
-                              right: 1,
-                              top: 0,
-                              bottom: 0,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_forward_ios,
-                                    color: colorIconActive),
-                                onPressed: () => _carouselController.nextPage(),
+                            if (widget.postItem.images!.length > 1)
+                              Positioned(
+                                right: 1,
+                                top: 0,
+                                bottom: 0,
+                                child: IconButton(
+                                  icon: const Icon(Icons.arrow_forward_ios,
+                                      color: colorIconActive),
+                                  onPressed: () =>
+                                      _carouselController.nextPage(),
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 10),
@@ -299,7 +308,8 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                         const SizedBox(height: 10),
                       ],
                     ),
-                  const SizedBox(height: 5),                             // totalReaction (like, comment, share)
+                  const SizedBox(
+                      height: 5), // totalReaction (like, comment, share)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -496,7 +506,9 @@ class _FullScreenImageState extends State<FullScreenImage> {
                       child: Text(
                         _isExpanded
                             ? widget.content
-                            : '${widget.content.substring(0, 100)}...',
+                            : widget.content.length > 100
+                                ? '${widget.content.substring(0, 100)}...'
+                                : widget.content,
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,

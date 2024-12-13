@@ -5,8 +5,10 @@ import 'package:flutter_application_1/core/data/models/UserModel/BasicInfoGet/Ba
 
 class UserAvatar extends StatelessWidget {
   final BasicInfoGet account;
+  double? width;
+  double? height;
 
-  UserAvatar({required this.account});
+  UserAvatar({required this.account, this.height, this.width});
   Color _getRandomColor(String name) {
     int firstCharCode = name.toUpperCase().codeUnitAt(0);
     Random random = Random(firstCharCode);
@@ -24,8 +26,8 @@ class UserAvatar extends StatelessWidget {
         ? ClipOval(
             child: Image.network(
               '${Constants.awsUrl}${account.avata}',
-              width: 30,
-              height: 30,
+              width: width ?? 30,
+              height: height ?? 30,
               fit: BoxFit.cover,
             ),
           )
