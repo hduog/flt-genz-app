@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
+import 'package:flutter_application_1/ui/widget/profile/account_avata.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,6 +22,15 @@ class _CreatePostState extends ConsumerState<CreatePost> {
   final ImagePicker _picker = ImagePicker();
   String selectedPrivacy = Constants.PUBLIC;
   bool isLoading = false;
+  final FocusNode _focusNode = FocusNode();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Tự động kích hoạt bàn phím
+      _focusNode.requestFocus();
+    });
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -40,7 +50,7 @@ class _CreatePostState extends ConsumerState<CreatePost> {
   Future<void> _createPost(PostService postService, userInfo) async {
     if (_contentController.text.isEmpty || userInfo == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Content cannot be empty')),
+        const SnackBar(content: Text('Nội dung của bạn đang trống')),
       );
       return;
     }
@@ -82,15 +92,11 @@ class _CreatePostState extends ConsumerState<CreatePost> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: SvgPicture.asset(
-            'assets/icons/close.svg',
-            width: 24,
-            height: 24,
-          ),
-          onPressed: () => Navigator.pop(context),
+        backgroundColor: colorBackground,
+        title: const Text(
+          'Tạo bài viết',
+          style: TextStyle(fontSize: 14),
         ),
-        title: const Text('Tạo bài viết'),
         centerTitle: true,
         actions: [
           isLoading
@@ -116,159 +122,151 @@ class _CreatePostState extends ConsumerState<CreatePost> {
                 ),
         ],
       ),
-      body: Column(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              radius: 20.0,
-              backgroundImage:
-                  NetworkImage('${Constants.awsUrl}${userInfo?.avata ?? ''}'),
+      body: Container(
+        color: colorBackground,
+        child: Column(
+          children: [
+            ListTile(
+              leading: UserAvatar(
+                account: userInfo!,
+                height: 40,
+                width: 40,
+              ),
+              title: Text(userInfo.fullName),
+              subtitle: PopupMenuButton<String>(
+                onSelected: (String value) =>
+                    setState(() => selectedPrivacy = value),
+                initialValue: selectedPrivacy,
+                itemBuilder: (BuildContext context) => [
+                  _buildPrivacyMenuItem(
+                      SvgPicture.asset(
+                        'assets/icons/public.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      'Mọi người',
+                      Constants.PUBLIC),
+                  _buildPrivacyMenuItem(
+                      SvgPicture.asset(
+                        'assets/icons/group.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      'Người theo dõi',
+                      Constants.FOLLOW),
+                  _buildPrivacyMenuItem(
+                      SvgPicture.asset(
+                        'assets/icons/lock_grey.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                      'Chỉ mình tôi',
+                      Constants.PRIVATE),
+                ],
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      selectedPrivacy == Constants.PUBLIC
+                          ? 'assets/icons/public.svg'
+                          : selectedPrivacy == Constants.FOLLOW
+                              ? 'assets/icons/group.svg'
+                              : 'assets/icons/lock_grey.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      selectedPrivacy == Constants.PUBLIC
+                          ? 'Mọi người'
+                          : selectedPrivacy == Constants.FOLLOW
+                              ? 'Người theo dõi'
+                              : 'Chỉ mình tôi',
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            title: Text(userInfo?.fullName ?? ''),
-            subtitle: PopupMenuButton<String>(
-              onSelected: (String value) =>
-                  setState(() => selectedPrivacy = value),
-              initialValue: selectedPrivacy,
-              itemBuilder: (BuildContext context) => [
-                _buildPrivacyMenuItem(
-                    SvgPicture.asset(
-                      'assets/icons/public.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                    'Mọi người',
-                    Constants.PUBLIC),
-                _buildPrivacyMenuItem(
-                    SvgPicture.asset(
-                      'assets/icons/group.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                    'Người theo dõi',
-                    Constants.FOLLOW),
-                _buildPrivacyMenuItem(
-                    SvgPicture.asset(
-                      'assets/icons/lock_grey.svg',
-                      width: 24,
-                      height: 24,
-                    ),
-                    'Chỉ mình tôi',
-                    Constants.PRIVATE),
-              ],
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    selectedPrivacy == Constants.PUBLIC
-                        ? 'assets/icons/public.svg'
-                        : selectedPrivacy == Constants.FOLLOW
-                            ? 'assets/icons/group.svg'
-                            : 'assets/icons/lock_grey.svg',
-                    width: 24,
-                    height: 24,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: TextField(
+                focusNode: _focusNode,
+                controller: _contentController,
+                decoration: const InputDecoration(
+                  hintText: 'Bạn đang suy nghĩ điều gì?',
+                  border: InputBorder.none,
+                ),
+                maxLines: null,
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (_selectedImages.isNotEmpty)
+              SizedBox(
+                height: 200,
+                child: GridView.builder(
+                  itemCount: _selectedImages.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 5.0,
+                    mainAxisSpacing: 5.0,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    selectedPrivacy == Constants.PUBLIC
-                        ? 'Mọi người'
-                        : selectedPrivacy == Constants.FOLLOW
-                            ? 'Người theo dõi'
-                            : 'Chỉ mình tôi',
-                    style: const TextStyle(color: Colors.black),
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      children: [
+                        Image.file(
+                          File(_selectedImages[index].path),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        Positioned(
+                          top: 5,
+                          right: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedImages.removeAt(index);
+                              });
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icons/cancel_grey.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            const Spacer(),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildOptionItem(
+                    icon: 'upload-pic.svg',
+                    text: 'Hình ảnh',
+                    onTap: _pickImage,
+                  ),
+                  _buildOptionItem(
+                    icon: 'upload-video.svg',
+                    text: 'Video',
+                    onTap: () {},
+                  ),
+                  _buildOptionItem(
+                    icon: 'upload-file.svg',
+                    text: 'Tệp',
+                    onTap: () {},
                   ),
                 ],
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: TextField(
-              controller: _contentController,
-              decoration: const InputDecoration(
-                hintText: 'Bạn đang suy nghĩ điều gì?',
-                border: InputBorder.none,
-              ),
-              maxLines: null,
-            ),
-          ),
-          const SizedBox(height: 10),
-          if (_selectedImages.isNotEmpty)
-            SizedBox(
-              height: 200,
-              child: GridView.builder(
-                itemCount: _selectedImages.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 5.0,
-                ),
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Image.file(
-                        File(_selectedImages[index].path),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                      Positioned(
-                        top: 5,
-                        right: 5,
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedImages.removeAt(index);
-                            });
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/cancel_grey.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          const Spacer(),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildOptionItem(
-                  icon: SvgPicture.asset(
-                    'assets/icons/picture_grey.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                  text: 'Hình ảnh/Video',
-                  onTap: _pickImage,
-                ),
-                _buildOptionItem(
-                  icon: SvgPicture.asset(
-                    'assets/icons/emoji_smile_grey.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                  text: 'Cảm xúc',
-                  onTap: () {},
-                ),
-                _buildOptionItem(
-                  icon: SvgPicture.asset(
-                    'assets/icons/photo_grey.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                  text: 'Camera',
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -288,22 +286,29 @@ class _CreatePostState extends ConsumerState<CreatePost> {
   }
 
   Widget _buildOptionItem({
-    required Widget icon,
+    required String icon,
     required String text,
     required Function() onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          icon,
-          const SizedBox(height: 5),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-        ],
+      child: SizedBox(
+        width: 90,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/icons/$icon',
+              width: 13,
+              height: 13,
+            ),
+            const SizedBox(
+              child: Text(" | "),
+            ),
+            Text(text),
+          ],
+        ),
       ),
     );
   }

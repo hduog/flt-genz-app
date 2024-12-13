@@ -18,19 +18,46 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _currentPage = 1;
+  Future<void>? _loadingFuture;
   @override
   void initState() {
     super.initState();
     fetchPosts();
-    // fetchPostShare();
     fetchUser();
+    _scrollController.addListener(_onScroll);
   }
 
-  Future<void> fetchPosts() async {
-    final postService = PostService();
-    final posts = await postService.getPosts(ref);
-    if (posts != null) {
-      ref.read(postProvider.notifier).setPosts(posts);
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchPosts({int page = 1}) async {
+    try {
+      final postService = PostService();
+      final posts = await postService.getPosts('pageNo=$page');
+
+      if (posts != null) {
+        if (page == 1) {
+          ref.read(postProvider.notifier).setPosts(posts);
+        } else {
+          ref.read(postProvider.notifier).addListPost(posts);
+        }
+        if (posts.isEmpty) {
+          _hasMore = false;
+        }
+      } else {
+        _hasMore = false;
+      }
+    } catch (e) {
+      debugPrint('Error fetching posts: $e');
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -42,8 +69,30 @@ class _HomeState extends ConsumerState<Home> {
     }
   }
 
+  Future<void> _loadMorePosts() async {
+    if (_isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    _loadingFuture = fetchPosts(page: _currentPage + 1);
+    await _loadingFuture;
+    setState(() {
+      _currentPage++;
+      _isLoadingMore = false;
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 50 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _loadMorePosts();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(_scrollController);
+
     final postData = ref.watch(postProvider);
     final userInfo = ref.watch(userProvider);
     if (postData.isEmpty) {
@@ -66,6 +115,7 @@ class _HomeState extends ConsumerState<Home> {
                 ),
               ),
               SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 5, top: 20, right: 5),
@@ -213,10 +263,10 @@ class _HomeState extends ConsumerState<Home> {
                                             CircleAvatar(
                                               radius: 20.0,
                                               backgroundImage: NetworkImage(
-                                                  '${Constants.awsUrl}${userInfo?.avata ?? ''}'), // Replace with user's profile image
+                                                  '${Constants.awsUrl}${userInfo?.avata ?? ''}'),
                                             ),
-                                            SizedBox(width: 20),
-                                            Flexible(
+                                            const SizedBox(width: 20),
+                                            const Flexible(
                                               child: Text(
                                                 "Hãy chia sẻ suy nghĩ của bạn...",
                                                 style: TextStyle(
@@ -303,43 +353,56 @@ class _HomeState extends ConsumerState<Home> {
                               const SizedBox(height: 10),
                               // LIST REELS
                               ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: postData.length,
-  itemBuilder: (context, index) {
-    final post = postData[index];
-    final comments = post.comment_recent ?? [];
-
-    return GestureDetector(
-      onTap: () {
-        if (post.is_share ?? false) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PostShareDetailPage(
-                postItem: post,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PostDetailPage(
-                postItem: post,
-                comments: comments,
-              ),
-            ),
-          );
-        }
-      },
-      child: ReelCard(
-        postItem: post,
-        is_share: post.is_share ?? false,
-      ),
-    );
-  },
-),
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: postData.length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index < postData.length) {
+                                    final post = postData[index];
+                                    final comments = post.comment_recent ?? [];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (post.is_share ?? false) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PostShareDetailPage(
+                                                      postItem: post),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PostDetailPage(
+                                                postItem: post,
+                                                comments: comments,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: ReelCard(
+                                        postItem: post,
+                                        is_share: post.is_share ?? false,
+                                      ),
+                                    );
+                                  } else {
+                                    return _hasMore
+                                        ? const Center(
+                                            child: CircularProgressIndicator())
+                                        : const Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: const Center(
+                                                child: Text(
+                                                    'Không còn dữ liệu để hiển thị')),
+                                          );
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ),

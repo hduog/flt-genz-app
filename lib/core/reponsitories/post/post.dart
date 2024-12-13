@@ -10,8 +10,9 @@ import 'package:flutter_application_1/core/reponsitories/api_service.dart';
 class PostRepo {
   final apiService = ApiService();
 
-  Future getPostValid(String token) async {
-    return await apiService.get(ApiEndPointConstants.apiGetValidPost, token);
+  Future getPostValid(String token, String? query) async {
+    return await apiService.get(
+        ApiEndPointConstants.apiGetValidPost(query), token);
   }
 
   Future updateStatusReactionReel(
@@ -43,15 +44,18 @@ class PostRepo {
 
   Future getAllCommentReelPostShare(String token, String idPostShare) async {
     return await apiService.get(
-        ApiEndPointConstants.apiShowAllCommentReelPostShare(idPostShare), token);
+        ApiEndPointConstants.apiShowAllCommentReelPostShare(idPostShare),
+        token);
   }
 
-    Future createPost(PostForCreate body, String token) async {
-    return await apiService.postWithToken(ApiEndPointConstants.apiCreatePost, body, token);
+  Future createPost(PostForCreate body, String token) async {
+    return await apiService.postWithToken(
+        ApiEndPointConstants.apiCreatePost, body, token);
   }
 
   Future uploadPostImage(ImageForCreatePost body, String token) async {
-    final file = File(body.filePath); 
-    return await apiService.uploadImage(ApiEndPointConstants.apiUploadPostImage, file,token);
+    final file = File(body.filePath);
+    return await apiService.uploadImage(
+        ApiEndPointConstants.apiUploadPostImage, file, token);
   }
 }

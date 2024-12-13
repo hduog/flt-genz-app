@@ -15,11 +15,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PostService {
   final postRepo = PostRepo();
 
-  Future<List<DataGet>?> getPosts(WidgetRef ref) async {
+  Future<List<DataGet>?> getPosts(String? query) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token.isNotEmpty) {
-      final response = await postRepo.getPostValid(token);
+      final response = await postRepo.getPostValid(token, query);
       if (response?.statusCode == 200) {
         PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
         return postInfo.data;
@@ -46,7 +46,8 @@ class PostService {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token.isNotEmpty) {
-      final response = await postRepo.updateStatusReactionPostShare(token, data);
+      final response =
+          await postRepo.updateStatusReactionPostShare(token, data);
       if (response?.statusCode == 201) {
         return true;
       }
@@ -92,7 +93,8 @@ class PostService {
     return null;
   }
 
-  Future<List<CommentFullGet>?> getAllCommentReelPostShare(String idPost) async {
+  Future<List<CommentFullGet>?> getAllCommentReelPostShare(
+      String idPost) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token.isNotEmpty) {
@@ -134,7 +136,8 @@ class PostService {
     }
   }
 
-  Future<bool> createPost(PostForCreate body, List<File>? images, WidgetRef ref) async {
+  Future<bool> createPost(
+      PostForCreate body, List<File>? images, WidgetRef ref) async {
     try {
       final token =
           (await SharedPreferences.getInstance()).getString('access_token');
