@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/core/data/models/BlogModel/CateBlog/CateBlog.dart';
 import 'package:flutter_application_1/core/data/models/HotBlogModel/HotBlogItemForGet/HotBlogItemForGet.dart';
 
 class BlogsImageCard extends StatelessWidget {
@@ -70,7 +69,7 @@ class BlogsImageCard extends StatelessWidget {
                 const Spacer(),
                 // Blog title
                 Text(
-                  hotBlogItem.title ?? 'No Title',
+                  hotBlogItem.title ?? 'Không có tiêu đề',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,

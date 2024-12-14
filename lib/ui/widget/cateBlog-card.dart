@@ -3,8 +3,13 @@ import 'package:flutter_application_1/core/data/models/CateBlogs/CateBlogItem/Ca
 
 class CateBlogCard extends StatelessWidget {
   final CateBlogItem cateBlogItem;
+  final Function(String cateId) onCategorySelected; 
 
-  const CateBlogCard({super.key, required this.cateBlogItem});
+  const CateBlogCard({
+    super.key,
+    required this.cateBlogItem,
+    required this.onCategorySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +17,7 @@ class CateBlogCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       child: ElevatedButton(
         onPressed: () {
-          print('Selected category: ${cateBlogItem.title}');
+          onCategorySelected(cateBlogItem.id); 
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
