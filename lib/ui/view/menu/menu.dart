@@ -9,6 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/ui/view/menu/setting.dart';
 
 class MenuPage extends ConsumerStatefulWidget {
+  const MenuPage({Key? key}) : super(key: key);
+
+  @override
   ConsumerState<MenuPage> createState() => _MenuPageState();
 }
 
@@ -29,122 +32,155 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   Widget build(BuildContext context) {
     final profileInfo = ref.watch(profileProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Menu'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MySettingsPage()),
-              );
-            },
-          ),
-          SizedBox(width: 8),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProfileSection(profileInfo),
-            // Các phần khác trong menu
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Tất cả các phím tắt',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            _buildGridMenu(),
-            Divider(thickness: 1),
-            _buildListTile(Icons.settings, 'Cài đặt & quyền riêng tư', context),
-            _buildListTile(Icons.help_outline, 'Trợ giúp & hỗ trợ', context),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(userProvider.notifier).logout();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 60, vertical: 12),
+      backgroundColor: colorBackground,
+      body: Column(
+        children: [
+          Container(
+            color: colorBackground,
+            padding:
+                const EdgeInsets.only(top: 30, bottom: 0, left: 20, right: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Menu',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Text('Đăng xuất'),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MySettingsPage()),
+                        );
+                      },
+                    ),
+                    SizedBox(width: 5),
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        // chung nao search duoc thi code o day :D
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(thickness: 1),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProfileSection(profileInfo),
+                    const Divider(thickness: 1),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Tất cả các phím tắt',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    _buildGridMenu(),
+                    const Divider(thickness: 1),
+                    _buildListTile(
+                        Icons.settings, 'Cài đặt & quyền riêng tư', context),
+                    _buildListTile(
+                        Icons.help_outline, 'Trợ giúp & hỗ trợ', context),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            ref.read(userProvider.notifier).logout();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 60, vertical: 12),
+                          ),
+                          child: const Text('Đăng xuất'),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  // Hiển thị thông tin hồ sơ người dùng
   Widget _buildProfileSection(ProfileData? profileInfo) {
     if (profileInfo == null) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Text(
-            'Chưa có thông tin người dùng.',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
+      return Center(
+        child: Text(
+          'Chưa có thông tin người dùng.',
+          style: TextStyle(fontSize: 16, color: colorBackground),
         ),
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage:
-                NetworkImage('${Constants.awsUrl}${profileInfo.user.avata ?? ''}'),
-            radius: 30,
-          ),
-          SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                profileInfo.user.fullName ?? "",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          backgroundImage:
+              NetworkImage('${Constants.awsUrl}${profileInfo.user.avata}'),
+          radius: 25,
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              profileInfo.user.fullName,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero, // Xóa padding mặc định
+                minimumSize: const Size(0, 0), // Giảm kích thước TextButton
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfileScreen()),
-                  );
-                },
-                child: Text(
-                  'Xem hồ sơ',
-                  style: TextStyle(color: Colors.blue),
-                ),
+              child: const Text(
+                'Xem hồ sơ',
+                style: TextStyle(color: Colors.blue, fontSize: 14),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  // Các phần trong menu dạng lưới
   Widget _buildGridMenu() {
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: 3,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         _buildMenuItem(Icons.link, 'Kết nối'),
         _buildMenuItem(Icons.calendar_today, 'Lịch trình'),
@@ -161,15 +197,32 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   Widget _buildMenuItem(IconData icon, String title) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 30),
-          SizedBox(height: 8),
-          Text(title, textAlign: TextAlign.center),
+          Icon(icon, size: 30, color: Colors.blueAccent),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -177,8 +230,11 @@ class _MenuPageState extends ConsumerState<MenuPage> {
 
   Widget _buildListTile(IconData icon, String title, BuildContext context) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
+      leading: Icon(icon, color: colorIconActive),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      ),
       onTap: () {
         if (title == 'Cài đặt & quyền riêng tư') {
           Navigator.push(
