@@ -129,11 +129,7 @@ class ReelCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SvgPicture.asset(
-                      'assets/icons/dots-horizontal.svg',
-                      width: 24,
-                      height: 24,
-                    ),
+                    
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -163,11 +159,7 @@ class ReelCard extends StatelessWidget {
             _buildReactionInfo('like', postItem.totalReaction ?? 0),
             _buildReactionInfo('comment', postItem.totalComment ?? 0),
             _buildReactionInfo('share', postItem.totalShare ?? 0),
-            SvgPicture.asset(
-              'assets/icons/save.svg',
-              width: 24,
-              height: 24,
-            ),
+            
           ],
         ),
         ],
@@ -207,11 +199,6 @@ class ReelCard extends StatelessWidget {
                 ],
               ),
             ),
-            SvgPicture.asset(
-              'assets/icons/dots-horizontal.svg',
-              width: 24,
-              height: 24,
-            ),
           ],
         ),
         const SizedBox(height: 10),
@@ -242,11 +229,7 @@ class ReelCard extends StatelessWidget {
             _buildReactionInfo('like', postItem.totalReaction ?? 0),
             _buildReactionInfo('comment', postItem.totalComment ?? 0),
             _buildReactionInfo('share', postItem.totalShare ?? 0),
-            SvgPicture.asset(
-              'assets/icons/save.svg',
-              width: 24,
-              height: 24,
-            ),
+            
           ],
         ),
       ],

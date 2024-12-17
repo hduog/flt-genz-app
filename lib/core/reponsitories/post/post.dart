@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_application_1/core/constants/end_point.dart';
 import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreatePost/ImageForCreatePost.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/CreatePostShare.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/reponsitories/api_service.dart';
@@ -58,7 +59,13 @@ class PostRepo {
     return await apiService.uploadImage(
         ApiEndPointConstants.apiUploadPostImage, file, token);
   }
+
   Future getPostMySelf(String token) async {
     return await apiService.get(ApiEndPointConstants.apiGetPostMySelf, token);
+  }
+
+  Future createPostShare (CreatePostShare data, String token) async {
+    return await apiService.postWithToken(
+        ApiEndPointConstants.apiCreatePostShare, data, token);
   }
 }

@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://172.16.10.196:3003/api";
+  static const String _baseUrl = "http://10.0.0.2:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -42,4 +42,5 @@ class ApiEndPointConstants {
   static String apiPatchMyProfile = "$_baseUrl/user/update-account/:id";
   static String apiGetBlogById = "$_baseUrl/blog/:id";
   static String apiGetPostMySelf = "$_baseUrl/post/get-posts-account";
+  static String apiCreatePostShare = "$_baseUrl/postshare";
 }
