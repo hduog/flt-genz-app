@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/service/features/feature_service.dart';
-import 'package:flutter_application_1/ui/widget/list_feature.dart';
+import 'package:flutter_application_1/ui/widget/feature.card.dart';
 import 'package:flutter_application_1/view-models/feature/feature.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';

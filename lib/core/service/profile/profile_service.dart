@@ -1,11 +1,10 @@
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
 import 'package:flutter_application_1/core/reponsitories/profile/profile.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
   final profileRepo = ProfileRepo();
-  Future<ProfileData> getMyProfile(WidgetRef ref) async {
+  Future<ProfileData> getMyProfile() async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
 
@@ -22,25 +21,27 @@ class ProfileService {
     }
   }
 
-   Future<ProfileData> patchMyProfile(
+  Future<ProfileData> patchMyProfile(
     String userId,
     Map<String, dynamic> updatedData,
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
-    
+
     if (token.isEmpty) {
       throw Exception('Token is missing or empty');
     }
 
     try {
-      final response = await profileRepo.patchMyProfile(token, userId, updatedData);
-      
+      final response =
+          await profileRepo.patchMyProfile(token, userId, updatedData);
+
       if (response?.statusCode == 200) {
         return ProfileData.fromJson(response.data);
       } else {
         // Log response details for debugging
-        print('API error: ${response?.statusCode} - ${response?.statusMessage}');
+        print(
+            'API error: ${response?.statusCode} - ${response?.statusMessage}');
         throw Exception('Failed to update profile: ${response?.statusMessage}');
       }
     } catch (e) {

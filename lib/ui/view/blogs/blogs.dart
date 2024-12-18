@@ -75,8 +75,7 @@ class _BlogsState extends ConsumerState<Blogs> {
                   width: 500,
                 )),
             Container(
-              padding:
-                  EdgeInsets.only(left: 10, top: 20, right: 10, bottom: 20),
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
@@ -202,7 +201,7 @@ class _BlogsState extends ConsumerState<Blogs> {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                      ListView.builder(
+                    ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: blogData.length,
@@ -214,7 +213,8 @@ class _BlogsState extends ConsumerState<Blogs> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => BlogDetailScreen(blogId: blog.id),
+                                builder: (context) =>
+                                    BlogDetailScreen(blogId: blog.id),
                               ),
                             );
                           },
