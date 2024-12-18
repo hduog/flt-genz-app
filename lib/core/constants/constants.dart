@@ -52,6 +52,6 @@ String? formatDate(String? dateStr) {
 String? formatBirth(String? dateStr) {
   if (dateStr == null) return null;
   final dateTime = DateTime.parse(dateStr).toLocal();
-  final formatter = DateFormat('dd MMMM yyyy');
+  final formatter = DateFormat('dd/MM/yyyy');
   return formatter.format(dateTime);
 }

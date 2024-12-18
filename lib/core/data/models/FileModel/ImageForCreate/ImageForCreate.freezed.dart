@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'ImageForCreatePost.dart';
+part of 'ImageForCreate.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,45 +14,45 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-ImageForCreatePost _$ImageForCreatePostFromJson(Map<String, dynamic> json) {
-  return _ImageForCreatePost.fromJson(json);
+ImageForCreate _$ImageForCreateFromJson(Map<String, dynamic> json) {
+  return _ImageForCreate.fromJson(json);
 }
 
 /// @nodoc
-mixin _$ImageForCreatePost {
+mixin _$ImageForCreate {
   @JsonKey(name: 'filePath')
   String get filePath => throw _privateConstructorUsedError;
 
-  /// Serializes this ImageForCreatePost to a JSON map.
+  /// Serializes this ImageForCreate to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of ImageForCreatePost
+  /// Create a copy of ImageForCreate
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ImageForCreatePostCopyWith<ImageForCreatePost> get copyWith =>
+  $ImageForCreateCopyWith<ImageForCreate> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ImageForCreatePostCopyWith<$Res> {
-  factory $ImageForCreatePostCopyWith(
-          ImageForCreatePost value, $Res Function(ImageForCreatePost) then) =
-      _$ImageForCreatePostCopyWithImpl<$Res, ImageForCreatePost>;
+abstract class $ImageForCreateCopyWith<$Res> {
+  factory $ImageForCreateCopyWith(
+          ImageForCreate value, $Res Function(ImageForCreate) then) =
+      _$ImageForCreateCopyWithImpl<$Res, ImageForCreate>;
   @useResult
   $Res call({@JsonKey(name: 'filePath') String filePath});
 }
 
 /// @nodoc
-class _$ImageForCreatePostCopyWithImpl<$Res, $Val extends ImageForCreatePost>
-    implements $ImageForCreatePostCopyWith<$Res> {
-  _$ImageForCreatePostCopyWithImpl(this._value, this._then);
+class _$ImageForCreateCopyWithImpl<$Res, $Val extends ImageForCreate>
+    implements $ImageForCreateCopyWith<$Res> {
+  _$ImageForCreateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ImageForCreatePost
+  /// Create a copy of ImageForCreate
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -69,32 +69,32 @@ class _$ImageForCreatePostCopyWithImpl<$Res, $Val extends ImageForCreatePost>
 }
 
 /// @nodoc
-abstract class _$$ImageForCreatePostImplCopyWith<$Res>
-    implements $ImageForCreatePostCopyWith<$Res> {
-  factory _$$ImageForCreatePostImplCopyWith(_$ImageForCreatePostImpl value,
-          $Res Function(_$ImageForCreatePostImpl) then) =
-      __$$ImageForCreatePostImplCopyWithImpl<$Res>;
+abstract class _$$ImageForCreateImplCopyWith<$Res>
+    implements $ImageForCreateCopyWith<$Res> {
+  factory _$$ImageForCreateImplCopyWith(_$ImageForCreateImpl value,
+          $Res Function(_$ImageForCreateImpl) then) =
+      __$$ImageForCreateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({@JsonKey(name: 'filePath') String filePath});
 }
 
 /// @nodoc
-class __$$ImageForCreatePostImplCopyWithImpl<$Res>
-    extends _$ImageForCreatePostCopyWithImpl<$Res, _$ImageForCreatePostImpl>
-    implements _$$ImageForCreatePostImplCopyWith<$Res> {
-  __$$ImageForCreatePostImplCopyWithImpl(_$ImageForCreatePostImpl _value,
-      $Res Function(_$ImageForCreatePostImpl) _then)
+class __$$ImageForCreateImplCopyWithImpl<$Res>
+    extends _$ImageForCreateCopyWithImpl<$Res, _$ImageForCreateImpl>
+    implements _$$ImageForCreateImplCopyWith<$Res> {
+  __$$ImageForCreateImplCopyWithImpl(
+      _$ImageForCreateImpl _value, $Res Function(_$ImageForCreateImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ImageForCreatePost
+  /// Create a copy of ImageForCreate
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? filePath = null,
   }) {
-    return _then(_$ImageForCreatePostImpl(
+    return _then(_$ImageForCreateImpl(
       filePath: null == filePath
           ? _value.filePath
           : filePath // ignore: cast_nullable_to_non_nullable
@@ -105,11 +105,11 @@ class __$$ImageForCreatePostImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ImageForCreatePostImpl implements _ImageForCreatePost {
-  _$ImageForCreatePostImpl({@JsonKey(name: 'filePath') required this.filePath});
+class _$ImageForCreateImpl implements _ImageForCreate {
+  _$ImageForCreateImpl({@JsonKey(name: 'filePath') required this.filePath});
 
-  factory _$ImageForCreatePostImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ImageForCreatePostImplFromJson(json);
+  factory _$ImageForCreateImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ImageForCreateImplFromJson(json);
 
   @override
   @JsonKey(name: 'filePath')
@@ -117,14 +117,14 @@ class _$ImageForCreatePostImpl implements _ImageForCreatePost {
 
   @override
   String toString() {
-    return 'ImageForCreatePost(filePath: $filePath)';
+    return 'ImageForCreate(filePath: $filePath)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ImageForCreatePostImpl &&
+            other is _$ImageForCreateImpl &&
             (identical(other.filePath, filePath) ||
                 other.filePath == filePath));
   }
@@ -133,39 +133,39 @@ class _$ImageForCreatePostImpl implements _ImageForCreatePost {
   @override
   int get hashCode => Object.hash(runtimeType, filePath);
 
-  /// Create a copy of ImageForCreatePost
+  /// Create a copy of ImageForCreate
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ImageForCreatePostImplCopyWith<_$ImageForCreatePostImpl> get copyWith =>
-      __$$ImageForCreatePostImplCopyWithImpl<_$ImageForCreatePostImpl>(
+  _$$ImageForCreateImplCopyWith<_$ImageForCreateImpl> get copyWith =>
+      __$$ImageForCreateImplCopyWithImpl<_$ImageForCreateImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ImageForCreatePostImplToJson(
+    return _$$ImageForCreateImplToJson(
       this,
     );
   }
 }
 
-abstract class _ImageForCreatePost implements ImageForCreatePost {
-  factory _ImageForCreatePost(
+abstract class _ImageForCreate implements ImageForCreate {
+  factory _ImageForCreate(
           {@JsonKey(name: 'filePath') required final String filePath}) =
-      _$ImageForCreatePostImpl;
+      _$ImageForCreateImpl;
 
-  factory _ImageForCreatePost.fromJson(Map<String, dynamic> json) =
-      _$ImageForCreatePostImpl.fromJson;
+  factory _ImageForCreate.fromJson(Map<String, dynamic> json) =
+      _$ImageForCreateImpl.fromJson;
 
   @override
   @JsonKey(name: 'filePath')
   String get filePath;
 
-  /// Create a copy of ImageForCreatePost
+  /// Create a copy of ImageForCreate
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ImageForCreatePostImplCopyWith<_$ImageForCreatePostImpl> get copyWith =>
+  _$$ImageForCreateImplCopyWith<_$ImageForCreateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

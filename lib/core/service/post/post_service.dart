@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_application_1/core/data/models/CommentFullGet/CommentFullGet.dart';
-import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreatePost/ImageForCreatePost.dart';
+import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreate/ImageForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
@@ -121,7 +121,7 @@ class PostService {
       }
 
       final response = await postRepo.uploadPostImage(
-        ImageForCreatePost(filePath: image.path),
+        ImageForCreate(filePath: image.path),
         token,
       );
 

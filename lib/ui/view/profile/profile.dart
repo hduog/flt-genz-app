@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/favorite-tag/favorite-tag_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/view/profile/follow.dart';
-import 'package:flutter_application_1/ui/widget/profile/follower.dart';
+
 import 'package:flutter_application_1/ui/widget/profile/infor_profile.dart';
 import 'package:flutter_application_1/ui/widget/profile/tag_profile.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
+import 'package:flutter_application_1/view-models/favorite-tag/favorite-tag.prvd.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +26,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     fetchProfile();
     fetchPostProfile();
+    fetchListFavorite();
   }
 
   Future<void> fetchProfile() async {
@@ -39,6 +42,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final posts = await postService.getMyPosts(ref);
     if (posts != null) {
       ref.read(postProvider.notifier).setPosts(posts);
+    }
+  }
+
+  Future<void> fetchListFavorite() async {
+    final featureService = FavoriteTagService();
+    final listFavorite = await featureService.getAllFavoriteTags(ref);
+    if (listFavorite != null) {
+      ref.read(favoriteTagProvider.notifier).setFavoriteTag(listFavorite);
     }
   }
 
@@ -86,7 +97,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         },
                       ),
                       Positioned(
-                        top: 150, // Đảm bảo khoảng cách từ trên xuống hợp lý
+                        top: 150,
                         left:
                             (MediaQuery.of(context).size.width - 100) / 2 - 20,
                         child: CircleAvatar(
@@ -144,7 +155,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  const TagProfile(),
+                  Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 5,
+                        runSpacing: 8,
+                        children: profileInfo.user.favorite!.map((favorite) {
+                          return TagProfile(favorite: favorite);
+                        }).toList(),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
