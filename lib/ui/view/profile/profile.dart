@@ -4,7 +4,6 @@ import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/view/profile/follow.dart';
-import 'package:flutter_application_1/ui/widget/profile/follower.dart';
 import 'package:flutter_application_1/ui/widget/profile/infor_profile.dart';
 import 'package:flutter_application_1/ui/widget/profile/tag_profile.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
@@ -28,7 +27,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Future<void> fetchProfile() async {
     final profileService = ProfileService();
-    final profile = await profileService.getMyProfile(ref);
+    final profile = await profileService.getMyProfile();
     if (profile != null) {
       ref.read(profileProvider.notifier).setMyProfile(profile);
     }

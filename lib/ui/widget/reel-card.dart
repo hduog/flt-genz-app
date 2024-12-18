@@ -18,12 +18,8 @@ class ReelCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 0.5,
-          color: const Color.fromARGB(255, 161, 160, 160),
-        ),
-        borderRadius: BorderRadius.circular(10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
       ),
       child: is_share
           ? _buildSharedPostContent(context)
@@ -122,7 +118,8 @@ class ReelCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            formatDate(postItem.infoAuthorAndPost?.postInf.created_at) ??
+                            formatDate(postItem
+                                    .infoAuthorAndPost?.postInf.created_at) ??
                                 "DD/MM/YYYY HH:mm",
                             style: const TextStyle(color: Colors.grey),
                           ),
@@ -145,7 +142,8 @@ class ReelCard extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                if (postItem.infoAuthorAndPost?.postInf.images != null && postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
+                if (postItem.infoAuthorAndPost?.postInf.images != null &&
+                    postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Image.network(
@@ -156,20 +154,22 @@ class ReelCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8,),
+          const SizedBox(
+            height: 8,
+          ),
           Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildReactionInfo('like', postItem.totalReaction ?? 0),
-            _buildReactionInfo('comment', postItem.totalComment ?? 0),
-            _buildReactionInfo('share', postItem.totalShare ?? 0),
-            SvgPicture.asset(
-              'assets/icons/save.svg',
-              width: 24,
-              height: 24,
-            ),
-          ],
-        ),
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildReactionInfo('like', postItem.totalReaction ?? 0),
+              _buildReactionInfo('comment', postItem.totalComment ?? 0),
+              _buildReactionInfo('share', postItem.totalShare ?? 0),
+              SvgPicture.asset(
+                'assets/icons/save.svg',
+                width: 24,
+                height: 24,
+              ),
+            ],
+          ),
         ],
       ),
     );
