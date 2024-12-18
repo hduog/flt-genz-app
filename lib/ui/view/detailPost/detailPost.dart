@@ -4,6 +4,7 @@ import 'package:flutter_application_1/core/data/models/CommentFullGet/CommentFul
 import 'package:flutter_application_1/core/data/models/PostModel/AccountCommentFullGet/AccountCommentFullGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/Comment/CommentForGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/CreatePostShare.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
@@ -30,6 +31,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   bool isLiked = false;
   int countLike = 0;
   int countComment = 0;
+  int countShare = 0;
   List<CommentFullGet> listComment = [];
   int _currentIndex = 0;
   bool _isExpanded = false;
@@ -39,6 +41,12 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   final FocusNode _focusNode = FocusNode();
   bool _showAllComments = false;
 
+  void toggleContent() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +54,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     isLiked = widget.postItem.is_liked ?? false;
     countLike = widget.postItem.totalReaction ?? 0;
     countComment = widget.postItem.totalComment ?? 0;
+    countShare = widget.postItem.totalShare ?? 0;
     getAllComment();
   }
 
@@ -116,6 +125,89 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     FocusScope.of(context).unfocus();
   }
 
+  Future<void> _createPostShare() async {
+    final account = ref.read(userProvider);
+    final data = CreatePostShare(
+      content: _contentCmtController.text,
+      accountId: account!.id,
+      postId: widget.postItem.id,
+    );
+
+    try {
+      print(
+          "Content to share: ${_contentCmtController.text}"); // Kiểm tra nội dung
+      await postService.createPostShare(data);
+      setState(() {
+        countShare++;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chia sẻ thành công')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chia sẻ thất bại')),
+      );
+    }
+  }
+
+  void _showShareModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _contentCmtController,
+                  decoration: InputDecoration(
+                    hintText: "Nhập nội dung chia sẻ...",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey),
+                      child: const Text("Hủy"),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        _createPostShare();
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Chia sẻ"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> getAllComment() async {
     final comments =
         await postService.getAllCommentReelPost(widget.postItem.id);
@@ -142,9 +234,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              // Show more options (edit, delete, etc.)
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -196,19 +286,21 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                     maxLines: _isExpanded ? null : 3,
                   ),
                   GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
+                    onTap: toggleContent,
+                    child: Visibility(
+                      visible: widget.postItem.contentText != null &&
+                          widget.postItem.contentText!.length > 100,
                       child: Text(
                         _isExpanded ? "Ẩn bớt" : "Xem thêm",
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.blue,
+                          color: colorTextHeader,
                           fontWeight: FontWeight.bold,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
+
                   const SizedBox(height: 10),
                   if (widget.postItem.images != null &&
                       widget.postItem.images!.isNotEmpty)
@@ -308,8 +400,8 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                         const SizedBox(height: 10),
                       ],
                     ),
-                  const SizedBox(
-                      height: 5), // totalReaction (like, comment, share)
+                  const SizedBox(height: 5),
+                  // totalReaction (like, comment, share)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -318,7 +410,8 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                           onReactionTap: _likePost),
                       _buildReactionInfo('comment', countComment,
                           onReactionTap: _showKeyboard),
-                      _buildReactionInfo('share', 0),
+                      _buildReactionInfo('share', countShare,
+                          onReactionTap: () => _showShareModal(context)),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -338,8 +431,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                           ),
                           labelText: 'Bình luận bài viết..',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                10.0), // Adjust the radius as needed
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                           labelStyle: const TextStyle(
                               color: colorIconDefault, fontSize: 14)),
@@ -518,12 +610,16 @@ class _FullScreenImageState extends State<FullScreenImage> {
                   ),
                   GestureDetector(
                     onTap: _toggleContent,
-                    child: Text(
-                      _isExpanded ? "Ẩn bớt" : "Xem thêm",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: colorTextHeader,
-                        fontWeight: FontWeight.bold,
+                    child: Visibility(
+                      visible: widget.content.isNotEmpty &&
+                          widget.content.length > 100,
+                      child: Text(
+                        _isExpanded ? "Ẩn bớt" : "Xem thêm",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: colorTextHeader,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
