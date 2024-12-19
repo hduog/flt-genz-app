@@ -28,12 +28,19 @@ class _ReelCardState extends ConsumerState<ReelCard> {
   int countLike = 0;
   int countComment = 0;
   int countShare = 0;
-  int _currentIndex = 0;
-  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial state
+    isLiked = widget.postItem.is_liked ?? false;
+    countLike = widget.postItem.totalReaction ?? 0;
+    countComment = widget.postItem.totalComment ?? 0;
+    countShare = widget.postItem.totalShare ?? 0;
+  }
+
   final TextEditingController _contentPostShareController =
       TextEditingController();
-
-  final FocusNode _focusNode = FocusNode();
 
   Future<void> _likePost() async {
     setState(() {
@@ -42,6 +49,15 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReaction(data);
+  }
+
+  Future<void> _likePostShare() async {
+    setState(() {
+      isLiked ? countLike-- : countLike++;
+      isLiked = !isLiked;
+    });
+    final data = UpdateReactionReelPost(widget.postItem.id);
+    await postService.updateStatusReactionPostShare(data);
   }
 
   void _showShareModal(BuildContext context) {
@@ -111,8 +127,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     );
 
     try {
-      print(
-          "Content to share: ${_contentPostShareController.text}"); // Kiểm tra nội dung
+      print("Content to share: ${_contentPostShareController.text}");
       await postService.createPostShare(data);
       setState(() {
         countShare++;
@@ -176,12 +191,6 @@ class _ReelCardState extends ConsumerState<ReelCard> {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              SvgPicture.asset(
-                'assets/icons/more.svg', // Biểu tượng thêm
-                width: 20,
-                height: 20,
               ),
             ],
           ),
@@ -273,9 +282,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildReactionInfo(isLiked ? 'like_active' : 'like', countLike,
-                  onReactionTap: _likePost),
+                  onReactionTap: _likePostShare),
               _buildReactionInfo('comment', widget.postItem.totalComment ?? 0),
-              _buildReactionInfo('share', countShare,
+              _buildReactionInfo('icon_share', countShare,
                   onReactionTap: () => _showShareModal(context)),
               SvgPicture.asset(
                 'assets/icons/save.svg',
@@ -353,7 +362,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
             _buildReactionInfo(isLiked ? 'like_active' : 'like', countLike,
                 onReactionTap: _likePost),
             _buildReactionInfo('comment', widget.postItem.totalComment ?? 0),
-            _buildReactionInfo('share', countShare,
+            _buildReactionInfo('icon_share', countShare,
                 onReactionTap: () => _showShareModal(context)),
           ],
         ),
