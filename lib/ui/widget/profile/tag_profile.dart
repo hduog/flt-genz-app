@@ -1,43 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/FavoriteData/FavoriteData.dart';
 
 class TagProfile extends StatelessWidget {
-  const TagProfile({Key? key}) : super(key: key);
+  final FavoriteData favorite; 
+
+  const TagProfile({Key? key, required this.favorite}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: const Text('Game', style: TextStyle(fontSize: 15)),
-        ),
-        const SizedBox(width: 8), // Khoảng cách giữa các Container
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: const Text('Song', style: TextStyle(fontSize: 15)),
-        ),
-        const SizedBox(width: 8), // Khoảng cách giữa các Container
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey),
-          ),
-          child: const Text('Reading', style: TextStyle(fontSize: 15)),
-        ),
-      ],
+       return Container(
+      
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 5), 
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey),
+      ),
+      child: Text(
+        favorite.nameFavorite,
+        style: const TextStyle(fontSize: 15),
+        textAlign: TextAlign.center,
+      ),
     );
+      }
+    
   }
-}
+

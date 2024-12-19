@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://192.168.1.5:3003/api";
+  static const String _baseUrl = "http://192.168.88.101:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -10,7 +10,10 @@ class ApiEndPointConstants {
   }
 
   static String apiGetCateBlog = "$_baseUrl/category-blog";
-  static String apiGetBlog = "$_baseUrl/blog";
+  static String apiGetBlog(String? query) {
+    return "$_baseUrl/blog?$query";
+  }
+
   static String apiGetNotification = "$_baseUrl/notifications";
   // API FOR REEL POST
   static String apiUpdateReactionReel = "$_baseUrl/likes/";
@@ -39,14 +42,21 @@ class ApiEndPointConstants {
   static String apiCreatePost = "$_baseUrl/post";
   static String apiUploadPostImage = "$_baseUrl/file/upload-posts";
   static String apiGetMyAccountProfile = "$_baseUrl/user/my-account-profile";
-  static String apiPatchMyProfile = "$_baseUrl/user/update-account/:id";
+  static String apiPatchMyProfile = "$_baseUrl/user/update-account";
+
   static String apiGetBlogById = "$_baseUrl/blog/:id";
   static String apiGetPostMySelf = "$_baseUrl/post/get-posts-account";
+  static String apiGetPostShareMySelf = "$_baseUrl/postshare/myself";
+  static String apiCreatePostShare = "$_baseUrl/postshare";
+  static String apiGetFavoriteTag = "$_baseUrl/favorite-tag";
+  static String apiUploadAvatarImage = "$_baseUrl/file/upload-avata";
+  static String apiUploadBannerImage = "$_baseUrl/file/upload-banner";
 
   // API search
   static String apiSearchPost(String? keyword) {
     return "$_baseUrl/search/posts?keyword=$keyword";
   }
+
   static String apiSearchUser(String? keyword) {
     return "$_baseUrl/search/accounts?keyword=$keyword";
   }

@@ -14,16 +14,48 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class Blogs extends ConsumerStatefulWidget {
   const Blogs({super.key});
+  @override
   ConsumerState<Blogs> createState() => _BlogsState();
 }
 
 class _BlogsState extends ConsumerState<Blogs> {
+  // FOR LOAD MORE
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _currentPage = 1;
+  Future<void>? _loadingFuture;
+
   @override
   void initState() {
     super.initState();
     fetchBlogs();
     fetchCate();
     fetchHotBlogs();
+    // FOR LOAD MORE
+    _scrollController.addListener(_onScroll);
+  }
+
+  // FOR LOAD MORE
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 50 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _loadMoreBlog();
+    }
+  }
+
+  // FOR LOAD MORE
+  Future<void> _loadMoreBlog() async {
+    if (_isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    _loadingFuture = fetchBlogs(page: _currentPage + 1);
+    await _loadingFuture;
+    setState(() {
+      _currentPage++;
+      _isLoadingMore = false;
+    });
   }
 
   Future<void> fetchHotBlogs() async {
@@ -34,11 +66,28 @@ class _BlogsState extends ConsumerState<Blogs> {
     }
   }
 
-  Future<void> fetchBlogs() async {
-    final blogService = BlogService();
-    final blogs = await blogService.getBlogs(ref);
-    if (blogs != null) {
-      ref.read(blogProvider.notifier).setBlogs(blogs);
+// FOR LOADMORE
+  Future<void> fetchBlogs({int page = 1}) async {
+    try {
+      final blogService = BlogService();
+      final blogs = await blogService.getBlogs('pageNo=$page');
+
+      if (blogs != null) {
+        if (page == 1) {
+          ref.read(blogProvider.notifier).setBlogs(blogs);
+        } else {
+          ref.read(blogProvider.notifier).addListBlog(blogs);
+        }
+        if (blogs.isEmpty) {
+          _hasMore = false;
+        }
+      } else {
+        _hasMore = false;
+      }
+    } catch (e) {
+      debugPrint('Error fetching blog: $e');
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -75,9 +124,9 @@ class _BlogsState extends ConsumerState<Blogs> {
                   width: 500,
                 )),
             Container(
-              padding:
-                  EdgeInsets.only(left: 10, top: 20, right: 10, bottom: 20),
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
               child: SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,23 +251,36 @@ class _BlogsState extends ConsumerState<Blogs> {
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                      ListView.builder(
+                    ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: blogData.length,
                       itemBuilder: (context, index) {
-                        final blog = blogData[index];
-                        return BlogsCard(
-                          blogItem: blog,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlogDetailScreen(blogId: blog.id),
-                              ),
-                            );
-                          },
-                        );
+                        if (index < blogData.length) {
+                          final blog = blogData[index];
+                          return BlogsCard(
+                            blogItem: blog,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BlogDetailScreen(blogId: blog.id),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          // FOR LOAD MORE
+                          return _hasMore
+                              ? const Center(child: CircularProgressIndicator())
+                              : const Padding(
+                                  padding: EdgeInsets.only(top: 8.0),
+                                  child: Center(
+                                      child: Text(
+                                          'Không còn dữ liệu để hiển thị')),
+                                );
+                        }
                       },
                     )
                   ],
