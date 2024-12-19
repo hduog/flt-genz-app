@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/service/features/feature_service.dart';
+import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
+import 'package:flutter_application_1/ui/view/info/ImageListPage.dart';
+import 'package:flutter_application_1/ui/view/info/PostListPage.dart';
+import 'package:flutter_application_1/ui/view/info/PostShareListPage.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/widget/feature.card.dart';
 import 'package:flutter_application_1/view-models/feature/feature.prvd.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -33,6 +38,22 @@ class _MenuPageState extends ConsumerState<MenuPage> {
     final featureService = FeatureService();
     final listFeature = await featureService.getAllFeature(ref);
     ref.read(featureProvider.notifier).setFeature(listFeature!);
+  }
+
+  Future<void> fetchPostShareProfile() async {
+    final postService = PostService();
+    final postShare = await postService.getMyPostShare(ref);
+    if (postShare != null) {
+      ref.read(postProvider.notifier).setPostShare(postShare);
+    }
+  }
+
+  Future<void> fetchPostProfile() async {
+    final postService = PostService();
+    final posts = await postService.getMyPosts(ref);
+    if (posts != null) {
+      ref.read(postProvider.notifier).setPosts(posts);
+    }
   }
 
   @override
@@ -123,19 +144,47 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ActionButton(
-                          icon: Icons.newspaper,
-                          label: '${profileInfo?.objectCount.posts} bài đăng'),
+                        icon: Icons.newspaper,
+                        label: '${profileInfo?.objectCount.posts} bài đăng',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PostListPage(),
+                            ),
+                          );
+                        },
+                      ),
                       ActionButton(
-                          icon: Icons.share,
-                          label:
-                              '${profileInfo?.objectCount.postShares} chia sẻ'),
+                        icon: Icons.share,
+                        label:
+                            '${profileInfo?.objectCount.postShares} bài chia sẻ',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PostShareListPage(),
+                            ),
+                          );
+                        },
+                      ),
                       ActionButton(
                           icon: Icons.favorite_outlined,
                           label:
-                              '${profileInfo?.objectCount.RequestFollow} yêu cầu'),
+                              '${profileInfo?.objectCount.RequestFollow} yêu cầu',
+                          onTap: () {}),
                       ActionButton(
-                          icon: Icons.add_circle_outline,
-                          label: '${profileInfo?.objectCount.images} bức ảnh'),
+                        icon: Icons.add_circle_outline,
+                        label: '${profileInfo?.objectCount.images} bức ảnh',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ImageListPage(),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],
@@ -286,29 +335,42 @@ class TransactionTile extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback onTap; // onTap callback
 
-  const ActionButton({super.key, required this.icon, required this.label});
+  const ActionButton({
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.onTap, // nhận onTap từ widget cha
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+    return GestureDetector(
+      onTap: onTap, // gọi onTap khi nhấn vào widget
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+            ),
+            child: Icon(icon, size: 28, color: const Color(0xFF5E3CE9)),
           ),
-          child: Icon(icon, size: 28, color: Color(0xFF5E3CE9)),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: const TextStyle(
-              color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-      ],
+          const SizedBox(height: 5),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

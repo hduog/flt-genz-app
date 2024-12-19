@@ -46,6 +46,7 @@ class ApiEndPointConstants {
 
   static String apiGetBlogById = "$_baseUrl/blog/:id";
   static String apiGetPostMySelf = "$_baseUrl/post/get-posts-account";
+  static String apiGetPostShareMySelf = "$_baseUrl/postshare/myself";
   static String apiCreatePostShare = "$_baseUrl/postshare";
   static String apiGetFavoriteTag = "$_baseUrl/favorite-tag";
   static String apiUploadAvatarImage = "$_baseUrl/file/upload-avata";

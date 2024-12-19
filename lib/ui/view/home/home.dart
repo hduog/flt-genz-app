@@ -92,11 +92,8 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     print(_scrollController);
 
-    final postData = ref.watch(postProvider);
-    final userInfo = ref.watch(userProvider);
-    if (postData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final postState = ref.watch(postProvider); 
+    final posts = postState.posts; 
 
     return SafeArea(
       child: Scaffold(
@@ -224,10 +221,10 @@ class _HomeState extends ConsumerState<Home> {
                             ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: postData.length + 1,
+                              itemCount: posts.length + 1,
                               itemBuilder: (context, index) {
-                                if (index < postData.length) {
-                                  final post = postData[index];
+                                if (index < posts.length) {
+                                  final post = posts[index];
                                   final comments = post.comment_recent ?? [];
                                   return GestureDetector(
                                     onTap: () {
