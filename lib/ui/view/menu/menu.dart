@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/service/features/feature_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
-import 'package:flutter_application_1/ui/view/menu/setting.dart';
+import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/widget/feature.card.dart';
 import 'package:flutter_application_1/view-models/feature/feature.prvd.dart';
 import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
@@ -98,7 +98,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MySettingsPage()));
+                                  builder: (context) => EditProfileScreen()));
                         },
                         icon: const Icon(Icons.settings,
                             color: Colors.white, size: 28),

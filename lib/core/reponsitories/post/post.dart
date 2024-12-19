@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_application_1/core/constants/end_point.dart';
-import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreatePost/ImageForCreatePost.dart';
+import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreate/ImageForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CreatePostShare.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
@@ -54,7 +54,7 @@ class PostRepo {
         ApiEndPointConstants.apiCreatePost, body, token);
   }
 
-  Future uploadPostImage(ImageForCreatePost body, String token) async {
+  Future uploadPostImage(ImageForCreate body, String token) async {
     final file = File(body.filePath);
     return await apiService.uploadImage(
         ApiEndPointConstants.apiUploadPostImage, file, token);
