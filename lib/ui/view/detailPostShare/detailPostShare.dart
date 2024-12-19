@@ -30,11 +30,18 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   bool isLiked = false;
   int countLike = 0;
   int countComment = 0;
+  int countShare = 0;
   List<CommentFullGet> listComment = [];
   bool _isExpanded = false;
   final TextEditingController _contentCmtController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _showAllComments = false;
+
+  void toggleContent() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
 
   @override
   void initState() {
@@ -43,6 +50,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
     isLiked = widget.postItem.is_liked ?? false;
     countLike = widget.postItem.totalReaction ?? 0;
     countComment = widget.postItem.totalComment ?? 0;
+    countShare = widget.postItem.totalShare ?? 0;
     getAllComment();
   }
 
@@ -181,19 +189,20 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                     maxLines: _isExpanded ? null : 3,
                   ),
                   GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isExpanded = !_isExpanded;
-                        });
-                      },
+                    onTap: toggleContent,
+                    child: Visibility(
+                      visible: widget.postItem.contentText!.isNotEmpty &&
+                          widget.postItem.contentText!.length > 100,
                       child: Text(
                         _isExpanded ? "Ẩn bớt" : "Xem thêm",
                         style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.blue,
+                          color: colorTextHeader,
                           fontWeight: FontWeight.bold,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   // POSTSHARED
                   Container(
@@ -222,7 +231,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                 children: [
                                   Text(
                                     widget.postItem.infoAuthorAndPost!.author
-                                            .fullName,
+                                        .fullName,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -238,11 +247,6 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                   ),
                                 ],
                               ),
-                            ),
-                            SvgPicture.asset(
-                              'assets/icons/dots-horizontal.svg',
-                              width: 24,
-                              height: 24,
                             ),
                           ],
                         ),
@@ -281,7 +285,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                           onReactionTap: _likePost),
                       _buildReactionInfo('comment', countComment,
                           onReactionTap: _showKeyboard),
-                      _buildReactionInfo('share', 0),
+                      _buildReactionInfo('icon_share', 0),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -408,92 +412,4 @@ Widget _buildReactionInfo(String iconName, int count,
       ),
     ),
   );
-}
-
-// show full screen image
-class FullScreenImage extends StatefulWidget {
-  final String? imageUrl;
-  final String content;
-
-  const FullScreenImage({
-    super.key,
-    this.imageUrl,
-    required this.content,
-  });
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _FullScreenImageState createState() => _FullScreenImageState();
-}
-
-class _FullScreenImageState extends State<FullScreenImage> {
-  bool _isExpanded = false;
-
-  void _toggleContent() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 4,
-            child: InteractiveViewer(
-              child: Image.network(
-                widget.imageUrl ?? '',
-                fit: BoxFit.contain,
-                height: double.infinity,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Use SingleChildScrollView for the content
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Text(
-                        _isExpanded
-                            ? widget.content
-                            : '${widget.content.substring(0, 100)}...',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: _toggleContent,
-                    child: Text(
-                      _isExpanded ? "Ẩn bớt" : "Xem thêm",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: colorTextHeader,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

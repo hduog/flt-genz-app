@@ -12,7 +12,6 @@ class FeatureCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(itemFeature.url),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,

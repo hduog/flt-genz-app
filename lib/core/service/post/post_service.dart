@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_application_1/core/data/models/CommentFullGet/CommentFullGet.dart';
-import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreatePost/ImageForCreatePost.dart';
+import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreate/ImageForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
+import 'package:flutter_application_1/core/data/models/PostModel/CreatePostShare.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/PostForCreate/PostForCreate.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
@@ -121,7 +122,7 @@ class PostService {
       }
 
       final response = await postRepo.uploadPostImage(
-        ImageForCreatePost(filePath: image.path),
+        ImageForCreate(filePath: image.path),
         token,
       );
 
@@ -175,11 +176,42 @@ class PostService {
   }
 
   Future<List<DataGet>?> getMyPosts(WidgetRef ref) async {
-    // final token = ref.read(authProvider);
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
     if (token != null) {
       final response = await postRepo.getPostMySelf(token);
+      if (response?.statusCode == 200) {
+        PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
+        return postInfo.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<DataGet>?> createPostShare(CreatePostShare data) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.createPostShare(data, token);
+      if (response?.statusCode == 200) {
+        PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
+        return postInfo.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<DataGet>?> getMyPostShare(WidgetRef ref) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.getPostShareMySelf(token);
       if (response?.statusCode == 200) {
         PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
         return postInfo.data;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/core/data/models/BlogModel/BlogData/BlogData.dart';
 import 'package:flutter_application_1/core/service/cateBlog/cateBlog_service.dart';
 import 'package:flutter_application_1/core/service/blog/blog_service.dart';
 import 'package:flutter_application_1/ui/view/blogs/detailblog.dart';
@@ -15,13 +14,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class Blogs extends ConsumerStatefulWidget {
   const Blogs({super.key});
+  @override
   ConsumerState<Blogs> createState() => _BlogsState();
 }
 
 class _BlogsState extends ConsumerState<Blogs> {
-  List<BlogData> filteredBlogs = []; 
-  bool isFiltered = false; 
-  bool noContent = false; 
+  // FOR LOAD MORE
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _currentPage = 1;
+  Future<void>? _loadingFuture;
 
   @override
   void initState() {
@@ -29,6 +32,30 @@ class _BlogsState extends ConsumerState<Blogs> {
     fetchBlogs();
     fetchCate();
     fetchHotBlogs();
+    // FOR LOAD MORE
+    _scrollController.addListener(_onScroll);
+  }
+
+  // FOR LOAD MORE
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 50 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _loadMoreBlog();
+    }
+  }
+
+  // FOR LOAD MORE
+  Future<void> _loadMoreBlog() async {
+    if (_isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    _loadingFuture = fetchBlogs(page: _currentPage + 1);
+    await _loadingFuture;
+    setState(() {
+      _currentPage++;
+      _isLoadingMore = false;
+    });
   }
 
   Future<void> fetchHotBlogs() async {
@@ -39,11 +66,28 @@ class _BlogsState extends ConsumerState<Blogs> {
     }
   }
 
-  Future<void> fetchBlogs() async {
-    final blogService = BlogService();
-    final blogs = await blogService.getBlogs(ref);
-    if (blogs != null) {
-      ref.read(blogProvider.notifier).setBlogs(blogs);
+// FOR LOADMORE
+  Future<void> fetchBlogs({int page = 1}) async {
+    try {
+      final blogService = BlogService();
+      final blogs = await blogService.getBlogs('pageNo=$page');
+
+      if (blogs != null) {
+        if (page == 1) {
+          ref.read(blogProvider.notifier).setBlogs(blogs);
+        } else {
+          ref.read(blogProvider.notifier).addListBlog(blogs);
+        }
+        if (blogs.isEmpty) {
+          _hasMore = false;
+        }
+      } else {
+        _hasMore = false;
+      }
+    } catch (e) {
+      debugPrint('Error fetching blog: $e');
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -55,31 +99,10 @@ class _BlogsState extends ConsumerState<Blogs> {
     }
   }
 
-  Future<void> fetchBlogsByCategory(String cateId) async {
-    try {
-      final blogService = BlogService();
-      final blogs = await blogService.getBlogsByCategory(cateId, ref);
-      if (blogs != null) {
-        setState(() {
-          if (blogs.isEmpty) {
-            noContent = true; 
-          } else {
-            filteredBlogs = blogs; 
-            isFiltered = true; 
-            noContent =
-                false; 
-          }
-        });
-      }
-    } catch (e) {
-      print('Error fetching blogs by category: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final cateBlogData = ref.watch(cateBlogProvider);
-    final blogData = isFiltered ? filteredBlogs : ref.watch(blogProvider);
+    final blogData = ref.watch(blogProvider);
     final hotBlogData = ref.watch(hotBlogProvider);
 
     if (cateBlogData.isEmpty || blogData.isEmpty) {
@@ -101,15 +124,15 @@ class _BlogsState extends ConsumerState<Blogs> {
                   width: 500,
                 )),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
               child: SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.vertical,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Logo và tiêu đề
                     Container(
-                      margin: const EdgeInsets.only(bottom: 20),
+                      margin: EdgeInsets.only(bottom: 20),
                       child: SizedBox(
                           width: 210,
                           child: Row(
@@ -138,11 +161,10 @@ class _BlogsState extends ConsumerState<Blogs> {
                       "Nơi khám phá và chia sẻ về sức khỏe tình thần",
                       style: TextStyle(color: colorTextSubPart),
                     ),
-                    // Thanh tìm kiếm
                     Container(
                       height: 40,
-                      margin: const EdgeInsets.only(top: 20, bottom: 5),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      margin: EdgeInsets.only(top: 20, bottom: 5),
+                      padding: EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           border: Border.all(color: colorIconActive),
                           borderRadius: BorderRadius.circular(20)),
@@ -156,7 +178,7 @@ class _BlogsState extends ConsumerState<Blogs> {
                                 width: 25,
                                 height: 25,
                               ),
-                              const SizedBox(width: 20),
+                              SizedBox(width: 20),
                               SizedBox(
                                 width: 200,
                                 child: TextField(
@@ -178,7 +200,6 @@ class _BlogsState extends ConsumerState<Blogs> {
                         ],
                       ),
                     ),
-                    // Danh mục bài viết
                     Container(
                       height: 40,
                       margin: const EdgeInsets.only(bottom: 15.0),
@@ -190,16 +211,11 @@ class _BlogsState extends ConsumerState<Blogs> {
                           final cateBlogs = cateBlogData[index];
                           return Padding(
                             padding: const EdgeInsets.only(),
-                            child: CateBlogCard(
-                              cateBlogItem: cateBlogs,
-                              onCategorySelected: (cateId) =>
-                                  fetchBlogsByCategory(cateId),
-                            ),
+                            child: CateBlogCard(cateBlogItem: cateBlogs),
                           );
                         },
                       ),
                     ),
-                    // Bài viết nổi bật
                     const Text(
                       "Bài viết nổi bật",
                       style:
@@ -215,8 +231,7 @@ class _BlogsState extends ConsumerState<Blogs> {
                         itemCount: hotBlogData
                             .length, // Đảm bảo cung cấp số phần tử cho ListView
                         itemBuilder: (context, index) {
-                          final hotBlog = hotBlogData[
-                              index]; // Lấy từng bài viết trong danh sách
+                          final hotBlogs = hotBlogData[index];
                           if (hotBlogData.isEmpty) {
                             return Center(
                                 child: Text("No hot blogs available"));
@@ -224,57 +239,50 @@ class _BlogsState extends ConsumerState<Blogs> {
                           return Padding(
                             padding: const EdgeInsets.only(
                                 right: 16.0), // Khoảng cách giữa các Card
-                            child: GestureDetector(
-                              onTap: () {
-                                // Điều hướng đến chi tiết bài viết khi nhấn vào bài hotBlog
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BlogDetailScreen(
-                                        blogId: hotBlog
-                                            .id), // Truyền ID bài viết đúng
-                                  ),
-                                );
-                              },
-                              child: BlogsImageCard(
-                                hotBlogItems: [
-                                  hotBlog
-                                ], // Gọi widget BlogsImageCard cho bài hotBlog
-                              ),
-                            ),
+                            child: BlogsImageCard(
+                                hotBlogItems:
+                                    hotBlogData), // Gọi widget BlogsImageCard
                           );
                         },
                       ),
                     ),
-
-                    // Bài viết đề xuất
                     const Text(
                       "Đề xuất cho bạn",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
-                    noContent
-                        ? const Center(child: Text("Không có nội dung"))
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: blogData.length,
-                            itemBuilder: (context, index) {
-                              final blog = blogData[index];
-                              return BlogsCard(
-                                blogItem: blog,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          BlogDetailScreen(blogId: blog.id),
-                                    ),
-                                  );
-                                },
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: blogData.length,
+                      itemBuilder: (context, index) {
+                        if (index < blogData.length) {
+                          final blog = blogData[index];
+                          return BlogsCard(
+                            blogItem: blog,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BlogDetailScreen(blogId: blog.id),
+                                ),
                               );
                             },
-                          ),
+                          );
+                        } else {
+                          // FOR LOAD MORE
+                          return _hasMore
+                              ? const Center(child: CircularProgressIndicator())
+                              : const Padding(
+                                  padding: EdgeInsets.only(top: 8.0),
+                                  child: Center(
+                                      child: Text(
+                                          'Không còn dữ liệu để hiển thị')),
+                                );
+                        }
+                      },
+                    )
                   ],
                 ),
               ),
