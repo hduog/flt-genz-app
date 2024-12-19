@@ -68,4 +68,8 @@ class PostRepo {
     return await apiService.postWithToken(
         ApiEndPointConstants.apiCreatePostShare, data, token);
   }
+
+  Future getPostShareMySelf(String token) async {
+    return await apiService.get(ApiEndPointConstants.apiGetPostShareMySelf, token);
+  }
 }
