@@ -410,7 +410,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                           onReactionTap: _likePost),
                       _buildReactionInfo('comment', countComment,
                           onReactionTap: _showKeyboard),
-                      _buildReactionInfo('share', countShare,
+                      _buildReactionInfo('icon_share', countShare,
                           onReactionTap: () => _showShareModal(context)),
                     ],
                   ),

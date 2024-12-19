@@ -137,20 +137,13 @@ class _HomeState extends ConsumerState<Home> {
                               ],
                             ),
                           ),
+                          const SizedBox(width: 45),
                           Row(
                             children: [
                               IconButton(
                                 icon: const Icon(
                                   size: 30,
                                   Icons.search,
-                                  color: colorTextDefault,
-                                ),
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  size: 30,
-                                  Icons.notifications_none,
                                   color: colorTextDefault,
                                 ),
                                 onPressed: () {},

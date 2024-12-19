@@ -231,7 +231,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                 children: [
                                   Text(
                                     widget.postItem.infoAuthorAndPost!.author
-                                            .fullName,
+                                        .fullName,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black,
@@ -248,7 +248,6 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                 ],
                               ),
                             ),
-                            
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -286,7 +285,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                           onReactionTap: _likePost),
                       _buildReactionInfo('comment', countComment,
                           onReactionTap: _showKeyboard),
-                      _buildReactionInfo('share', 0),
+                      _buildReactionInfo('icon_share', 0),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -414,4 +413,3 @@ Widget _buildReactionInfo(String iconName, int count,
     ),
   );
 }
-

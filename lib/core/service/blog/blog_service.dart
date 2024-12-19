@@ -16,10 +16,10 @@ class BlogService {
   }
 
   // Lấy các blog
-  Future<List<BlogData>?> getBlogs(WidgetRef ref) async {
+  Future<List<BlogData>?> getBlogs(String? query) async {
     final token = await _getToken();
     if (token.isNotEmpty) {
-      final response = await blogRepo.getBlog(token);
+      final response = await blogRepo.getBlog(token, query);
       if (response != null &&
           response.statusCode == 200 &&
           response.data != null) {
@@ -53,18 +53,15 @@ class BlogService {
       final prefs = await SharedPreferences.getInstance();
       final String token = prefs.getString('access_token') ?? '';
       if (token.isEmpty) {
-        print("Token không tồn tại hoặc rỗng.");
         return null;
       }
       final response = await blogRepo.getBlogById(token, id);
       if (response != null && response.statusCode == 200) {
         BlogDetail blogById = BlogDetail.fromJson(response.data);
         return blogById;
-      } else {
-        print("API trả về lỗi: ${response?.statusCode} - ${response?.data}");
-      }
+      } else {}
     } catch (e) {
-      print("Lỗi khi gọi API getBlogById: $e");
+      print(e);
     }
 
     return null;
