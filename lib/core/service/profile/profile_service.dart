@@ -3,12 +3,11 @@ import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreate/
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileUpdateRespone/ProfileUpdateRespone.dart';
 import 'package:flutter_application_1/core/reponsitories/profile/profile.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
   final profileRepo = ProfileRepo();
-  Future<ProfileData> getMyProfile(WidgetRef ref) async {
+  Future<ProfileData> getMyProfile() async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
 
@@ -26,7 +25,7 @@ class ProfileService {
   }
 
   Future<ProfileUpdateRespone> patchMyProfile(
-       Map<String, dynamic> updatedData) async {
+      Map<String, dynamic> updatedData) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';
 

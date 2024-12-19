@@ -91,101 +91,85 @@ class _CreatePostState extends ConsumerState<CreatePost> {
     final postService = PostService();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: colorBackground,
-        title: const Text(
-          'Tạo bài viết',
-          style: TextStyle(fontSize: 14),
-        ),
-        centerTitle: true,
-        actions: [
-          isLoading
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () => _createPost(postService, userInfo),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Đăng',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15.0,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ),
-                ),
-        ],
-      ),
       body: Container(
+        margin: EdgeInsets.only(top: 30),
         color: colorBackground,
         child: Column(
           children: [
-            ListTile(
-              leading: UserAvatar(
-                account: userInfo!,
-                height: 40,
-                width: 40,
-              ),
-              title: Text(userInfo.fullName),
-              subtitle: PopupMenuButton<String>(
-                onSelected: (String value) =>
-                    setState(() => selectedPrivacy = value),
-                initialValue: selectedPrivacy,
-                itemBuilder: (BuildContext context) => [
-                  _buildPrivacyMenuItem(
-                      SvgPicture.asset(
-                        'assets/icons/public.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                      'Mọi người',
-                      Constants.PUBLIC),
-                  _buildPrivacyMenuItem(
-                      SvgPicture.asset(
-                        'assets/icons/group.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                      'Người theo dõi',
-                      Constants.FOLLOW),
-                  _buildPrivacyMenuItem(
-                      SvgPicture.asset(
-                        'assets/icons/lock_grey.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                      'Chỉ mình tôi',
-                      Constants.PRIVATE),
-                ],
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      selectedPrivacy == Constants.PUBLIC
-                          ? 'assets/icons/public.svg'
-                          : selectedPrivacy == Constants.FOLLOW
-                              ? 'assets/icons/group.svg'
-                              : 'assets/icons/lock_grey.svg',
-                      width: 24,
-                      height: 24,
+            Row(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    leading: UserAvatar(
+                      account: userInfo!,
+                      height: 40,
+                      width: 40,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      selectedPrivacy == Constants.PUBLIC
-                          ? 'Mọi người'
-                          : selectedPrivacy == Constants.FOLLOW
-                              ? 'Người theo dõi'
-                              : 'Chỉ mình tôi',
-                      style: const TextStyle(color: Colors.black),
+                    title: Text(userInfo.fullName),
+                    subtitle: PopupMenuButton<String>(
+                      onSelected: (String value) =>
+                          setState(() => selectedPrivacy = value),
+                      initialValue: selectedPrivacy,
+                      itemBuilder: (BuildContext context) => [
+                        _buildPrivacyMenuItem(
+                            SvgPicture.asset(
+                              'assets/icons/public.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                            'Mọi người',
+                            Constants.PUBLIC),
+                        _buildPrivacyMenuItem(
+                            SvgPicture.asset(
+                              'assets/icons/group.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                            'Người theo dõi',
+                            Constants.FOLLOW),
+                        _buildPrivacyMenuItem(
+                            SvgPicture.asset(
+                              'assets/icons/lock_grey.svg',
+                              width: 24,
+                              height: 24,
+                            ),
+                            'Chỉ mình tôi',
+                            Constants.PRIVATE),
+                      ],
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            selectedPrivacy == Constants.PUBLIC
+                                ? 'assets/icons/public.svg'
+                                : selectedPrivacy == Constants.FOLLOW
+                                    ? 'assets/icons/group.svg'
+                                    : 'assets/icons/lock_grey.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            selectedPrivacy == Constants.PUBLIC
+                                ? 'Mọi người'
+                                : selectedPrivacy == Constants.FOLLOW
+                                    ? 'Người theo dõi'
+                                    : 'Chỉ mình tôi',
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                TextButton(
+                    onPressed: () => _createPost(postService, userInfo),
+                    child: const Text(
+                      'Đăng',
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
+                    )),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),

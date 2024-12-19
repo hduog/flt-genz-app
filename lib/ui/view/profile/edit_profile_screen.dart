@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/FavoriteTagData/FavoriteTagData.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/FavoriteData/FavoriteData.dart';
+import 'package:flutter_application_1/core/service/favorite-tag/favorite-tag_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
 import 'package:flutter_application_1/view-models/favorite-tag/favorite-tag.prvd.dart';
 import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
@@ -27,7 +28,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final TextEditingController aboutMeController = TextEditingController();
   final TextEditingController avatarPathController = TextEditingController();
   final TextEditingController bannerPathController = TextEditingController();
-  
+
   late List<FavoriteData> favorites = [];
   File? _avatarImage;
   File? _bannerImage;
@@ -38,12 +39,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void initState() {
     super.initState();
     fetchProfile();
+    fetchListFavorite();
   }
 
   Future<void> fetchProfile() async {
     final profileService = ProfileService();
     try {
-      final profile = await profileService.getMyProfile(ref);
+      final profile = await profileService.getMyProfile();
       if (profile != null) {
         ref.read(profileProvider.notifier).setMyProfile(profile);
         setState(() {
@@ -62,6 +64,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch profile: $e')),
       );
+    }
+  }
+
+  Future<void> fetchListFavorite() async {
+    final featureService = FavoriteTagService();
+    final listFavorite = await featureService.getAllFavoriteTags();
+    if (listFavorite != null) {
+      ref.read(favoriteTagProvider.notifier).setFavoriteTag(listFavorite);
     }
   }
 
@@ -96,7 +106,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    if (fullNameController.text.trim().isEmpty || phoneController.text.trim().isEmpty) {
+    if (fullNameController.text.trim().isEmpty ||
+        phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Họ và tên, Số điện thoại là bắt buộc')),
       );
@@ -106,17 +117,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final profileService = ProfileService();
       String? avatarUrl;
       String? bannerUrl;
-      if (_avatarImage != null) avatarUrl = await profileService.uploadAvatarImage(_avatarImage!);
-      if (_bannerImage != null) bannerUrl = await profileService.uploadBannerImage(_bannerImage!);
+      if (_avatarImage != null)
+        avatarUrl = await profileService.uploadAvatarImage(_avatarImage!);
+      if (_bannerImage != null)
+        bannerUrl = await profileService.uploadBannerImage(_bannerImage!);
 
       final updatedData = {
         "fullName": fullNameController.text,
         "nickName": nickNameController.text,
         "phone": phoneController.text,
         "email": emailController.text,
-        "birth": selectedBirthDate?.toUtc().toIso8601String() ?? 
-                  (birthController.text.isNotEmpty ? DateFormat('dd/MM/yyyy')
-                     .parse(birthController.text).toUtc().toIso8601String() : null),
+        "birth": selectedBirthDate?.toUtc().toIso8601String() ??
+            (birthController.text.isNotEmpty
+                ? DateFormat('dd/MM/yyyy')
+                    .parse(birthController.text)
+                    .toUtc()
+                    .toIso8601String()
+                : null),
         "aboutMe": aboutMeController.text,
         "avata": {
           "isDelete": _avatarImage == null && avatarPathController.text.isEmpty,
@@ -182,7 +199,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       },
     );
 
-    if (selectedFavorite != null && !favorites.any((fav) => fav.id == selectedFavorite.id)) {
+    if (selectedFavorite != null &&
+        !favorites.any((fav) => fav.id == selectedFavorite.id)) {
       setState(() {
         favorites.add(FavoriteData(
           id: selectedFavorite.id,
@@ -196,7 +214,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
   }
 
-  Widget buildTextField(String label, TextEditingController controller, {bool readOnly = false, VoidCallback? onTap}) {
+  Widget buildTextField(String label, TextEditingController controller,
+      {bool readOnly = false, VoidCallback? onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
@@ -222,9 +241,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               Navigator.of(context).pop();
             },
           ),
-          title: const Text(
-            'Chỉnh sửa thông tin',
-            style: TextStyle(fontSize: 20),
+          title: const Center(
+            child: Text(
+              'Chỉnh sửa thông tin',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ),
           actions: [
             TextButton(
@@ -241,7 +262,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-                    children: [
+          children: [
             GestureDetector(
               onTap: () => _pickImage(ImageSource.gallery, false),
               child: Container(
@@ -252,8 +273,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     image: _bannerImage != null
                         ? FileImage(_bannerImage!)
                         : (bannerPathController.text.isNotEmpty
-                            ? NetworkImage('${Constants.awsUrl}${bannerPathController.text}')
-                            : const AssetImage('assets/images/reels-test.png')) as ImageProvider,
+                            ? NetworkImage(
+                                '${Constants.awsUrl}${bannerPathController.text}')
+                            : const AssetImage(
+                                'assets/images/reels-test.png')) as ImageProvider,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -280,8 +303,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 backgroundImage: _avatarImage != null
                     ? FileImage(_avatarImage!)
                     : (avatarPathController.text.isNotEmpty
-                        ? NetworkImage('${Constants.awsUrl}${avatarPathController.text}')
-                        : const AssetImage('assets/images/reels-test.png')) as ImageProvider,
+                        ? NetworkImage(
+                            '${Constants.awsUrl}${avatarPathController.text}')
+                        : const AssetImage(
+                            'assets/images/reels-test.png')) as ImageProvider,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: SvgPicture.asset(
