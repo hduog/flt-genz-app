@@ -51,4 +51,13 @@ class ApiEndPointConstants {
   static String apiGetFavoriteTag = "$_baseUrl/favorite-tag";
   static String apiUploadAvatarImage = "$_baseUrl/file/upload-avata";
   static String apiUploadBannerImage = "$_baseUrl/file/upload-banner";
+
+  // API search
+  static String apiSearchPost(String? keyword) {
+    return "$_baseUrl/search/posts?keyword=$keyword";
+  }
+
+  static String apiSearchUser(String? keyword) {
+    return "$_baseUrl/search/accounts?keyword=$keyword";
+  }
 }

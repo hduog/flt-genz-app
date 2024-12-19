@@ -4,6 +4,7 @@ import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
 import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
+import 'package:flutter_application_1/ui/view/search/searchPage.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
@@ -146,8 +147,16 @@ class _HomeState extends ConsumerState<Home> {
                                   Icons.search,
                                   color: colorTextDefault,
                                 ),
-                                onPressed: () {},
-                              ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                    builder: (context) => SearchScreen(),
+                                  ),
+                                );
+                                }
+                                ),
+                              
                               IconButton(
                                 icon: const Icon(
                                   size: 30,
