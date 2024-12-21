@@ -11,4 +11,8 @@ class ProfileRepo {
   final path = ApiEndPointConstants.apiPatchMyProfile.replaceAll(":id", id);
   return await apiService.patch(path, data, token);
 }
+Future getProfileOtherAccount(String token, String id) async {
+    return await apiService.get(ApiEndPointConstants.apiOtherAccountProfile(id),token);
+  }
+
 }

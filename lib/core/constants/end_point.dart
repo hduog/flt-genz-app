@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://10.0.0.2:3003/api";
+  static const String _baseUrl = "http://172.16.0.115:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -43,4 +43,17 @@ class ApiEndPointConstants {
   static String apiGetBlogById = "$_baseUrl/blog/:id";
   static String apiGetPostMySelf = "$_baseUrl/post/get-posts-account";
   static String apiCreatePostShare = "$_baseUrl/postshare";
+
+  static String apiGetPostShareMySelf = "$_baseUrl/postshare/myself";
+
+  //Profile Other 
+   static String apiOtherAccountProfile (String? id) {
+    return "$_baseUrl/user/other-account-profile/$id";
+  }
+  static String apiPostOtherAccountProfile (String? id) {
+    return "$_baseUrl/post/get-posts-other-account/$id";
+  }
+  static String apiPostShareOtherAccountProfile (String? id) {
+    return "$_baseUrl/postshare/accounts/$id";
+  }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileOtherAccountData/ProfileOtherAccountData.dart';
+import 'package:flutter_application_1/ui/view/profile/profileOther/profileOther.dart';
 
 class FollowerScreen extends StatelessWidget {
   final ProfileData profileInfo;
-
-  const FollowerScreen({super.key, required this.profileInfo});
+  // final ProfileOtherAccountData profileOtherData;
+  const FollowerScreen(
+      {super.key, required this.profileInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +52,6 @@ class FollowerScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
 
-              // Hiển thị danh sách người theo dõi
               if (profileInfo.follower == null || profileInfo.follower!.isEmpty)
                 const Center(
                   child: Padding(
@@ -65,7 +67,8 @@ class FollowerScreen extends StatelessWidget {
                 )
               else ...[
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     "Tất cả người theo dõi",
                     style: TextStyle(
@@ -87,6 +90,14 @@ class FollowerScreen extends StatelessWidget {
                       ),
                       title: Text(user.fullName),
                       subtitle: Text(user.nickName ?? ""),
+                      onTap: () {
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileOtherScreen(accountId: user.id), 
+                          ),
+                        );
+                      },
                       trailing: ElevatedButton(
                         onPressed: () {
                           // Xử lý sự kiện "Gỡ"

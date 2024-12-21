@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
+import 'package:flutter_application_1/ui/view/profile/profileOther/profileOther.dart';
 
 class FollowingScreen extends StatelessWidget {
   final ProfileData profileInfo;
@@ -66,6 +67,13 @@ class FollowingScreen extends StatelessWidget {
                       ),
                       title: Text(user.fullName),
                       subtitle: Text(user.nickName ?? ""),
+                       onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileOtherScreen(accountId: user.id), 
+                          ),
+                        );
+                      },
                       trailing: ElevatedButton(
                         onPressed: () {
                          

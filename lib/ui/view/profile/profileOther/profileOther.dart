@@ -6,47 +6,52 @@ import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
 import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/view/profile/follow.dart';
+import 'package:flutter_application_1/ui/widget/profile/followButton.dart';
 import 'package:flutter_application_1/ui/widget/profile/infor_profile.dart';
 import 'package:flutter_application_1/ui/widget/profile/tag_profile.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_application_1/view-models/profile/profile.prvd.dart';
+import 'package:flutter_application_1/view-models/profile/profileother.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
-  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+class ProfileOtherScreen extends ConsumerStatefulWidget {
+  final String accountId;
+  const ProfileOtherScreen({required this.accountId, super.key});
+  ConsumerState<ProfileOtherScreen> createState() => _ProfileOtherScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+class _ProfileOtherScreenState extends ConsumerState<ProfileOtherScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProfile();
-    fetchPostProfile();
-    fetchPostShareProfile();
+    fetchProfileOther(widget.accountId);
+    fetchPostProfileOther(widget.accountId);
+    fetchPostShareProfileOther(widget.accountId);
   }
 
-  Future<void> fetchProfile() async {
+  Future<void> fetchProfileOther(String accountId) async {
     final profileService = ProfileService();
-    final profile = await profileService.getMyProfile(ref);
-    if (profile != null) {
-      ref.read(profileProvider.notifier).setMyProfile(profile);
+    final profileOther =
+        await profileService.getProfileOtherAccount(ref, accountId);
+    if (profileOther != null) {
+      ref.read(profileOtherProvider.notifier).setOtherProfile(profileOther);
     }
   }
 
-  Future<void> fetchPostProfile() async {
+  Future<void> fetchPostProfileOther(String accountId) async {
     final postService = PostService();
-    final posts = await postService.getMyPosts(ref);
+    final posts = await postService.getPostOtherAccounts(ref, accountId);
     if (posts != null) {
       ref.read(postProvider.notifier).setPosts(posts);
     }
   }
 
-  Future<void> fetchPostShareProfile() async {
+  Future<void> fetchPostShareProfileOther(String accountId) async {
     final postService = PostService();
-    final postShare = await postService.getMyPostShare(ref);
+    final postShare =
+        await postService.getPostShareOtherAccounts(ref, accountId);
     if (postShare != null) {
       ref.read(postProvider.notifier).setPostShare(postShare);
     }
@@ -54,14 +59,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profileInfo = ref.watch(profileProvider);
+    final profileInfo = ref.watch(profileOtherProvider);
     final posts = ref.watch(postProvider).posts;
     final postShares = ref.watch(postProvider).postShares;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          profileInfo?.user.fullName ?? "",
+          profileInfo?.profileOtherAccount.user.fullName ?? "",
           style: const TextStyle(fontSize: 18, color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -89,7 +94,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             height: 200,
                             color: Colors.blueAccent.withOpacity(0.8),
                             child: Image.network(
-                              '${Constants.awsUrl}${profileInfo!.user.banner ?? ""}',
+                              '${Constants.awsUrl}${profileInfo?.profileOtherAccount.user.banner ?? ""}',
                               fit: BoxFit.cover,
                               width: bannerWidth,
                             ),
@@ -103,21 +108,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         child: CircleAvatar(
                           radius: 50,
                           backgroundImage: NetworkImage(
-                              '${Constants.awsUrl}${profileInfo!.user.avata ?? ''}'),
+                              '${Constants.awsUrl}${profileInfo?.profileOtherAccount.user.avata ?? ''}'),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 50),
                   Text(
-                    profileInfo.user.fullName,
+                    profileInfo?.profileOtherAccount.user.fullName ?? "",
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
-                      profileInfo.user.nickName,
+                      profileInfo?.profileOtherAccount.user.nickName ?? "",
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 14, color: Colors.black),
                     ),
@@ -131,12 +136,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => FollowTabScreen(
-                                  tabFollow: 0, profileInfo: profileInfo),
+                                  tabFollow: 0,
+                                  profileInfo:
+                                      profileInfo!.profileOtherAccount),
                             ),
                           );
                         },
                         child: Text(
-                            '${profileInfo.objectCount.followers} Followers'),
+                            '${profileInfo?.profileOtherAccount.objectCount.followers} Followers'),
                       ),
                       const SizedBox(width: 20),
                       GestureDetector(
@@ -145,60 +152,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => FollowTabScreen(
-                                  tabFollow: 1, profileInfo: profileInfo),
+                                  tabFollow: 1,
+                                  profileInfo:
+                                      profileInfo!.profileOtherAccount),
                             ),
                           );
                         },
                         child: Text(
-                            '${profileInfo.objectCount.followings} Followings'),
+                            '${profileInfo?.profileOtherAccount.objectCount.followings} Followings'),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   const TagProfile(),
                   const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditProfileScreen()),
-                          );
-                        },
-                        child: const Text(
-                          "Chỉnh sửa hồ sơ",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: colorButton,
-                          side: const BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => InforProfileScreen(
-                                      profile: profileInfo,
-                                    )),
-                          );
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/dots-vertical.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                      )
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     ElevatedButton(
+                  //       onPressed: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => EditProfileScreen()),
+                  //         );
+                  //       },
+                  //       child: const Text(
+                  //         "Chỉnh sửa hồ sơ",
+                  //         style: TextStyle(color: Colors.white),
+                  //       ),
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: colorButton,
+                  //         side: const BorderSide(color: Colors.grey),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(10),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 10),
+                  //     InkWell(
+                  //       onTap: () {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => InforProfileScreen(
+                  //                     profile: profileInfo.profileOtherAccount,
+                  //                   )),
+                  //         );
+                  //       },
+                  //       child: SvgPicture.asset(
+                  //         'assets/icons/dots-vertical.svg',
+                  //         width: 24,
+                  //         height: 24,
+                  //       ),
+                  //     )
+                  //   ],
+                  // ),
+                  FollowButton(),
                 ],
               ),
             ),
@@ -271,9 +281,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           mainAxisSpacing: 4.0,
                           crossAxisSpacing: 4.0,
                         ),
-                        itemCount: profileInfo!.image!.length,
+                        itemCount:
+                            profileInfo?.profileOtherAccount.image?.length ??
+                                0, 
                         itemBuilder: (context, index) {
-                          final photo = profileInfo.image![index];
+                          final photo =
+                              profileInfo?.profileOtherAccount.image?[index];
+                          if (photo?.path == null || photo!.path.isEmpty) {
+                            return const SizedBox
+                                .shrink(); 
+                          }
                           return Image.network(
                             '${Constants.awsUrl}${photo.path}',
                             fit: BoxFit.cover,

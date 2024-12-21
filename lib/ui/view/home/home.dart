@@ -93,11 +93,9 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     print(_scrollController);
 
-    final postData = ref.watch(postProvider);
+    final postState = ref.watch(postProvider); 
+    final posts = postState.posts; 
     final userInfo = ref.watch(userProvider);
-    if (postData.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
 
     return SafeArea(
       child: Scaffold(
@@ -355,10 +353,11 @@ class _HomeState extends ConsumerState<Home> {
                               ListView.builder(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: postData.length + 1,
+                                itemCount: posts.length +
+                                    1, 
                                 itemBuilder: (context, index) {
-                                  if (index < postData.length) {
-                                    final post = postData[index];
+                                  if (index < posts.length) {
+                                    final post = posts[index];
                                     final comments = post.comment_recent ?? [];
                                     return GestureDetector(
                                       onTap: () {
@@ -394,9 +393,8 @@ class _HomeState extends ConsumerState<Home> {
                                         ? const Center(
                                             child: CircularProgressIndicator())
                                         : const Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 8.0),
-                                            child: const Center(
+                                            padding: EdgeInsets.only(top: 8.0),
+                                            child: Center(
                                                 child: Text(
                                                     'Không còn dữ liệu để hiển thị')),
                                           );

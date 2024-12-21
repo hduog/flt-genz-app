@@ -208,4 +208,56 @@ class PostService {
       return null;
     }
   }
+
+  Future<List<DataGet>?> getMyPostShare(WidgetRef ref) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await postRepo.getPostShareMySelf(token);
+      if (response?.statusCode == 200) {
+        PostInfoGet postInfo = PostInfoGet.fromJson(response.data);
+        return postInfo.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+//Other Account 
+Future<List<DataGet>?> getPostOtherAccounts(WidgetRef ref, String id) async {
+    // final token = ref.read(authProvider);
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token != null) { 
+      final response = await postRepo.getPostOtherAccount(token, id);
+      if (response?.statusCode == 200) {
+        PostInfoGet postOtherAccount = PostInfoGet.fromJson(response.data);
+        return postOtherAccount.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+Future<List<DataGet>?> getPostShareOtherAccounts(WidgetRef ref, String id) async {
+    // final token = ref.read(authProvider);
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token != null) { 
+      final response = await postRepo.getPostShareOtherAccount(token, id);
+      if (response?.statusCode == 200) {
+        PostInfoGet postOtherAccount = PostInfoGet.fromJson(response.data);
+        return postOtherAccount.data;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+
 }
