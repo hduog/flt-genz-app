@@ -41,6 +41,7 @@ class Constants {
   static const String PUBLIC = "genzmth@pms_p_345432";
   static const String PRIVATE = "genzmth@pms_p_887123";
   static const String FOLLOW = "genzmth@pms_p_6673892";
+  static const String ID_CHAT_AI = "0308051202024GZMTH";
 }
 
 String? formatDate(String? dateStr) {
@@ -49,6 +50,7 @@ String? formatDate(String? dateStr) {
   final formatter = DateFormat('dd/MM/yyyy HH:mm');
   return formatter.format(dateTime);
 }
+
 String? formatBirth(String? dateStr) {
   if (dateStr == null) return null;
   final dateTime = DateTime.parse(dateStr).toLocal();
