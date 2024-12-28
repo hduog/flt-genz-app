@@ -4,6 +4,7 @@ import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
 import 'package:flutter_application_1/ui/view/detailPostShare/detailPostShare.dart';
+import 'package:flutter_application_1/ui/view/messenger/messenger.dart';
 import 'package:flutter_application_1/ui/view/search/searchPage.dart';
 import 'package:flutter_application_1/ui/widget/reel-card.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
@@ -93,8 +94,8 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     print(_scrollController);
 
-    final postState = ref.watch(postProvider); 
-    final posts = postState.posts; 
+    final postState = ref.watch(postProvider);
+    final posts = postState.posts;
 
     return SafeArea(
       child: Scaffold(
@@ -142,28 +143,33 @@ class _HomeState extends ConsumerState<Home> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(
-                                  size: 30,
-                                  Icons.search,
-                                  color: colorTextDefault,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                    builder: (context) => SearchScreen(),
+                                  icon: const Icon(
+                                    size: 30,
+                                    Icons.search,
+                                    color: colorTextDefault,
                                   ),
-                                );
-                                }
-                                ),
-                              
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchScreen(),
+                                      ),
+                                    );
+                                  }),
                               IconButton(
                                 icon: const Icon(
                                   size: 30,
                                   Icons.send_outlined,
                                   color: colorTextDefault,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MessengerScreen(),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),

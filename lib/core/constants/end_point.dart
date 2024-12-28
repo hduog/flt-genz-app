@@ -38,6 +38,8 @@ class ApiEndPointConstants {
   // API send to AI
   static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
   static String apiGetAllFeatures = "$_baseUrl/feature";
+  static String apiPostRoomMessageAI = "$_baseUrl/room-message/";
+  static String apiGetRoomMessageAI = "$_baseUrl/room-message/chat-bot";
 
   static String apiCreatePost = "$_baseUrl/post";
   static String apiUploadPostImage = "$_baseUrl/file/upload-posts";
@@ -60,4 +62,11 @@ class ApiEndPointConstants {
   static String apiSearchUser(String? keyword) {
     return "$_baseUrl/search/accounts?keyword=$keyword";
   }
+
+  // API message
+  static String apiGetMessageInRoom(String? idRoom) {
+    return "$_baseUrl/room-message/messages/$idRoom";
+  }
+
+  static String apiPostMessageToChatAIRoom = "$_baseUrl/chat-bot";
 }
