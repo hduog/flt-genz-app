@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/Search/SearchModel/SearchModel.dart';
+import 'package:flutter_application_1/core/data/models/Search/SearchPostResponse/SearchPostResponse.dart';
+import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
 
 class SearchCard extends StatelessWidget {
   final dynamic item;
@@ -16,18 +18,7 @@ class SearchCard extends StatelessWidget {
       final user = item as SearchUser;
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.all(8), 
         child: Row(
           children: [
             // Avatar
@@ -70,67 +61,82 @@ class SearchCard extends StatelessWidget {
           ],
         ),
       );
-    } else if (item is SearchPosts) {
-      final post = item as SearchPosts;
-      return Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+    } else if (item is SearchPostResponse) {
+      final post = item as SearchPostResponse;
+      
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostDetailPage(postId: post.id),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundImage: post.account.avata.isNotEmpty
-                  ? NetworkImage('${Constants.awsUrl}${post.account.avata}')
-                  : null,
-              child: post.account.avata.isEmpty
-                  ? const Icon(Icons.person, size: 24)
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(top: 10, right: 4, left: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    post.account.fullName,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage(
+                      '${Constants.awsUrl}${post.account.avata ?? ''}',
                     ),
                   ),
-                  Text(
-                    post.created_at,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          post.account.fullName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          post.created_at ?? "DD/MM/YYYY HH:mm",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    post.contentText,
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ),
-                    maxLines: 3,
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Text(
+                post.contentText ?? "",
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.justify,
+              ),
+              const SizedBox(height: 5),
+              if (post.images != null && post.images!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Image.network(
+                    '${Constants.awsUrl}${post.images!.first.path}',
+                    fit: BoxFit.fitWidth,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Text('Image not available');
+                    },
+                  ),
+                ),
+              const SizedBox(height: 5),
+            ],
+          ),
         ),
       );
     } else {
-      return SizedBox(); // Handle unknown types
+      return const SizedBox();
     }
   }
 }

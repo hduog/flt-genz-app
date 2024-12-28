@@ -7,7 +7,9 @@ import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost
 import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
+import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -21,8 +23,7 @@ class PostShareDetailPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PostShareDetailPage> createState() =>
-      _PostShareDetailPageState();
+  ConsumerState<PostShareDetailPage> createState() => _PostShareDetailPageState();
 }
 
 class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
@@ -46,7 +47,6 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Set initial state
     isLiked = widget.postItem.is_liked ?? false;
     countLike = widget.postItem.totalReaction ?? 0;
     countComment = widget.postItem.totalComment ?? 0;
@@ -68,6 +68,8 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReactionPostShare(data);
+
+     ref.read(postProvider.notifier).updateLikeStatus(widget.postItem.id, isLiked, countLike);
   }
 
   void _showKeyboard() {
@@ -102,6 +104,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
         listComment = [newComment, ...listComment];
       });
       await postService.commentReelPostShare(data);
+       ref.read(postProvider.notifier).updateCommentCount(widget.postItem.id, countComment);
     }
   }
 
@@ -110,8 +113,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   }
 
   Future<void> getAllComment() async {
-    final comments =
-        await postService.getAllCommentReelPostShare(widget.postItem.id);
+    final comments = await postService.getAllCommentReelPostShare(widget.postItem.id);
     if (comments!.isNotEmpty) {
       setState(() {
         listComment = comments;
@@ -119,10 +121,20 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
     }
   }
 
+  void navigatetoPost() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetailPage(
+          postId: widget.postItem.infoAuthorAndPost!.postInf.id,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final commentsToShow =
-        _showAllComments ? listComment : listComment.take(5).toList();
+    final commentsToShow = _showAllComments ? listComment : listComment.take(5).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -135,9 +147,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              // Show more options (edit, delete, etc.)
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -181,8 +191,6 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                     ],
                   ),
                   const SizedBox(height: 10),
-
-                  // Post content
                   Text(
                     widget.postItem.contentText ?? "",
                     style: const TextStyle(fontSize: 16),
@@ -204,79 +212,72 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // POSTSHARED
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: Colors.grey.shade100,
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              radius: 20.0,
-                              backgroundImage: NetworkImage(
-                                '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.author.avata ?? ''}',
+                  GestureDetector(
+                    onTap: navigatetoPost,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: Colors.grey.shade100,
+                      ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 20.0,
+                                backgroundImage: NetworkImage(
+                                  '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.author.avata ?? ''}',
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.postItem.infoAuthorAndPost!.author
-                                        .fullName,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.postItem.infoAuthorAndPost!.author.fullName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    formatDate(
-                                          widget.postItem.infoAuthorAndPost!
-                                              .postInf.created_at,
-                                        ) ??
-                                        "DD/MM/YYYY HH:mm",
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
+                                    // Text(
+                                    //   formatDate(
+                                    //         widget.postItem.infoAuthorAndPost!.postInf.created_at,
+                                    //       ) ??
+                                    //       "DD/MM/YYYY HH:mm",
+                                    //   style: const TextStyle(color: Colors.grey),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.postItem.infoAuthorAndPost!.postInf.contentText ??
+                                "Nội dung bài viết được chia sẻ",
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          const SizedBox(height: 8),
+                          if (widget.postItem.infoAuthorAndPost!.postInf.images != null &&
+                              widget.postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Image.network(
+                                '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.postInf.images!.first.path}',
+                                fit: BoxFit.fitWidth,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.postItem.infoAuthorAndPost!.postInf
-                                  .contentText ??
-                              "Nội dung bài viết được chia sẻ",
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        if (widget.postItem.infoAuthorAndPost!.postInf.images !=
-                                null &&
-                            widget.postItem.infoAuthorAndPost!.postInf.images!
-                                .isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Image.network(
-                              '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost!.postInf.images!.first.path}',
-                              fit: BoxFit.fitWidth,
-                            ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-
-                  const SizedBox(
-                      height: 5), // totalReaction (like, comment, share)
+                  const SizedBox(height: 5),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -289,31 +290,31 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                     ],
                   ),
                   const SizedBox(height: 20),
-
                   SizedBox(
                     child: TextField(
                       controller: _contentCmtController,
                       focusNode: _focusNode,
                       decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: const Icon(
-                              size: 30,
-                              Icons.send_outlined,
-                              color: colorTextDefault,
-                            ),
-                            onPressed: _commentPost,
+                        suffixIcon: IconButton(
+                          icon: const Icon(
+                            Icons.send_outlined,
+                            size: 30,
+                            color: colorTextDefault,
                           ),
-                          labelText: 'Bình luận bài viết..',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                10.0), // Adjust the radius as needed
-                          ),
-                          labelStyle: const TextStyle(
-                              color: colorIconDefault, fontSize: 14)),
+                          onPressed: _commentPost,
+                        ),
+                        labelText: 'Bình luận bài viết..',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        labelStyle: const TextStyle(
+                          color: colorIconDefault,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Comments Section
                   const Text(
                     'Bình luận',
                     style: TextStyle(
@@ -321,7 +322,6 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -352,7 +352,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                   const SizedBox(height: 3),
                                   Text(comment.contentCmt ?? ''),
                                   const SizedBox(height: 5),
-                                  Text(comment.created_at ?? ''),
+                                  Text(formatDate(comment.created_at) ?? ''),
                                 ],
                               ),
                             ),
@@ -369,9 +369,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                         });
                       },
                       child: Text(
-                        _showAllComments
-                            ? 'Ẩn bớt bình luận'
-                            : 'Xem tất cả bình luận',
+                        _showAllComments ? 'Ẩn bớt bình luận' : 'Xem tất cả bình luận',
                         style: const TextStyle(color: Colors.blue),
                       ),
                     ),
@@ -385,9 +383,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   }
 }
 
-// Helper widget for reaction information
-Widget _buildReactionInfo(String iconName, int count,
-    {VoidCallback? onReactionTap}) {
+Widget _buildReactionInfo(String iconName, int count, {VoidCallback? onReactionTap}) {
   return GestureDetector(
     onTap: onReactionTap,
     child: SizedBox(

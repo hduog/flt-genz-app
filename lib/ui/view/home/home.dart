@@ -93,8 +93,8 @@ class _HomeState extends ConsumerState<Home> {
   Widget build(BuildContext context) {
     print(_scrollController);
 
-    final postState = ref.watch(postProvider); 
-    final posts = postState.posts; 
+    final postState = ref.watch(postProvider);
+    final posts = postState.posts;
 
     return SafeArea(
       child: Scaffold(
@@ -142,21 +142,19 @@ class _HomeState extends ConsumerState<Home> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(
-                                  size: 30,
-                                  Icons.search,
-                                  color: colorTextDefault,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                    builder: (context) => SearchScreen(),
+                                  icon: const Icon(
+                                    size: 30,
+                                    Icons.search,
+                                    color: colorTextDefault,
                                   ),
-                                );
-                                }
-                                ),
-                              
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchScreen(),
+                                      ),
+                                    );
+                                  }),
                               IconButton(
                                 icon: const Icon(
                                   size: 30,
@@ -236,7 +234,7 @@ class _HomeState extends ConsumerState<Home> {
                                   final post = posts[index];
                                   final comments = post.comment_recent ?? [];
                                   return GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       if (post.is_share ?? false) {
                                         Navigator.push(
                                           context,
@@ -247,16 +245,18 @@ class _HomeState extends ConsumerState<Home> {
                                           ),
                                         );
                                       } else {
-                                        Navigator.push(
+                                        final needsRefresh =
+                                            await Navigator.push<bool>(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                PostDetailPage(
-                                              postItem: post,
-                                              comments: comments,
-                                            ),
+                                                PostDetailPage(postId: post.id),
                                           ),
                                         );
+
+                                        if (needsRefresh == true) {
+                                                 fetchPosts(); 
+                                        }
                                       }
                                     },
                                     child: ReelCard(

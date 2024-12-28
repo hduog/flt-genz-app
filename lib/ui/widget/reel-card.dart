@@ -5,6 +5,7 @@ import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -30,26 +31,35 @@ class _ReelCardState extends ConsumerState<ReelCard> {
   int countShare = 0;
 
   @override
-  void initState() {
-    super.initState();
-    // Set initial state
-    isLiked = widget.postItem.is_liked ?? false;
-    countLike = widget.postItem.totalReaction ?? 0;
-    countComment = widget.postItem.totalComment ?? 0;
-    countShare = widget.postItem.totalShare ?? 0;
-  }
+  void didChangeDependencies() {
+  super.didChangeDependencies();
 
+  final posts = ref.read(postProvider).posts;
+  final currentPost = posts.firstWhere((p) => p.id == widget.postItem.id);
+  
+  setState(() {
+    isLiked = currentPost.is_liked ?? false;
+    countLike = currentPost.totalReaction ?? 0;
+    countComment = currentPost.totalComment ?? 0;
+    countShare = currentPost.totalShare ?? 0;
+  });
+}
   final TextEditingController _contentPostShareController =
       TextEditingController();
 
-  Future<void> _likePost() async {
-    setState(() {
-      isLiked ? countLike-- : countLike++;
-      isLiked = !isLiked;
-    });
-    final data = UpdateReactionReelPost(widget.postItem.id);
-    await postService.updateStatusReaction(data);
-  }
+Future<void> _likePost() async {
+  setState(() {
+    isLiked = !isLiked;
+    countLike = isLiked ? countLike + 1 : countLike - 1;
+  });
+  final data = UpdateReactionReelPost(widget.postItem.id);
+  await postService.updateStatusReaction(data);
+  ref.read(postProvider.notifier).updateLikeStatus(
+    widget.postItem.id,
+    isLiked,
+    countLike
+  );
+}
 
   Future<void> _likePostShare() async {
     setState(() {
@@ -58,6 +68,11 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReactionPostShare(data);
+     ref.read(postProvider.notifier).updateLikeStatus(
+    widget.postItem.id,
+    isLiked,
+    countLike
+  );
   }
 
   void _showShareModal(BuildContext context) {
@@ -184,11 +199,11 @@ class _ReelCardState extends ConsumerState<ReelCard> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      formatDate(widget.postItem.created_at) ??
-                          "DD/MM/YYYY HH:mm", // Ngày chia sẻ
-                      style: const TextStyle(color: Colors.grey),
-                    ),
+                    // Text(
+                    //   formatDate(widget.postItem.created_at) ??
+                    //       "DD/MM/YYYY HH:mm", // Ngày chia sẻ
+                    //   style: const TextStyle(color: Colors.grey),
+                    // ),
                   ],
                 ),
               ),

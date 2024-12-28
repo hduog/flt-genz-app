@@ -5,20 +5,21 @@ import 'package:flutter_application_1/core/data/models/PostModel/AccountCommentF
 import 'package:flutter_application_1/core/data/models/PostModel/Comment/CommentForGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CommentReelPost.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/CreatePostShare.dart';
-import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet.dart';
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
+import 'package:flutter_application_1/view-models/post/postbyId.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class PostDetailPage extends ConsumerStatefulWidget {
-  final DataGet postItem;
+  final String postId;
   final List<CommentForGet>? comments;
   const PostDetailPage({
     super.key,
-    required this.postItem,
+    required this.postId,
     this.comments = const [],
   });
 
@@ -51,11 +52,21 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   void initState() {
     super.initState();
     // Set initial state
-    isLiked = widget.postItem.is_liked ?? false;
-    countLike = widget.postItem.totalReaction ?? 0;
-    countComment = widget.postItem.totalComment ?? 0;
-    countShare = widget.postItem.totalShare ?? 0;
+    fetchPostById(widget.postId);
     getAllComment();
+  }
+
+  Future<void> fetchPostById(String idPost) async {
+    final postById = await postService.getDetailPost(idPost);
+    if (postById != null) {
+      ref.read(postDetailProvider.notifier).setPostDetail(postById);
+      setState(() {
+        isLiked = postById.is_liked ?? false;
+        countLike = postById.totalReaction ?? 0;
+        countComment = postById.totalComment ?? 0;
+        countShare = postById.totalShare ?? 0;
+      });
+    }
   }
 
   @override
@@ -65,13 +76,14 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     super.dispose();
   }
 
-  void _showFullScreenImage(BuildContext context, String imageUrl) {
+  void _showFullScreenImage(
+      BuildContext context, String imageUrl, String content) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FullScreenImage(
           imageUrl: imageUrl,
-          content: widget.postItem.contentText ?? '',
+          content: content,
         ),
       ),
     );
@@ -82,8 +94,13 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
       isLiked ? countLike-- : countLike++;
       isLiked = !isLiked;
     });
-    final data = UpdateReactionReelPost(widget.postItem.id);
+    final data = UpdateReactionReelPost(widget.postId);
     await postService.updateStatusReaction(data);
+    print(
+        "DetailPost like update: postId=${widget.postId}, isLiked=$isLiked, countLike=$countLike");
+    ref
+        .read(postProvider.notifier)
+        .updateLikeStatus(widget.postId, isLiked, countLike);
   }
 
   void _showKeyboard() {
@@ -96,7 +113,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
       final data = CommentReelPost(
         contentCmt: _contentCmtController.text,
         accountId: account!.id,
-        postId: widget.postItem.id,
+        postId: widget.postId,
       );
 
       _hideKeyboard();
@@ -130,7 +147,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     final data = CreatePostShare(
       content: _contentCmtController.text,
       accountId: account!.id,
-      postId: widget.postItem.id,
+      postId: widget.postId,
     );
 
     try {
@@ -209,8 +226,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   }
 
   Future<void> getAllComment() async {
-    final comments =
-        await postService.getAllCommentReelPost(widget.postItem.id);
+    final comments = await postService.getAllCommentReelPost(widget.postId);
     if (comments!.isNotEmpty) {
       setState(() {
         listComment = comments;
@@ -222,9 +238,16 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   Widget build(BuildContext context) {
     final commentsToShow =
         _showAllComments ? listComment : listComment.take(5).toList();
-
+    final postDetail = ref.watch(postDetailProvider);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: SvgPicture.asset("assets/icons/arrow_left_grey.svg"),
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
         backgroundColor: colorBackground,
         title: const Text(
           'Chi tiết bài viết',
@@ -238,230 +261,25 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
           ),
         ],
       ),
-      body: Container(
-        color: colorBackground,
-        child: GestureDetector(
-          onTap: _hideKeyboard,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 20.0,
-                        backgroundImage: NetworkImage(
-                            '${Constants.awsUrl}${widget.postItem.account.avata ?? ''}'),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.postItem.account.fullName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              formatDate(widget.postItem.created_at) ??
-                                  "DD/MM/YYYY HH:mm",
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Post content
-                  Text(
-                    widget.postItem.contentText ?? "",
-                    style: const TextStyle(fontSize: 16),
-                    maxLines: _isExpanded ? null : 3,
-                  ),
-                  GestureDetector(
-                    onTap: toggleContent,
-                    child: Visibility(
-                      visible: widget.postItem.contentText != null &&
-                          widget.postItem.contentText!.length > 100,
-                      child: Text(
-                        _isExpanded ? "Ẩn bớt" : "Xem thêm",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: colorTextHeader,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  if (widget.postItem.images != null &&
-                      widget.postItem.images!.isNotEmpty)
-                    Column(
+      body: postDetail == null
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              color: colorBackground,
+              child: GestureDetector(
+                onTap: _hideKeyboard,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          children: [
-                            CarouselSlider(
-                              items: widget.postItem.images!.map((url) {
-                                return GestureDetector(
-                                  onTap: () => _showFullScreenImage(
-                                      context, Constants.awsUrl + url.path),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
-                                        Constants.awsUrl + url.path,
-                                        fit: BoxFit.contain,
-                                        height:
-                                            MediaQuery.of(context).size.height,
-                                        width:
-                                            MediaQuery.of(context).size.width),
-                                  ),
-                                );
-                              }).toList(),
-                              options: CarouselOptions(
-                                enlargeCenterPage: true,
-                                enableInfiniteScroll:
-                                    widget.postItem.images!.length > 1,
-                                scrollPhysics:
-                                    widget.postItem.images!.length > 1
-                                        ? const BouncingScrollPhysics()
-                                        : const NeverScrollableScrollPhysics(),
-                                viewportFraction: 1.0,
-                                height: 400,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _currentIndex = index;
-                                  });
-                                },
-                              ),
-                              carouselController: _carouselController,
-                            ),
-                            // Left navigation button
-                            if (widget.postItem.images!.length > 1)
-                              Positioned(
-                                left: 1,
-                                top: 0,
-                                bottom: 0,
-                                child: IconButton(
-                                  icon: const Icon(Icons.arrow_back_ios,
-                                      color: colorIconActive),
-                                  onPressed: () =>
-                                      _carouselController.previousPage(),
-                                ),
-                              ),
-                            // Right navigation button
-                            if (widget.postItem.images!.length > 1)
-                              Positioned(
-                                right: 1,
-                                top: 0,
-                                bottom: 0,
-                                child: IconButton(
-                                  icon: const Icon(Icons.arrow_forward_ios,
-                                      color: colorIconActive),
-                                  onPressed: () =>
-                                      _carouselController.nextPage(),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: widget.postItem.images!
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            return GestureDetector(
-                              onTap: () => setState(() {
-                                _currentIndex = entry.key;
-                              }),
-                              child: Container(
-                                width: 8.0,
-                                height: 8.0,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _currentIndex == entry.key
-                                      ? Colors.blueAccent
-                                      : Colors.grey,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  const SizedBox(height: 5),
-                  // totalReaction (like, comment, share)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildReactionInfo(
-                          isLiked ? 'like_active' : 'like', countLike,
-                          onReactionTap: _likePost),
-                      _buildReactionInfo('comment', countComment,
-                          onReactionTap: _showKeyboard),
-                      _buildReactionInfo('icon_share', countShare,
-                          onReactionTap: () => _showShareModal(context)),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    child: TextField(
-                      controller: _contentCmtController,
-                      focusNode: _focusNode,
-                      decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: const Icon(
-                              size: 30,
-                              Icons.send_outlined,
-                              color: colorTextDefault,
-                            ),
-                            onPressed: _commentPost,
-                          ),
-                          labelText: 'Bình luận bài viết..',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          labelStyle: const TextStyle(
-                              color: colorIconDefault, fontSize: 14)),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Comments Section
-                  const Text(
-                    'Bình luận',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: commentsToShow.length,
-                    itemBuilder: (context, index) {
-                      final comment = commentsToShow[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CircleAvatar(
-                              radius: 25.0,
+                              radius: 20.0,
                               backgroundImage: NetworkImage(
-                                  '${Constants.awsUrl}${comment.account.avata ?? ''}'),
+                                  '${Constants.awsUrl}${postDetail.account.avata ?? ''}'),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -469,43 +287,258 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    comment.account.fullName,
+                                    postDetail.account.fullName,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 3),
-                                  Text(comment.contentCmt ?? ''),
-                                  const SizedBox(height: 5),
-                                  Text(comment.created_at ?? ''),
+                                  Text(
+                                    formatDate(postDetail.created_at) ??
+                                        "DD/MM/YYYY HH:mm",
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                  if (listComment.length > 5)
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _showAllComments = !_showAllComments;
-                        });
-                      },
-                      child: Text(
-                        _showAllComments
-                            ? 'Ẩn bớt bình luận'
-                            : 'Xem tất cả bình luận',
-                        style: const TextStyle(color: Colors.blue),
-                      ),
+                        const SizedBox(height: 10),
+
+                        // Post content
+                        Text(
+                          postDetail.contentText ?? "",
+                          style: const TextStyle(fontSize: 16),
+                          maxLines: _isExpanded ? null : 3,
+                        ),
+                        GestureDetector(
+                          onTap: toggleContent,
+                          child: Visibility(
+                            visible: postDetail.contentText != null &&
+                                postDetail.contentText!.length > 100,
+                            child: Text(
+                              _isExpanded ? "Ẩn bớt" : "Xem thêm",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: colorTextHeader,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+                        if (postDetail.images != null &&
+                            postDetail.images!.isNotEmpty)
+                          Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  CarouselSlider(
+                                    items: postDetail.images!.map((url) {
+                                      return GestureDetector(
+                                        onTap: () => _showFullScreenImage(
+                                            context,
+                                            Constants.awsUrl + url.path,
+                                            postDetail.contentText ?? ""),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Image.network(
+                                              Constants.awsUrl + url.path,
+                                              fit: BoxFit.contain,
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    options: CarouselOptions(
+                                      enlargeCenterPage: true,
+                                      enableInfiniteScroll:
+                                          postDetail.images!.length > 1,
+                                      scrollPhysics: postDetail.images!.length >
+                                              1
+                                          ? const BouncingScrollPhysics()
+                                          : const NeverScrollableScrollPhysics(),
+                                      viewportFraction: 1.0,
+                                      height: 400,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentIndex = index;
+                                        });
+                                      },
+                                    ),
+                                    carouselController: _carouselController,
+                                  ),
+                                  // Left navigation button
+                                  if (postDetail.images!.length > 1)
+                                    Positioned(
+                                      left: 1,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.arrow_back_ios,
+                                            color: colorIconActive),
+                                        onPressed: () =>
+                                            _carouselController.previousPage(),
+                                      ),
+                                    ),
+                                  // Right navigation button
+                                  if (postDetail.images!.length > 1)
+                                    Positioned(
+                                      right: 1,
+                                      top: 0,
+                                      bottom: 0,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: colorIconActive),
+                                        onPressed: () =>
+                                            _carouselController.nextPage(),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: postDetail.images!
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  return GestureDetector(
+                                    onTap: () => setState(() {
+                                      _currentIndex = entry.key;
+                                    }),
+                                    child: Container(
+                                      width: 8.0,
+                                      height: 8.0,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _currentIndex == entry.key
+                                            ? Colors.blueAccent
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          ),
+                        const SizedBox(height: 5),
+                        // totalReaction (like, comment, share)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildReactionInfo(
+                                isLiked ? 'like_active' : 'like', countLike,
+                                onReactionTap: _likePost),
+                            _buildReactionInfo('comment', countComment,
+                                onReactionTap: _showKeyboard),
+                            _buildReactionInfo('icon_share', countShare,
+                                onReactionTap: () => _showShareModal(context)),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        SizedBox(
+                          child: TextField(
+                            controller: _contentCmtController,
+                            focusNode: _focusNode,
+                            decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  icon: const Icon(
+                                    size: 30,
+                                    Icons.send_outlined,
+                                    color: colorTextDefault,
+                                  ),
+                                  onPressed: _commentPost,
+                                ),
+                                labelText: 'Bình luận bài viết..',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                labelStyle: const TextStyle(
+                                    color: colorIconDefault, fontSize: 14)),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        // Comments Section
+                        const Text(
+                          'Bình luận',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: commentsToShow.length,
+                          itemBuilder: (context, index) {
+                            final comment = commentsToShow[index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 25.0,
+                                    backgroundImage: NetworkImage(
+                                        '${Constants.awsUrl}${comment.account.avata ?? ''}'),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          comment.account.fullName,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(comment.contentCmt ?? ''),
+                                        const SizedBox(height: 5),
+                                        Text(formatDate(comment.created_at) ?? ''),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        if (listComment.length > 5)
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _showAllComments = !_showAllComments;
+                              });
+                            },
+                            child: Text(
+                              _showAllComments
+                                  ? 'Ẩn bớt bình luận'
+                                  : 'Xem tất cả bình luận',
+                              style: const TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                      ],
                     ),
-                ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

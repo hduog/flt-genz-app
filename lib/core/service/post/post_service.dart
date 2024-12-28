@@ -222,4 +222,22 @@ class PostService {
       return null;
     }
   }
+ Future<DataGet?> getDetailPost( String idPost) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String token = prefs.getString('access_token') ?? '';
+      if (token.isEmpty) {
+        return null;
+      }
+      final response = await postRepo.getDetailPostById(token, idPost);
+      if (response != null && response.statusCode == 200) {
+        DataGet postById = DataGet.fromJson(response.data);
+        return postById;
+      } else {}
+    } catch (e) {
+      print(e);
+    }
+
+    return null;
+  }
 }

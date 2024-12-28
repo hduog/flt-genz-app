@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/Search/SearchModel/SearchModel.dart';
 import 'package:flutter_application_1/core/service/search/search_service.dart';
 import 'package:flutter_application_1/ui/widget/search_card.dart';
 
 class SearchScreen extends StatefulWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -12,147 +13,151 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final SearchService _searchService = SearchService();
-  TextEditingController _searchController = TextEditingController();
-  List<SearchUser> _searchUserResults = [];
-  List<SearchPosts> _searchPostResults = [];
+  final TextEditingController _searchController = TextEditingController();
+
+  bool _hasSearched = false;
   bool _isLoading = false;
+
+  List<dynamic> _allResults = [];
+  List<dynamic> _userResults = [];
+  List<dynamic> _postResults = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this); 
+    _tabController = TabController(length: 3, vsync: this);
   }
 
-  Future<void> _performSearch() async {
-    final String keyword = _searchController.text.trim();
-    if (keyword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nội dung tìm kiếm không được trống')),
-      );
-      return;
-    }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
-    setState(() => _isLoading = true);
+  Future<void> search() async {
+  final String keyword = _searchController.text.trim();
+  if (keyword.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Nội dung tìm kiếm không được trống')),
+    );
+    return;
+  }
 
-    try {
-      final results = await Future.wait([
-        _searchService.searchUser(keyword), 
-        _searchService.searchPosts(keyword), 
-      ]);
+  setState(() {
+    _isLoading = true;
+    _hasSearched = true;
+  });
 
-      setState(() {
-        _searchUserResults = List<SearchUser>.from(
-            results[0] as List); 
-        _searchPostResults = List<SearchPosts>.from(
-            results[1] as List); 
+  try {
+    final searchService = SearchService();
+    final userResults = await searchService.searchUser(keyword);
+    final postResults = await searchService.searchPosts(keyword);
+
+    setState(() {
+      _userResults = userResults;
+      _postResults = postResults;
+      _allResults = [...userResults, ...postResults];
+      _allResults.sort((a, b) {
+        if (a is SearchUser && b is SearchPosts) {
+          return -1;
+        } else if (a is SearchPosts && b is SearchUser) {
+          return 1; 
+        }
+        return 0;
       });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi khi tìm kiếm: $e")),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    });
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Lỗi khi tìm kiếm: $e")),
+    );
+  } finally {
+    setState(() => _isLoading = false);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorBackground,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(5, 30, 16, 8),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: Colors.grey[700]),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      style: const TextStyle(fontSize: 14),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 7, horizontal: 16),
-                        hintText: "Nhập từ khóa",
-                        hintStyle:
-                            const TextStyle(fontSize: 13, color: Colors.grey),
-                        suffixIcon: IconButton(
-                          icon:
-                              Icon(Icons.search, size: 18, color: Colors.grey),
-                          onPressed: _performSearch,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
             ),
-          ),
-          TabBar(
-            controller: _tabController,
-            indicatorColor: Theme.of(context).primaryColor,
-            labelColor: Theme.of(context).primaryColor,
-            unselectedLabelColor: Colors.grey,
-            labelStyle: const TextStyle(fontSize: 13),
-            tabs: const [
-              SizedBox(
-                width: 100, 
-                height: 30,
-                child: const Tab(text: "Tài khoản"),
-              ),
-              SizedBox(
-                width: 100, 
-                height: 30,
-                child: const Tab(text: "Bài viết"),
-              ),
-            ],
-          ),
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : TabBarView(
-                    controller: _tabController,
-                    children: [
-                      ListView.builder(
-                        itemCount: _searchUserResults.length,
-                        itemBuilder: (context, index) {
-                          final user = _searchUserResults[index];
-                          return SearchCard(item: user);
-                        },
-                      ),
-                      ListView.builder(
-                        itemCount: _searchPostResults.length,
-                        itemBuilder: (context, index) {
-                          final post = _searchPostResults[index];
-                          return SearchCard(
-                              item: post); // Assuming a SearchCardPost widget
-                        },
-                      ),
-                    ],
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                onSubmitted: (_) => search(),
+                decoration: InputDecoration(
+                  hintText: "Tìm kiếm...",
+                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
                   ),
-          ),
-        ],
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 3.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+        bottom: _hasSearched
+            ? TabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: "Tất cả"),
+                  Tab(text: "Người dùng"),
+                  Tab(text: "Bài viết"),
+                ],
+              )
+            : null,
       ),
+      body: _hasSearched
+          ? _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildAll(_allResults),
+                    _buildResults(_userResults),
+                    _buildResults(_postResults),
+                  ],
+                )
+          : const Center(child: Text("Tìm kiếm")),
+    );
+  }
+
+  Widget _buildAll(List<dynamic> results) {
+    if (results.isEmpty) {
+      return const Center(child: Text("Không có kết quả"));
+    }
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final item = results[index];
+        return SearchCard(item: item);
+      },
+    );
+  }
+
+  Widget _buildResults(List<dynamic> results) {
+    if (results.isEmpty) {
+      return const Center(child: Text("Không có kết quả"));
+    }
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        final item = results[index];
+        return SearchCard(item: item);
+      },
     );
   }
 }
