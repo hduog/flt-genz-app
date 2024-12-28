@@ -10,7 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
 
 class CreatePost extends ConsumerStatefulWidget {
-  const CreatePost({Key? key}) : super(key: key);
+  final VoidCallback? onPostCreated;
+  const CreatePost({Key? key, this.onPostCreated}) : super(key: key);
 
   @override
   _CreatePostState createState() => _CreatePostState();
@@ -23,6 +24,7 @@ class _CreatePostState extends ConsumerState<CreatePost> {
   String selectedPrivacy = Constants.PUBLIC;
   bool isLoading = false;
   final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -70,15 +72,18 @@ class _CreatePostState extends ConsumerState<CreatePost> {
       final success = await postService.createPost(post, imageFiles, ref);
 
       if (success) {
-        Navigator.pop(context, true);
+        if (widget.onPostCreated != null) {
+          widget.onPostCreated!();
+        }
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to create post')),
+          const SnackBar(content: Text('Không thể tạo bài viết')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error creating post: $e')),
+        SnackBar(content: Text('Không thể tạo bài viết: $e')),
       );
     } finally {
       setState(() => isLoading = false);

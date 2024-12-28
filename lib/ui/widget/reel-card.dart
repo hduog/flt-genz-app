@@ -286,11 +286,6 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               _buildReactionInfo('comment', widget.postItem.totalComment ?? 0),
               _buildReactionInfo('icon_share', countShare,
                   onReactionTap: () => _showShareModal(context)),
-              SvgPicture.asset(
-                'assets/icons/save.svg',
-                width: 24,
-                height: 24,
-              ),
             ],
           ),
         ],
