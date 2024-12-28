@@ -25,6 +25,24 @@ class SendSorrowService {
     return null;
   }
 
+  Future<List<SendSorrowModelGet>?> getAllSoundNatural() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await sendSorrowRepo.getAllSoundNatural(token);
+      print(response);
+      if (response?.statusCode == 200) {
+        List<SendSorrowModelGet> list = (response.data as List<dynamic>)
+            .map((item) =>
+                SendSorrowModelGet.fromJson(item as Map<String, dynamic>))
+            .toList();
+
+        return list;
+      }
+    }
+    return null;
+  }
+
   Future<QuoteSendSorrowGet?> sendSorrowToAI(QuoteSendSorrowPost sorrow) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ?? '';

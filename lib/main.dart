@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
+import 'package:flutter_application_1/ui/view/soundChill/soundChill.dart';
 import 'package:flutter_application_1/ui/view/splash/splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
         title: 'genz mental heath',
         routes: <String, WidgetBuilder>{
           '/send_sorrow': (BuildContext context) => new SendSorrow(),
+          '/sound-chill': (BuildContext context) => new SoundChillScreen(),
         },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
