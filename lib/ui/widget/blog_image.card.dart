@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/BlogModel/CateBlog/CateBlog.dart';
+import 'package:flutter_application_1/core/data/models/HotBlogModel/HotBlogItemForGet/HotBlogItemForGet.dart';
 
 class BlogsImageCard extends StatelessWidget {
+  final List<HotBlogItemForGet> hotBlogItems;
+  const BlogsImageCard({super.key, required this.hotBlogItems});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal, // Enable horizontal scrolling
       child: Row(
-        children: [
-          buildNewsCard(context), // First Card
-          SizedBox(width: 16), // Spacing between cards
-          buildNewsCard(context), // Second Card
-          SizedBox(width: 16),
-          buildNewsCard(context), // Third Card
-        ],
+        children: hotBlogItems.map((hotBlogItem) => buildNewsCard(context, hotBlogItem)).toList(),
       ),
     );
   }
 
   // Function to build a single card
-  Widget buildNewsCard(BuildContext context) {
+  Widget buildNewsCard(BuildContext context, HotBlogItemForGet hotBlogItem) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20, top: 10),
+      margin: const EdgeInsets.only(bottom: 20, top: 10, right: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
-          image: NetworkImage(
-              'https://picsum.photos/200/300'), // Replace with the image you want to use
+          image: NetworkImage('${Constants.awsUrl}${hotBlogItem.thumbnailBlog}'), // Background image
           fit: BoxFit.cover,
         ),
       ),
@@ -36,73 +35,60 @@ class BlogsImageCard extends StatelessWidget {
           // Dark overlay for text contrast
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(20),
             ),
           ),
-          // Positioned text and content
+          // Positioned content
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // "Sports" Tag
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Sports',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Spacer(),
-                // Bottom Row: Logo, Title, and Info
+                // Author's avatar and name
                 Row(
                   children: [
-                    // CNN Indonesia and Verified Icon
                     CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          'https://picsum.photos/100/100'), // Replace with actual logo
-                      radius: 12,
+                      radius: 20,
+                      backgroundImage: NetworkImage('${Constants.awsUrl}${hotBlogItem.account?.avata ?? ''}'),
+                      backgroundColor: Colors.grey[300], // Placeholder background
                     ),
-                    SizedBox(width: 8),
-                    Text(
-                      'CNN Indonesia',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.check_circle,
-                      color: Colors.blue,
-                      size: 16,
-                    ),
-                    Spacer(),
-                    Text(
-                      '6 hours ago',
-                      style: TextStyle(
-                        color: Colors.white70,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        hotBlogItem.account?.fullName ?? 'Unknown Author',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
-                // Headline Text
+                const Spacer(),
+                // Blog title
                 Text(
-                  'Alexander wears modified helmet in road races',
-                  style: TextStyle(
+                  hotBlogItem.title ?? 'No Title',
+                  style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                // Blog categories
+                Text(
+                  hotBlogItem.cateBlog.map((cate) => cate.title).join(', ') ?? '',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

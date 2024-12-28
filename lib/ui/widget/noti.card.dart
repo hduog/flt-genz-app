@@ -10,10 +10,10 @@ class NotiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           border:
               Border(bottom: BorderSide(color: colorTextSubPart, width: 0.2))),
-      padding: EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 30),
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 30, bottom: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -25,30 +25,6 @@ class NotiCard extends StatelessWidget {
                 height: 18,
               ),
               SizedBox(width: 5),
-              Stack(
-                children: [
-                Image.network(
-                '${Constants.awsUrl}${notificationItem.typeNotification!.thumbnailNoti ?? "assets/images/quote.png"}',
-                fit: BoxFit.cover,
-                width: 50,
-                height: 50,
-              ),
-                  Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            color: colorIconButtonOverlay),
-                        padding: EdgeInsets.all(2),
-                        child: SvgPicture.asset(
-                          'assets/icons/love-noti.svg',
-                          width: 16,
-                          height: 16,
-                        ),
-                      ))
-                ],
-              ),
             ],
           ),
           SizedBox(width: 10),
@@ -58,8 +34,8 @@ class NotiCard extends StatelessWidget {
               children: [
                 Text(notificationItem.messageNotifications ?? ""),
                 SizedBox(height: 3),
-                 Text(
-                   formatDate(notificationItem.created_at) ??  "DD/MM/YYYY hh:mm",
+                Text(
+                  formatDate(notificationItem.created_at) ?? "DD/MM/YYYY hh:mm",
                   style: TextStyle(fontSize: 13, color: colorTextSubPart),
                 )
               ],

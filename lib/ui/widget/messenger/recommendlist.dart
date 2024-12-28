@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/constants.dart';
 
 class RecommendList extends StatelessWidget {
   final VoidCallback onTap;
 
-  const RecommendList({Key? key, required this.onTap}) : super(key: key);
+  const RecommendList({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap, 
-            splashColor: Colors.blue.withOpacity(0.3), 
-            highlightColor: Colors.blue.withOpacity(0.1), 
-            child: CircleAvatar(
-              radius: 27,
-              backgroundImage: AssetImage('assets/images/reels-test.png'),
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorIconButtonOverlay,
+            borderRadius: BorderRadius.circular(10),
           ),
-          const SizedBox(height: 5),
-          const Text("Nguyễn Lê Huu Duy"),
-        ],
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/images/reels-test.png',
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                "Duy",
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

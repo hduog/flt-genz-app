@@ -44,10 +44,15 @@ mixin _$DataGet {
   int? get totalShare => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updated_at => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_share')
+  bool? get is_share => throw _privateConstructorUsedError;
   @JsonKey(name: 'permissionPost')
   PermissionPostGet get permissionPost => throw _privateConstructorUsedError;
   @JsonKey(name: 'comment_recent')
   List<CommentForGet>? get comment_recent => throw _privateConstructorUsedError;
+  @JsonKey(name: 'infoAuthorAndPost')
+  InforAuthorAndPostShared? get infoAuthorAndPost =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this DataGet to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -76,11 +81,15 @@ abstract class $DataGetCopyWith<$Res> {
       @JsonKey(name: 'totalReaction') int? totalReaction,
       @JsonKey(name: 'totalShare') int? totalShare,
       @JsonKey(name: 'updated_at') String? updated_at,
+      @JsonKey(name: 'is_share') bool? is_share,
       @JsonKey(name: 'permissionPost') PermissionPostGet permissionPost,
-      @JsonKey(name: 'comment_recent') List<CommentForGet>? comment_recent});
+      @JsonKey(name: 'comment_recent') List<CommentForGet>? comment_recent,
+      @JsonKey(name: 'infoAuthorAndPost')
+      InforAuthorAndPostShared? infoAuthorAndPost});
 
   $AuthorGetCopyWith<$Res> get account;
   $PermissionPostGetCopyWith<$Res> get permissionPost;
+  $InforAuthorAndPostSharedCopyWith<$Res>? get infoAuthorAndPost;
 }
 
 /// @nodoc
@@ -110,8 +119,10 @@ class _$DataGetCopyWithImpl<$Res, $Val extends DataGet>
     Object? totalReaction = freezed,
     Object? totalShare = freezed,
     Object? updated_at = freezed,
+    Object? is_share = freezed,
     Object? permissionPost = null,
     Object? comment_recent = freezed,
+    Object? infoAuthorAndPost = freezed,
   }) {
     return _then(_value.copyWith(
       account: null == account
@@ -162,6 +173,10 @@ class _$DataGetCopyWithImpl<$Res, $Val extends DataGet>
           ? _value.updated_at
           : updated_at // ignore: cast_nullable_to_non_nullable
               as String?,
+      is_share: freezed == is_share
+          ? _value.is_share
+          : is_share // ignore: cast_nullable_to_non_nullable
+              as bool?,
       permissionPost: null == permissionPost
           ? _value.permissionPost
           : permissionPost // ignore: cast_nullable_to_non_nullable
@@ -170,6 +185,10 @@ class _$DataGetCopyWithImpl<$Res, $Val extends DataGet>
           ? _value.comment_recent
           : comment_recent // ignore: cast_nullable_to_non_nullable
               as List<CommentForGet>?,
+      infoAuthorAndPost: freezed == infoAuthorAndPost
+          ? _value.infoAuthorAndPost
+          : infoAuthorAndPost // ignore: cast_nullable_to_non_nullable
+              as InforAuthorAndPostShared?,
     ) as $Val);
   }
 
@@ -190,6 +209,21 @@ class _$DataGetCopyWithImpl<$Res, $Val extends DataGet>
   $PermissionPostGetCopyWith<$Res> get permissionPost {
     return $PermissionPostGetCopyWith<$Res>(_value.permissionPost, (value) {
       return _then(_value.copyWith(permissionPost: value) as $Val);
+    });
+  }
+
+  /// Create a copy of DataGet
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $InforAuthorAndPostSharedCopyWith<$Res>? get infoAuthorAndPost {
+    if (_value.infoAuthorAndPost == null) {
+      return null;
+    }
+
+    return $InforAuthorAndPostSharedCopyWith<$Res>(_value.infoAuthorAndPost!,
+        (value) {
+      return _then(_value.copyWith(infoAuthorAndPost: value) as $Val);
     });
   }
 }
@@ -214,13 +248,18 @@ abstract class _$$DataGetImplCopyWith<$Res> implements $DataGetCopyWith<$Res> {
       @JsonKey(name: 'totalReaction') int? totalReaction,
       @JsonKey(name: 'totalShare') int? totalShare,
       @JsonKey(name: 'updated_at') String? updated_at,
+      @JsonKey(name: 'is_share') bool? is_share,
       @JsonKey(name: 'permissionPost') PermissionPostGet permissionPost,
-      @JsonKey(name: 'comment_recent') List<CommentForGet>? comment_recent});
+      @JsonKey(name: 'comment_recent') List<CommentForGet>? comment_recent,
+      @JsonKey(name: 'infoAuthorAndPost')
+      InforAuthorAndPostShared? infoAuthorAndPost});
 
   @override
   $AuthorGetCopyWith<$Res> get account;
   @override
   $PermissionPostGetCopyWith<$Res> get permissionPost;
+  @override
+  $InforAuthorAndPostSharedCopyWith<$Res>? get infoAuthorAndPost;
 }
 
 /// @nodoc
@@ -248,8 +287,10 @@ class __$$DataGetImplCopyWithImpl<$Res>
     Object? totalReaction = freezed,
     Object? totalShare = freezed,
     Object? updated_at = freezed,
+    Object? is_share = freezed,
     Object? permissionPost = null,
     Object? comment_recent = freezed,
+    Object? infoAuthorAndPost = freezed,
   }) {
     return _then(_$DataGetImpl(
       account: null == account
@@ -300,6 +341,10 @@ class __$$DataGetImplCopyWithImpl<$Res>
           ? _value.updated_at
           : updated_at // ignore: cast_nullable_to_non_nullable
               as String?,
+      is_share: freezed == is_share
+          ? _value.is_share
+          : is_share // ignore: cast_nullable_to_non_nullable
+              as bool?,
       permissionPost: null == permissionPost
           ? _value.permissionPost
           : permissionPost // ignore: cast_nullable_to_non_nullable
@@ -308,6 +353,10 @@ class __$$DataGetImplCopyWithImpl<$Res>
           ? _value._comment_recent
           : comment_recent // ignore: cast_nullable_to_non_nullable
               as List<CommentForGet>?,
+      infoAuthorAndPost: freezed == infoAuthorAndPost
+          ? _value.infoAuthorAndPost
+          : infoAuthorAndPost // ignore: cast_nullable_to_non_nullable
+              as InforAuthorAndPostShared?,
     ));
   }
 }
@@ -328,9 +377,11 @@ class _$DataGetImpl implements _DataGet {
       @JsonKey(name: 'totalReaction') this.totalReaction,
       @JsonKey(name: 'totalShare') this.totalShare,
       @JsonKey(name: 'updated_at') this.updated_at,
+      @JsonKey(name: 'is_share') this.is_share,
       @JsonKey(name: 'permissionPost') required this.permissionPost,
       @JsonKey(name: 'comment_recent')
-      final List<CommentForGet>? comment_recent})
+      final List<CommentForGet>? comment_recent,
+      @JsonKey(name: 'infoAuthorAndPost') this.infoAuthorAndPost})
       : _images = images,
         _comment_recent = comment_recent;
 
@@ -382,6 +433,9 @@ class _$DataGetImpl implements _DataGet {
   @JsonKey(name: 'updated_at')
   final String? updated_at;
   @override
+  @JsonKey(name: 'is_share')
+  final bool? is_share;
+  @override
   @JsonKey(name: 'permissionPost')
   final PermissionPostGet permissionPost;
   final List<CommentForGet>? _comment_recent;
@@ -396,8 +450,12 @@ class _$DataGetImpl implements _DataGet {
   }
 
   @override
+  @JsonKey(name: 'infoAuthorAndPost')
+  final InforAuthorAndPostShared? infoAuthorAndPost;
+
+  @override
   String toString() {
-    return 'DataGet(account: $account, accountId: $accountId, contentText: $contentText, created_at: $created_at, id: $id, isSave: $isSave, images: $images, is_liked: $is_liked, totalComment: $totalComment, totalReaction: $totalReaction, totalShare: $totalShare, updated_at: $updated_at, permissionPost: $permissionPost, comment_recent: $comment_recent)';
+    return 'DataGet(account: $account, accountId: $accountId, contentText: $contentText, created_at: $created_at, id: $id, isSave: $isSave, images: $images, is_liked: $is_liked, totalComment: $totalComment, totalReaction: $totalReaction, totalShare: $totalShare, updated_at: $updated_at, is_share: $is_share, permissionPost: $permissionPost, comment_recent: $comment_recent, infoAuthorAndPost: $infoAuthorAndPost)';
   }
 
   @override
@@ -425,10 +483,14 @@ class _$DataGetImpl implements _DataGet {
                 other.totalShare == totalShare) &&
             (identical(other.updated_at, updated_at) ||
                 other.updated_at == updated_at) &&
+            (identical(other.is_share, is_share) ||
+                other.is_share == is_share) &&
             (identical(other.permissionPost, permissionPost) ||
                 other.permissionPost == permissionPost) &&
             const DeepCollectionEquality()
-                .equals(other._comment_recent, _comment_recent));
+                .equals(other._comment_recent, _comment_recent) &&
+            (identical(other.infoAuthorAndPost, infoAuthorAndPost) ||
+                other.infoAuthorAndPost == infoAuthorAndPost));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -447,8 +509,10 @@ class _$DataGetImpl implements _DataGet {
       totalReaction,
       totalShare,
       updated_at,
+      is_share,
       permissionPost,
-      const DeepCollectionEquality().hash(_comment_recent));
+      const DeepCollectionEquality().hash(_comment_recent),
+      infoAuthorAndPost);
 
   /// Create a copy of DataGet
   /// with the given fields replaced by the non-null parameter values.
@@ -480,10 +544,13 @@ abstract class _DataGet implements DataGet {
       @JsonKey(name: 'totalReaction') final int? totalReaction,
       @JsonKey(name: 'totalShare') final int? totalShare,
       @JsonKey(name: 'updated_at') final String? updated_at,
+      @JsonKey(name: 'is_share') final bool? is_share,
       @JsonKey(name: 'permissionPost')
       required final PermissionPostGet permissionPost,
       @JsonKey(name: 'comment_recent')
-      final List<CommentForGet>? comment_recent}) = _$DataGetImpl;
+      final List<CommentForGet>? comment_recent,
+      @JsonKey(name: 'infoAuthorAndPost')
+      final InforAuthorAndPostShared? infoAuthorAndPost}) = _$DataGetImpl;
 
   factory _DataGet.fromJson(Map<String, dynamic> json) = _$DataGetImpl.fromJson;
 
@@ -524,11 +591,17 @@ abstract class _DataGet implements DataGet {
   @JsonKey(name: 'updated_at')
   String? get updated_at;
   @override
+  @JsonKey(name: 'is_share')
+  bool? get is_share;
+  @override
   @JsonKey(name: 'permissionPost')
   PermissionPostGet get permissionPost;
   @override
   @JsonKey(name: 'comment_recent')
   List<CommentForGet>? get comment_recent;
+  @override
+  @JsonKey(name: 'infoAuthorAndPost')
+  InforAuthorAndPostShared? get infoAuthorAndPost;
 
   /// Create a copy of DataGet
   /// with the given fields replaced by the non-null parameter values.

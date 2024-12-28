@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 class ApiService {
@@ -5,6 +7,7 @@ class ApiService {
   Future<Response?> get(String path, String? token,
       {Map<String, dynamic>? queryParameters}) async {
     try {
+      print('URL path :' + path);
       _dio.options.headers["Authorization"] =
           token!.isEmpty ? '' : "Bearer $token";
       _dio.options.headers['content-Type'] = 'application/json';
@@ -16,9 +19,14 @@ class ApiService {
     }
   }
 
-  Future<Response?> post(String path, dynamic data) async {
+  Future<Response?> post(String path, dynamic data, dynamic token) async {
     try {
       print('URL path :' + path);
+      if (token != null) {
+        print('setting token...');
+        _dio.options.headers["Authorization"] =
+            token.isEmpty ? '' : "Bearer $token";
+      }
       _dio.options.headers['content-Type'] = 'application/json';
       final response = await _dio.post(path, data: data.toJson());
       return response;
@@ -47,4 +55,52 @@ class ApiService {
       return null;
     }
   }
+
+  Future<Response?> uploadImage(String path, File image, String token) async {
+    try {
+      if (!await image.exists()) return null;
+
+      final formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path,
+            filename: image.path.split('/').last),
+      });
+
+      _dio.options.headers['Authorization'] = "Bearer $token";
+      return await _dio.post(path, data: formData);
+    } catch (e) {
+      if (e is DioException) {
+        print('Error: ${e.response?.statusCode} - ${e.response?.data}');
+      } else {
+        print('Error: $e');
+      }
+      return null;
+    }
+  }
+
+  Future<Response?> postWithToken(
+      String path, dynamic data, String token) async {
+    try {
+      print('URL path: $path');
+      _dio.options.headers['Content-Type'] = 'application/json';
+      _dio.options.headers["Authorization"] = "Bearer $token";
+      final response = await _dio.post(path, data: data.toJson());
+      return response;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+
+  Future<Response?> patch(String path, Map<String, dynamic> data, String token) async {
+    try {
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+      final response = await _dio.patch(path, data: data);
+      return response;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+
+
 }

@@ -20,6 +20,8 @@ CommentForGet _$CommentForGetFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CommentForGet {
+  @JsonKey(name: 'id')
+  String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'account')
   AccountComment get account => throw _privateConstructorUsedError;
   @JsonKey(name: 'content')
@@ -44,7 +46,8 @@ abstract class $CommentForGetCopyWith<$Res> {
       _$CommentForGetCopyWithImpl<$Res, CommentForGet>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'account') AccountComment account,
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'account') AccountComment account,
       @JsonKey(name: 'content') String content,
       @JsonKey(name: 'created_at') String? created_at});
 
@@ -66,11 +69,16 @@ class _$CommentForGetCopyWithImpl<$Res, $Val extends CommentForGet>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? account = null,
     Object? content = null,
     Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       account: null == account
           ? _value.account
           : account // ignore: cast_nullable_to_non_nullable
@@ -106,7 +114,8 @@ abstract class _$$CommentForGetImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'account') AccountComment account,
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'account') AccountComment account,
       @JsonKey(name: 'content') String content,
       @JsonKey(name: 'created_at') String? created_at});
 
@@ -127,11 +136,16 @@ class __$$CommentForGetImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? account = null,
     Object? content = null,
     Object? created_at = freezed,
   }) {
     return _then(_$CommentForGetImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       account: null == account
           ? _value.account
           : account // ignore: cast_nullable_to_non_nullable
@@ -152,13 +166,17 @@ class __$$CommentForGetImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CommentForGetImpl implements _CommentForGet {
   _$CommentForGetImpl(
-      {@JsonKey(name: 'account') required this.account,
+      {@JsonKey(name: 'id') required this.id,
+      @JsonKey(name: 'account') required this.account,
       @JsonKey(name: 'content') required this.content,
       @JsonKey(name: 'created_at') this.created_at});
 
   factory _$CommentForGetImpl.fromJson(Map<String, dynamic> json) =>
       _$$CommentForGetImplFromJson(json);
 
+  @override
+  @JsonKey(name: 'id')
+  final String id;
   @override
   @JsonKey(name: 'account')
   final AccountComment account;
@@ -171,7 +189,7 @@ class _$CommentForGetImpl implements _CommentForGet {
 
   @override
   String toString() {
-    return 'CommentForGet(account: $account, content: $content, created_at: $created_at)';
+    return 'CommentForGet(id: $id, account: $account, content: $content, created_at: $created_at)';
   }
 
   @override
@@ -179,6 +197,7 @@ class _$CommentForGetImpl implements _CommentForGet {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CommentForGetImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.account, account) || other.account == account) &&
             (identical(other.content, content) || other.content == content) &&
             (identical(other.created_at, created_at) ||
@@ -187,7 +206,8 @@ class _$CommentForGetImpl implements _CommentForGet {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, account, content, created_at);
+  int get hashCode =>
+      Object.hash(runtimeType, id, account, content, created_at);
 
   /// Create a copy of CommentForGet
   /// with the given fields replaced by the non-null parameter values.
@@ -207,7 +227,8 @@ class _$CommentForGetImpl implements _CommentForGet {
 
 abstract class _CommentForGet implements CommentForGet {
   factory _CommentForGet(
-          {@JsonKey(name: 'account') required final AccountComment account,
+          {@JsonKey(name: 'id') required final String id,
+          @JsonKey(name: 'account') required final AccountComment account,
           @JsonKey(name: 'content') required final String content,
           @JsonKey(name: 'created_at') final String? created_at}) =
       _$CommentForGetImpl;
@@ -215,6 +236,9 @@ abstract class _CommentForGet implements CommentForGet {
   factory _CommentForGet.fromJson(Map<String, dynamic> json) =
       _$CommentForGetImpl.fromJson;
 
+  @override
+  @JsonKey(name: 'id')
+  String get id;
   @override
   @JsonKey(name: 'account')
   AccountComment get account;

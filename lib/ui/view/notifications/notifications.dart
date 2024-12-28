@@ -71,12 +71,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                             ],
                           )),
                       Container(
-                        margin: EdgeInsets.only(top: 20),
-                        padding: EdgeInsets.only(right: 20, bottom: 20),
+                        margin: const EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(right: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
+                            const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
