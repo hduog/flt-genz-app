@@ -19,7 +19,8 @@ class _BlogsCardState extends State<BlogsCard> {
     final unescape = HtmlUnescape();
     final bodyText = unescape
         .convert(widget.blogItem.body ?? "")
-        .replaceAll(RegExp(r'<[^>]*>'), '');
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .trim();
 
     return GestureDetector(
         onTapDown: (_) {
@@ -80,17 +81,18 @@ class _BlogsCardState extends State<BlogsCard> {
                         Text(
                           widget.blogItem.title ?? "",
                           softWrap: true,
+                          maxLines: 2,
                           style: const TextStyle(
                               color: colorTextCateBlog,
                               fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.9,
-                          child: Text(
+                          child: Text(  
                             bodyText,
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
+                            maxLines: 1,
                             style: const TextStyle(
                               fontWeight: FontWeight.w400,
                               fontSize: 13,

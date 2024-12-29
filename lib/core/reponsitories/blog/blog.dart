@@ -16,4 +16,9 @@ class BlogRepo {
     final path = ApiEndPointConstants.apiGetBlogById.replaceFirst(':id', id);
     return await apiService.get(path, token);
   }
+
+  Future getBlogsByCategory(String token, String cateId) async {
+    final url = '${ApiEndPointConstants.apiGetBlog}?cateBlogId=$cateId';
+    return await apiService.get(url, token);
+  }
 }

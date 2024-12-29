@@ -30,6 +30,28 @@ class BlogService {
     return null;
   }
 
+  // Lấy các blog theo danh mục
+  Future<List<BlogData>?> getBlogsByCategory(
+      String cateId, WidgetRef ref) async {
+    final token = await _getToken();
+    if (token.isNotEmpty) {
+      try {
+        final response = await blogRepo.getBlogsByCategory(token, cateId);
+        if (response != null &&
+            response.statusCode == 200 &&
+            response.data != null) {
+          BlogInfoGet blogInfo = BlogInfoGet.fromJson(response.data);
+          return blogInfo.data;
+        } else {
+          print("API trả về lỗi: ${response?.statusCode} - ${response?.data}");
+        }
+      } catch (e) {
+        print("Lỗi khi gọi API getBlogsByCategory: $e");
+      }
+    }
+    return null;
+  }
+
   // Lấy các blog hot
   Future<List<HotBlogItemForGet>?> getHotBlogs(WidgetRef ref) async {
     final token = await _getToken();
@@ -48,6 +70,7 @@ class BlogService {
     return null;
   }
 
+  // Lấy blog chi tiết theo ID
   Future<BlogDetail?> getBlogById(WidgetRef ref, String id) async {
     try {
       final prefs = await SharedPreferences.getInstance();
