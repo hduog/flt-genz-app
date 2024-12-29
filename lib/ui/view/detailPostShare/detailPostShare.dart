@@ -23,7 +23,8 @@ class PostShareDetailPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<PostShareDetailPage> createState() => _PostShareDetailPageState();
+  ConsumerState<PostShareDetailPage> createState() =>
+      _PostShareDetailPageState();
 }
 
 class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
@@ -69,7 +70,9 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReactionPostShare(data);
 
-     ref.read(postProvider.notifier).updateLikeStatus(widget.postItem.id, isLiked, countLike);
+    ref
+        .read(postProvider.notifier)
+        .updateLikeStatus(widget.postItem.id, isLiked, countLike);
   }
 
   void _showKeyboard() {
@@ -104,7 +107,9 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
         listComment = [newComment, ...listComment];
       });
       await postService.commentReelPostShare(data);
-       ref.read(postProvider.notifier).updateCommentCount(widget.postItem.id, countComment);
+      ref
+          .read(postProvider.notifier)
+          .updateCommentCount(widget.postItem.id, countComment);
     }
   }
 
@@ -113,7 +118,8 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   }
 
   Future<void> getAllComment() async {
-    final comments = await postService.getAllCommentReelPostShare(widget.postItem.id);
+    final comments =
+        await postService.getAllCommentReelPostShare(widget.postItem.id);
     if (comments!.isNotEmpty) {
       setState(() {
         listComment = comments;
@@ -134,11 +140,21 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final commentsToShow = _showAllComments ? listComment : listComment.take(5).toList();
+    final commentsToShow =
+        _showAllComments ? listComment : listComment.take(5).toList();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorBackground,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text(
           'Chi tiết bài viết',
           style: TextStyle(fontSize: 14),
@@ -239,7 +255,8 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      widget.postItem.infoAuthorAndPost!.author.fullName,
+                                      widget.postItem.infoAuthorAndPost!.author
+                                          .fullName,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
@@ -259,13 +276,17 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            widget.postItem.infoAuthorAndPost!.postInf.contentText ??
+                            widget.postItem.infoAuthorAndPost!.postInf
+                                    .contentText ??
                                 "Nội dung bài viết được chia sẻ",
                             style: const TextStyle(color: Colors.black),
                           ),
                           const SizedBox(height: 8),
-                          if (widget.postItem.infoAuthorAndPost!.postInf.images != null &&
-                              widget.postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
+                          if (widget.postItem.infoAuthorAndPost!.postInf
+                                      .images !=
+                                  null &&
+                              widget.postItem.infoAuthorAndPost!.postInf.images!
+                                  .isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Image.network(
@@ -334,7 +355,7 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CircleAvatar(
-                              radius: 25.0,
+                              radius: 20.0,
                               backgroundImage: NetworkImage(
                                   '${Constants.awsUrl}${comment.account.avata ?? ''}'),
                             ),
@@ -349,10 +370,12 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 3),
+                                  const SizedBox(height: 2),
+                                  Text(formatDate(comment.created_at) ?? '',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                  const SizedBox(height: 4),
                                   Text(comment.contentCmt ?? ''),
-                                  const SizedBox(height: 5),
-                                  Text(formatDate(comment.created_at) ?? ''),
                                 ],
                               ),
                             ),
@@ -369,7 +392,9 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                         });
                       },
                       child: Text(
-                        _showAllComments ? 'Ẩn bớt bình luận' : 'Xem tất cả bình luận',
+                        _showAllComments
+                            ? 'Ẩn bớt bình luận'
+                            : 'Xem tất cả bình luận',
                         style: const TextStyle(color: Colors.blue),
                       ),
                     ),
@@ -383,7 +408,8 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
   }
 }
 
-Widget _buildReactionInfo(String iconName, int count, {VoidCallback? onReactionTap}) {
+Widget _buildReactionInfo(String iconName, int count,
+    {VoidCallback? onReactionTap}) {
   return GestureDetector(
     onTap: onReactionTap,
     child: SizedBox(

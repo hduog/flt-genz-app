@@ -85,7 +85,7 @@ class SearchCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 20.0,
                     backgroundImage: NetworkImage(
-                      '${Constants.awsUrl}${post.account.avata ?? ''}',
+                      '${Constants.awsUrl}${post.account.avata}',
                     ),
                   ),
                   const SizedBox(width: 10),

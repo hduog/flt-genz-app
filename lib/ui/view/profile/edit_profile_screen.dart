@@ -236,11 +236,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(
-            icon: SvgPicture.asset("assets/icons/arrow_left_grey.svg"),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
           ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
           title: const Center(
             child: Text(
               'Chỉnh sửa thông tin',

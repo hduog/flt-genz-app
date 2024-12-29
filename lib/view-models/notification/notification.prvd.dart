@@ -1,5 +1,3 @@
-
-import 'package:flutter_application_1/core/data/models/BlogModel/BlogData/BlogData.dart';
 import 'package:flutter_application_1/core/data/models/NotificationModel/NotificationData/NotificationData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

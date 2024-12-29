@@ -242,13 +242,16 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        backgroundColor: colorBackground,
         leading: IconButton(
-          icon: SvgPicture.asset("assets/icons/arrow_left_grey.svg"),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
           onPressed: () {
-            Navigator.of(context).pop(true);
+            Navigator.of(context).pop();
           },
         ),
-        backgroundColor: colorBackground,
         title: const Text(
           'Chi tiết bài viết',
           style: TextStyle(fontSize: 14),
@@ -491,7 +494,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CircleAvatar(
-                                    radius: 25.0,
+                                    radius: 20.0,
                                     backgroundImage: NetworkImage(
                                         '${Constants.awsUrl}${comment.account.avata ?? ''}'),
                                   ),
@@ -507,10 +510,14 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const SizedBox(height: 3),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          formatDate(comment.created_at) ?? '',
+                                          style: const TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                        ),
+                                        const SizedBox(height: 4),
                                         Text(comment.contentCmt ?? ''),
-                                        const SizedBox(height: 5),
-                                        Text(formatDate(comment.created_at) ?? ''),
                                       ],
                                     ),
                                   ),

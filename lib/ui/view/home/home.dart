@@ -232,7 +232,6 @@ class _HomeState extends ConsumerState<Home> {
                               itemBuilder: (context, index) {
                                 if (index < posts.length) {
                                   final post = posts[index];
-                                  final comments = post.comment_recent ?? [];
                                   return GestureDetector(
                                     onTap: () async {
                                       if (post.is_share ?? false) {
