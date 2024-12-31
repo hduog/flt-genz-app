@@ -151,7 +151,7 @@ class _HomeState extends ConsumerState<Home> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SearchScreen(),
+                                        builder: (context) => SearchScreen(shouldFocus: true),
                                       ),
                                     );
                                   }),
@@ -244,18 +244,13 @@ class _HomeState extends ConsumerState<Home> {
                                           ),
                                         );
                                       } else {
-                                        final needsRefresh =
-                                            await Navigator.push<bool>(
+                                        Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 PostDetailPage(postId: post.id),
                                           ),
                                         );
-
-                                        if (needsRefresh == true) {
-                                                 fetchPosts(); 
-                                        }
                                       }
                                     },
                                     child: ReelCard(

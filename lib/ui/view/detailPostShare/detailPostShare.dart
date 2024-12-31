@@ -199,7 +199,8 @@ class _PostShareDetailPageState extends ConsumerState<PostShareDetailPage> {
                             Text(
                               formatDate(widget.postItem.created_at) ??
                                   "DD/MM/YYYY HH:mm",
-                              style: const TextStyle(color: Colors.grey),
+                              style: const TextStyle(color: Colors.grey,
+                              fontSize: 12),
                             ),
                           ],
                         ),

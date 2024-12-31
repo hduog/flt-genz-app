@@ -18,7 +18,7 @@ class SearchCard extends StatelessWidget {
       final user = item as SearchUser;
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        padding: const EdgeInsets.all(8), 
+        padding: const EdgeInsets.all(8),
         child: Row(
           children: [
             // Avatar
@@ -63,7 +63,7 @@ class SearchCard extends StatelessWidget {
       );
     } else if (item is SearchPostResponse) {
       final post = item as SearchPostResponse;
-      
+
       return InkWell(
         onTap: () {
           Navigator.push(
@@ -101,8 +101,10 @@ class SearchCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          post.created_at ?? "DD/MM/YYYY HH:mm",
-                          style: const TextStyle(color: Colors.grey),
+                          formatDate(post.created_at) ??
+                              "DD/MM/YYYY HH:mm", // Ngày chia sẻ
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                         ),
                       ],
                     ),

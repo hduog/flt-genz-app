@@ -38,30 +38,15 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       body: routes[_selectedTab],
       bottomNavigationBar: Stack(clipBehavior: Clip.none, children: [
         Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 20,
-          ),
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: Offset(0, -2),
-                )
-              ],
-              borderRadius: BorderRadius.all(Radius.circular(10))),
           child: BottomNavigationBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
+            backgroundColor: Colors.white,
             currentIndex: _selectedTab,
             onTap: (index) => _changeTab(index),
             type: BottomNavigationBarType.fixed,
             selectedItemColor: const Color.fromARGB(255, 62, 104, 218),
             unselectedItemColor: Colors.black54,
             showSelectedLabels: true,
-            showUnselectedLabels: true,
+            showUnselectedLabels: false,
             items: [
               const BottomNavigationBarItem(
                 icon: Icon(Icons.home),
