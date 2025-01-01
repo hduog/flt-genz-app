@@ -3,6 +3,7 @@ import 'package:flutter_application_1/ui/view/home/home.dart';
 import 'package:flutter_application_1/ui/view/sendSorrow/sendSorrow.dart';
 import 'package:flutter_application_1/ui/view/soundChill/soundChill.dart';
 import 'package:flutter_application_1/ui/view/splash/splash.dart';
+import 'package:flutter_application_1/ui/view/takeABreak/takeABreak.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         title: 'genz mental heath',
         routes: <String, WidgetBuilder>{
           '/send_sorrow': (BuildContext context) => new SendSorrow(),
+          '/take_a_break': (BuildContext context) => new TakeABreakPage(),
           '/sound-chill': (BuildContext context) => new SoundChillScreen(),
           '/home': (BuildContext context) => Home(),
         },
