@@ -52,7 +52,7 @@ class _SendSorrowState extends ConsumerState<SendSorrow>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 60),
+      duration: const Duration(seconds: 45),
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _showMessage(_finalHealText ?? "Cảm ơn vì đã chia sẻ cho tôi !");
@@ -83,7 +83,7 @@ class _SendSorrowState extends ConsumerState<SendSorrow>
   }
 
   Future<void> _startTextUpdate(List<String> list) async {
-    _textUpdateTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    _textUpdateTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_isAnimating) {
         setState(() {
           _displayedMentalHeathText = list[_currentPhraseIndex];

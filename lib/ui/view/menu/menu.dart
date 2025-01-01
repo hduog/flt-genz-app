@@ -264,22 +264,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
               ),
             ),
             const SizedBox(height: 10),
-            TransactionTile(
-              icon: Icons.play_circle_fill,
-              title: 'Youtube',
-              subtitle: 'Subscription Payment',
-              amount: '\$15,00',
-              date: '16 May 2024',
-              amountColor: Colors.black,
-            ),
-            TransactionTile(
-              icon: Icons.account_balance_wallet_outlined,
-              title: 'Stripe',
-              subtitle: 'Monthly Salary',
-              amount: '+\$3,000',
-              date: '15 May 2024',
-              amountColor: Colors.green,
-            ),
+            
           ],
         ),
       ),

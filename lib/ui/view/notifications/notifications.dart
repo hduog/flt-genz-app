@@ -20,9 +20,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   Future<void> fetchNotifications() async {
     final notificationService = NotificationService();
-    final blogs = await notificationService.getNotifications(ref);
-    if (blogs != null) {
-      ref.read(notificationProvider.notifier).setNotifications(blogs);
+    final notifi = await notificationService.getNotifications(ref);
+    if (notifi != null) {
+      ref.read(notificationProvider.notifier).setNotifications(notifi);
     }
   }
 

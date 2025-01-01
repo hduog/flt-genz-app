@@ -17,4 +17,12 @@ class SendSorrowRepo {
     return await apiService.post(
         ApiEndPointConstants.apiGetQuoteSendSorrow, data, token);
   }
+
+   Future getAllSoundNatural(String token) async {
+    return await apiService.get(
+        ApiEndPointConstants.apiGetSound(
+            'typeSoundId=${Constants.typeSoundNaturalId}'),
+        token);
+  }
+
 }
