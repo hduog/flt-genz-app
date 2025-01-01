@@ -8,9 +8,9 @@ import 'package:flutter_application_1/ui/view/messenger/chat-bot.dart';
 import 'package:flutter_application_1/ui/view/messenger/chat.dart';
 import 'package:flutter_application_1/ui/widget/messenger/recommendlist.dart';
 import 'package:flutter_application_1/ui/widget/messenger/chatlist.dart';
-import 'package:flutter_application_1/ui/widget/messenger/user-message-card.dart';
 import 'package:flutter_application_1/ui/widget/messenger/bot-message-cart.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/follow/follow.prvd.dart';
 import 'package:flutter_application_1/view-models/room-message/AI/room-messageAI.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,13 +23,17 @@ class MessengerScreen extends ConsumerStatefulWidget {
 
 class _MessengerScreenState extends ConsumerState<MessengerScreen> {
   final roomMessageAI = RoomMessageAIService();
+  final roomMessage = MessageInRoomService();
   final messageService = MessageInRoomService();
   final TextEditingController _textNameTopicRoom = TextEditingController();
+  bool showAll = false;
 
   @override
   void initState() {
     super.initState();
     fetchRoomMessageAI();
+    fetchFollower();
+    fetchChatRRoom();
   }
 
   @override
@@ -41,6 +45,11 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
   Future<void> fetchRoomMessageAI() async {
     final data = await roomMessageAI.getAllRoomMessageAI();
     ref.read(roomMessageAIProvider.notifier).setListChatAI(data ?? []);
+  }
+
+  Future<void> fetchFollower() async {
+    final data = await roomMessageAI.getFollower();
+    ref.read(followProvider.notifier).setFollower(data ?? []);
   }
 
   Future<void> createRoomMessageAI(String topicRoom) async {
@@ -61,61 +70,76 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
     }
   }
 
+  Future<void> createRoomMessageUser(
+      String topicRoom, String targetUserId) async {
+    final profileInfo = ref.watch(userProvider);
+
+    RoomMessageAIPost data = RoomMessageAIPost(
+      accountInRoom: [profileInfo?.id ?? '', targetUserId],
+      name: topicRoom,
+    );
+    final result = await roomMessageAI.createRoomMessageAI(data);
+    if (result?.id != null) {
+      _textNameTopicRoom.clear();
+    }
+  }
+
+  Future<void> fetchChatRRoom() async {
+    final data = await roomMessage.fetchChatList();
+    ref.read(roomMessageAIProvider.notifier).setListChatRoom(data ??[]);
+  }
+  
+
   @override
   Widget build(BuildContext context) {
-    final listAIRoom = ref.watch(roomMessageAIProvider);
+    final listAIRoom = ref.watch(roomMessageAIProvider).chatAI;
+    final followers = ref.watch(followProvider);
+    final chatRoomList = ref.watch(roomMessageAIProvider).chatRoom;
+    final visibleList = showAll ? listAIRoom : listAIRoom.take(1).toList();
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Trò chuyện',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+        title: const Center(
+          child: Text(
+            'Đoạn chat',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_vert),
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(8),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // RecommendList
-              SizedBox(
-                height: 90,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return RecommendList(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatScreen(),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-
               // Search bar
               Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: TextField(
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
+                        vertical: 12, horizontal: 10),
                     border: InputBorder.none,
                     hintText: 'Tìm kiếm cuộc trò chuyện',
                     hintStyle: const TextStyle(color: Colors.grey),
@@ -130,8 +154,38 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-
+              const SizedBox(height: 4),
+              // Recommend
+              SizedBox(
+                height: 95,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: followers.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: RecommendList(
+                        follower: followers[index],
+                        onTap: () async {
+                          await createRoomMessageUser(
+                            'Chat with ${followers[index].fullName}', 
+                            followers[index].id, 
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                roomId:
+                                    followers[index].id, 
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
               // Title and Create button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -149,14 +203,14 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
                       _showCreateConversationModal(context);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: const Color.fromARGB(255, 89, 147, 247),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 8,
+                        vertical: 8,
+                        horizontal: 16,
                       ),
                     ),
                     child: const Text(
@@ -171,82 +225,74 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Bot message cards
               ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: listAIRoom.length,
-                  itemBuilder: (context, index) {
-                    return BotMessageCard(
-                      text: listAIRoom[index].nameRoom ??
-                          'Cuộc trò chuyện Tâm An',
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChatBotScreen(
-                                      roomId: listAIRoom[index].id,
-                                      nameRoom: listAIRoom[index].nameRoom ??
-                                          "Tâm an",
-                                    )));
-                      },
-                    );
-                  }),
-              const SizedBox(height: 10),
-
-              // Pinned section
-              const Text(
-                'Đã gim',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: visibleList.length,
+                itemBuilder: (context, index) {
+                  return BotMessageCard(
+                    text: visibleList[index].nameRoom,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatBotScreen(
+                            roomId: visibleList[index].id,
+                            nameRoom: visibleList[index].nameRoom,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-              const SizedBox(height: 10),
-
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    UserCard(
-                      avatarUrl: 'https://via.placeholder.com/150',
-                      name: 'George Lobko',
-                      message: 'Thanks for the quick response...',
-                      backgroundColor: Colors.greenAccent.withOpacity(0.2),
-                      index: 1,
-                      indicatorColor: Colors.green,
-                    ),
-                    const SizedBox(width: 16),
-                    UserCard(
-                      avatarUrl: 'https://via.placeholder.com/150',
-                      name: 'Amelia Korns',
-                      message: 'I\'m stuck in traffic...',
-                      backgroundColor: Colors.blueAccent.withOpacity(0.2),
-                      index: 2,
-                      indicatorColor: Colors.blue,
-                    ),
-                  ],
+              if (listAIRoom.length > 2)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showAll =
+                          !showAll; // Đổi trạng thái giữa showAll và không
+                    });
+                  },
+                  child: Text(
+                    showAll ? 'Thu gọn' : 'Xem thêm',
+                    style: TextStyle(color: Colors.blueAccent),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-
               // All chats section
-              const Text(
-                'Tất cả cuộc trò chuyện',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Tất cả cuộc trò chuyện',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 5),
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: 10,
+                itemCount: chatRoomList.length,
                 itemBuilder: (context, index) {
-                  return ChatList(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(),
-                        ),
-                      );
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: ChatList(
+                      roomMessage: chatRoomList[index],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatScreen(
+                              roomId: chatRoomList[index].id,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               ),
@@ -256,7 +302,7 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
       ),
     );
   }
-
+  
   void _showCreateConversationModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -279,11 +325,11 @@ class _MessengerScreenState extends ConsumerState<MessengerScreen> {
                 const Text(
                   'Tạo hội thoại với Tâm An',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _textNameTopicRoom,
                   decoration: InputDecoration(

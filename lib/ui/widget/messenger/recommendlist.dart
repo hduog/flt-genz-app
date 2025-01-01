@@ -1,44 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/FollowersData/FollowersData.dart';
 
 class RecommendList extends StatelessWidget {
+  final FollowersData follower;
   final VoidCallback onTap;
 
-  const RecommendList({super.key, required this.onTap});
+  const RecommendList({super.key, required this.onTap, required this.follower});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorIconButtonOverlay,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/images/reels-test.png',
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                ),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipOval(
+              child: Image.network(
+                '${Constants.awsUrl}${follower.avata ?? ''}',
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
               ),
-              const SizedBox(height: 2),
-              const Text(
-                "Duy",
-                style: TextStyle(
-                  fontSize: 13,
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              follower.fullName.split(' ').last,  
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600, 
+                color: Colors.black87,
               ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

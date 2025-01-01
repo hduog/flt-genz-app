@@ -129,7 +129,7 @@ class _ChatBotScreenState extends ConsumerState<ChatBotScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.nameRoom,
+                'Tâm An',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -148,6 +148,7 @@ class _ChatBotScreenState extends ConsumerState<ChatBotScreen> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
@@ -216,7 +217,7 @@ class _ChatBotScreenState extends ConsumerState<ChatBotScreen> {
                   child: TextField(
                     controller: _controller,
                     decoration: const InputDecoration(
-                      hintText: "Chia sẻ điều gì đó...",
+                      hintText: "Aa...",
                       border: InputBorder.none,
                     ),
                   ),
