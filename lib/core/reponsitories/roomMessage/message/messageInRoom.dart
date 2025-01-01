@@ -14,4 +14,9 @@ class MessageInRoomRepo {
     return await apiService.post(
         ApiEndPointConstants.apiPostMessageToChatAIRoom, data, token);
   }
+
+  Future fetchChatList(String token) async {
+    return await apiService.get(ApiEndPointConstants.apiGetAllValidRoom, token);
+  }
+  
 }

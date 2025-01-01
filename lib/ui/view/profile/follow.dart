@@ -15,7 +15,7 @@ class FollowTabScreen extends StatelessWidget {
       initialIndex: tabFollow,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(profileInfo.user.fullName ?? '__thanhcuong__',
+          title: Text(profileInfo.user.fullName,
               style: TextStyle(fontWeight: FontWeight.bold)),
           centerTitle: true,
           elevation: 1,

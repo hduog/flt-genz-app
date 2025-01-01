@@ -1,57 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/data/models/RoomMessageModel/RoomMessageForGet/RoomMessageForGet.dart';
 
 class ChatList extends StatelessWidget {
   final VoidCallback onTap;
+  final RoomMessageForGet roomMessage;
 
   const ChatList({
     Key? key,
     required this.onTap,
+    required this.roomMessage,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      splashColor: Colors.grey.withOpacity(1),
-      highlightColor: Colors.grey.withOpacity(1),
       child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        leading: CircleAvatar(
-          radius: 27,
-          backgroundImage: AssetImage('assets/images/quote.png'),
-        ),
+        leading: ClipOval(
+              child: Image.network(
+                '${Constants.awsUrl}${roomMessage.avatar ?? ''}',
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            ),
         title: Text(
-          "Nguyễn Lê Hữu Duy",
+          roomMessage.nameRoom ?? 'No Name',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          "Chào cáo bạn Nguyễn ahf áuhcaf thânsf tháinasf f àhaifnfasv fhaisfnasm ầihsfkasjfbifbasjbf fabufdasba fhfaibfabfufb a",
-          softWrap: true,
+          roomMessage.lastMessage ?? 'No messages yet',
           overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "10:20",
-              style: TextStyle(fontSize: 12),
-            ),
-            SizedBox(height: 4),
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  '1',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-            ),
-          ],
+          style: TextStyle(fontSize: 12),
         ),
       ),
     );

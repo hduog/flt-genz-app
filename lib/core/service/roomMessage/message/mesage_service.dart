@@ -1,5 +1,6 @@
 import 'package:flutter_application_1/core/data/models/RoomMessageModel/MessageAIPost/MessageAIPost.dart';
 import 'package:flutter_application_1/core/data/models/RoomMessageModel/MessageGet/MessageGet.dart';
+import 'package:flutter_application_1/core/data/models/RoomMessageModel/RoomMessageForGet/RoomMessageForGet.dart';
 import 'package:flutter_application_1/core/reponsitories/roomMessage/message/messageInRoom.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,5 +34,22 @@ class MessageInRoomService {
         return MessageGet.fromJson(response.data);
       }
     }
+  }
+
+  Future<List<RoomMessageForGet>?> fetchChatList() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+
+    if (token.isNotEmpty) {
+      final response = await messageRepo.fetchChatList(token);
+
+      if (response != null && response.statusCode == 200) {
+        List<dynamic> data = response.data;
+        return data.map((item) => RoomMessageForGet.fromJson(item)).toList();
+      }
+    } else {
+      throw Exception('Token is missing or empty');
+    }
+    return null;
   }
 }

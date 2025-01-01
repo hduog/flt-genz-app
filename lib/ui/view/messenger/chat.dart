@@ -1,224 +1,226 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_application_1/core/data/models/RoomMessageModel/MessageGet/MessageGet.dart';
+import 'package:flutter_application_1/core/data/models/RoomMessageModel/OwnerRoom/OwnerRoomGet.dart';
+import 'package:flutter_application_1/core/data/models/RoomMessageModel/RoomMessage.dart';
+import 'package:flutter_application_1/core/service/roomMessage/AI/room_message_ai.dart';
+import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/room-message/message/message.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends ConsumerStatefulWidget {
+  final String roomId;
+  @override
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+  const ChatScreen({
+    super.key,
+    required this.roomId,
+  });
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final service = RoomMessageAIService();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMessageInRoom().then((_) {
+      scrollToBottom();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> fetchMessageInRoom() async {
+    final data = await service.fetchMessages(widget.roomId);
+    if (data == null) {
+      debugPrint("No data returned from fetchMessages");
+      return;
+    }
+    ref.read(messageInRoomProvider.notifier).setListMessage(data ?? []);
+  }
+
+  Future<void> _sendMessage() async {
+    final profileInfo = ref.read(userProvider);
+
+    final userMessage = MessageGet(
+      id: DateTime.now().toIso8601String(),
+      roomId: widget.roomId,
+      owner: OwnerRoomGet(id: profileInfo?.id ?? ''),
+      contentText: _controller.text,
+      ownerId: profileInfo?.id ?? '',
+    );
+    ref.read(messageInRoomProvider.notifier).addMoreMessage(userMessage);
+
+    try {
+      final contentText = _controller.text;
+      if (contentText == null || contentText.isEmpty) {
+        throw Exception("Nội dung tin nhắn không hợp lệ.");
+      }
+      final data = MessagePost(
+        contentText: contentText,
+        roomId: widget.roomId,
+      );
+      // Gọi API để gửi tin nhắn
+      final response = await service.sendMessage(data);
+      if (response == null) {
+        debugPrint("API call trả về null");
+        throw Exception("API call không thành công");
+      }
+    } catch (e) {
+      debugPrint("Error: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+      scrollToBottom(); 
+    }
+    FocusScope.of(context).unfocus();
+    _controller.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final listMessageInRoom = ref.watch(messageInRoomProvider) ?? [];
+    final profileInfo = ref.watch(userProvider);
+
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            "assets/icons/arrow_back.svg",
-            width: 30,
-            height: 30,
-          ),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Nguyễn Lê Huu Duy',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+        title: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Nội dung đoạn chat",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            Text(
-              'huyduy',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
-            ),
-          ],
+              SizedBox(width: 4),
+            ],
+          ),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/call.svg",
-              width: 30,
-              height: 30,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/video_call.svg",
-              width: 30,
-              height: 30,
-            ),
+            icon: Icon(Icons.more_vert, color: Colors.black),
             onPressed: () {},
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16),
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
-                          ),
-                        ),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.6,
-                          ),
-                          child: Text(
-                            "Chào bạn nha Chào bạn nha",
-                            style: TextStyle(fontSize: 16, color: Colors.black),
-                          ),
-                        ),
+            child: ListView.builder(
+              itemCount: listMessageInRoom.length,
+              scrollDirection: Axis.vertical,
+              controller: _scrollController,
+              itemBuilder: (context, index) {
+                final data = listMessageInRoom[index];
+                if (data.ownerId == profileInfo?.id) {
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: EdgeInsets.all(12.0),
+                      margin: EdgeInsets.only(bottom: 8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
-                      Text(
-                        '10:00 am',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      child: Text(
+                        data.contentText ?? "Gửi không thành công",
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          AssetImage('assets/images/reels-test.png'),
                     ),
-                    SizedBox(width: 8),
-                    Column(
+                  );
+                }
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.all(12.0),
+                    margin: EdgeInsets.only(bottom: 8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                          ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.6,
-                            ),
-                            child: Text(
-                              "Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha Chào bạn nha",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ),
                         Text(
-                          '10:01 am',
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          data.contentText ?? "Gửi không thành công",
+                          style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
+                        SizedBox(height: 8),
                       ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                // Tin nhắn bên phải
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 4),
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
-                          ),
-                        ),
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width *
-                                0.6, // Giới hạn chiều rộng
-                          ),
-                          child: Text(
-                            'Chào bạn nha Chào bạn nha',
-                            style: TextStyle(fontSize: 16, color: Colors.black),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '10:02 am',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ],
                   ),
-                ),
-              ],
+                );
+              },
+              padding: EdgeInsets.all(16.0),
             ),
           ),
-          // Thanh nhập tin nhắn
+          if (isLoading)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(top: BorderSide(color: Colors.grey.shade300)),
+            ),
             child: Row(
               children: [
-                IconButton(
-                  icon: SvgPicture.asset(
-                    "assets/icons/camera.svg",
-                    width: 30,
-                    height: 30,
-                  ),
-                  onPressed: () {},
-                ),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Nhắn tin...',
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: "Aa...",
                       border: InputBorder.none,
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: SvgPicture.asset(
-                    "assets/icons/microphone.svg",
-                    width: 30,
-                    height: 30,
-                  ),
-                  onPressed: () {},
+                  icon: const Icon(Icons.send, color: Colors.blue),
+                  onPressed: _sendMessage,
                 ),
-                IconButton(
-            icon: SvgPicture.asset(
-              "assets/icons/add.svg",
-              width: 30,
-              height: 30,
-            ),
-            onPressed: () {
-              
-            },
-          ),
               ],
             ),
           ),

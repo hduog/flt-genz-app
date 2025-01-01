@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://192.168.88.101:3003/api";
+  static const String _baseUrl = "http://192.168.1.5:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -67,6 +67,8 @@ class ApiEndPointConstants {
   static String apiGetMessageInRoom(String? idRoom) {
     return "$_baseUrl/room-message/messages/$idRoom";
   }
-
+  static String apiSendMessage = "$_baseUrl/room-message/send-message";
+  static String apiGetAllValidRoom = "$_baseUrl/room-message";
   static String apiPostMessageToChatAIRoom = "$_baseUrl/chat-bot";
+  static String apiGetFollower = "$_baseUrl/follow/followers";
 }
