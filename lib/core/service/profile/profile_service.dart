@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_application_1/core/data/models/FileModel/ImageForCreate/ImageForCreate.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
+import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileOtherAccountData/ProfileOtherAccountData.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileUpdateRespone/ProfileUpdateRespone.dart';
 import 'package:flutter_application_1/core/reponsitories/profile/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,5 +94,21 @@ class ProfileService {
     } catch (e) {
       return null;
     }
+  }
+    //Other
+  Future<ProfileOtherAccountData?> getProfileOtherAccount(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('access_token') ?? '';
+
+    if (token.isNotEmpty) {
+      final response = await profileRepo.getProfileOtherAccount(token, id);
+
+      if (response?.statusCode == 200) {
+        ProfileOtherAccountData accountId =
+            ProfileOtherAccountData.fromJson(response.data);
+        return accountId;
+      }
+    }
+    return null;
   }
 }

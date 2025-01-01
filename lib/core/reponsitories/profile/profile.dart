@@ -24,4 +24,9 @@ class ProfileRepo {
     final file = File(body.filePath);
     return await apiService.uploadImage(ApiEndPointConstants.apiUploadBannerImage, file, token);
   }
+  
+  //Other account 
+  Future getProfileOtherAccount(String token, String id) async {
+    return await apiService.get(ApiEndPointConstants.apiOtherAccountProfile(id),token);
+  }
 }

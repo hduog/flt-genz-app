@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/ProfileModel/ProfileData/ProfileData.dart';
+import 'package:flutter_application_1/ui/view/profile/profileOther/profileOther.dart';
 
 class FollowingScreen extends StatelessWidget {
   final ProfileData profileInfo;
@@ -9,7 +10,9 @@ class FollowingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold(
+       backgroundColor: Colors.white,
+      body: Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -66,21 +69,36 @@ class FollowingScreen extends StatelessWidget {
                       ),
                       title: Text(user.fullName),
                       subtitle: Text(user.nickName ?? ""),
+                       onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ProfileOtherScreen(accountId: user.id), 
+                          ),
+                        );
+                      },
                       trailing: ElevatedButton(
                         onPressed: () {
                          
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
+                              horizontal: 10, vertical: 8,),
+                          backgroundColor: Color.fromARGB(255, 244, 244, 244),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10), 
+                          ),
                         ),
-                        child: const Text('Đang theo dõi'),
+                        child: const Text('Đang theo dõi',
+                         style: TextStyle(
+                     color: Colors.black,
+                      fontSize: 14,
+                    ),),
                       ),
                     );
                   },
                 ),
         ),
       ],
-    );
+    ));
   }
 }
