@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://192.168.1.5:3003/api";
+  static const String _baseUrl = "http://192.168.1.207:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -71,4 +71,30 @@ class ApiEndPointConstants {
   static String apiGetAllValidRoom = "$_baseUrl/room-message";
   static String apiPostMessageToChatAIRoom = "$_baseUrl/chat-bot";
   static String apiGetFollower = "$_baseUrl/follow/followers";
+
+ //Profile Other
+  static String apiOtherAccountProfile(String? id) {
+    return "$_baseUrl/user/other-account-profile/$id";
+  }
+
+  static String apiPostOtherAccountProfile(String? id) {
+    return "$_baseUrl/post/get-posts-other-account/$id";
+  }
+
+  static String apiPostShareOtherAccountProfile(String? id) {
+    return "$_baseUrl/postshare/accounts/$id";
+  }
+
+    //Follow
+  static String apisendFollow = "$_baseUrl/follow";
+  static String apicheckStatusFollow(String reciverId) {
+    return "$_baseUrl/follow/check-follow-status/$reciverId";
+  }
+  static String apiUnFollow(String id){
+    return "$_baseUrl/follow/unfollow/$id";
+  }
+  static String apiUnRequestFollow(String id){
+    return "$_baseUrl/follow/$id";
+  }
+
 }
