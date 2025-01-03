@@ -22,7 +22,7 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return account.avata!.isNotEmpty
+    return (account != null && account.avata != null && account.avata!.isNotEmpty)
         ? ClipOval(
             child: Image.network(
               '${Constants.awsUrl}${account.avata}',

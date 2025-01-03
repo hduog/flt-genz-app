@@ -3,6 +3,7 @@ import 'package:flutter_application_1/core/constants/constants.dart';
 import 'package:flutter_application_1/core/data/models/Search/SearchModel/SearchModel.dart';
 import 'package:flutter_application_1/core/data/models/Search/SearchPostResponse/SearchPostResponse.dart';
 import 'package:flutter_application_1/ui/view/detailPost/detailPost.dart';
+import 'package:flutter_application_1/ui/view/profile/profileOther/profileOther.dart';
 
 class SearchCard extends StatelessWidget {
   final dynamic item;
@@ -16,7 +17,17 @@ class SearchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (item is SearchUser) {
       final user = item as SearchUser;
-      return Container(
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileOtherScreen(accountId: user.id), 
+            ),
+          );
+        },
+        child: 
+       Container(
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
         padding: const EdgeInsets.all(8),
         child: Row(
@@ -60,7 +71,7 @@ class SearchCard extends StatelessWidget {
             const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
           ],
         ),
-      );
+      ));
     } else if (item is SearchPostResponse) {
       final post = item as SearchPostResponse;
 

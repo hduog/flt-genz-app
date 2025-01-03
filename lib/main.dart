@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/send_sorrow': (BuildContext context) => new SendSorrow(),
           '/take_a_break': (BuildContext context) => new TakeABreakPage(),
-          '/sound-chill': (BuildContext context) => new SoundChillScreen(),
+          '/sound_chill': (BuildContext context) => new SoundChillScreen(),
           '/home': (BuildContext context) => Home(),
         },
         debugShowCheckedModeBanner: false,

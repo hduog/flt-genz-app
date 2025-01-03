@@ -76,4 +76,12 @@ class PostRepo {
   Future getDetailPostById(String token, String idPost) async {
     return await apiService.get(ApiEndPointConstants.apiDetailPostById(idPost),token);
   }
+
+   //Other account
+    Future getPostOtherAccount(String token, String id) async {
+    return await apiService.get(ApiEndPointConstants.apiPostOtherAccountProfile(id),token);
+  }
+   Future getPostShareOtherAccount(String token, String id) async {
+    return await apiService.get(ApiEndPointConstants.apiPostShareOtherAccountProfile(id),token);
+  }
 }

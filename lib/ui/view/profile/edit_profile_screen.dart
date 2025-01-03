@@ -217,14 +217,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget buildTextField(String label, TextEditingController controller,
       {bool readOnly = false, VoidCallback? onTap}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: TextField(
         controller: controller,
         readOnly: readOnly,
         onTap: onTap,
+        style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
           labelText: label,
-          border: const UnderlineInputBorder(),
+          filled: true,
+          fillColor: Colors.grey[200],
+          border: const OutlineInputBorder(),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         ),
       ),
     );
@@ -234,44 +239,45 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 15,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: Colors.black,
           ),
-          title: const Center(
-            child: Text(
-              'Chỉnh sửa thông tin',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Chỉnh sửa thông tin',
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _saveProfile,
+            child: const Text(
+              'Lưu',
+              style: TextStyle(fontSize: 16, color: Colors.blue),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: _saveProfile,
-              child: const Text(
-                'Lưu',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-          ]),
-      body: Padding(
+        ],
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () => _pickImage(ImageSource.gallery, false),
               child: Container(
+                width:
+                    double.infinity, // Đảm bảo banner chiếm toàn bộ chiều rộng
                 height: 200,
-                width: double.infinity,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
                     image: _bannerImage != null
                         ? FileImage(_bannerImage!)
@@ -280,51 +286,68 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                 '${Constants.awsUrl}${bannerPathController.text}')
                             : const AssetImage(
                                 'assets/images/reels-test.png')) as ImageProvider,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.cover, // Đảm bảo hình ảnh được căn chỉnh đúng
                   ),
                 ),
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(1.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: SvgPicture.asset(
                         'assets/icons/photo_grey.svg',
                         width: 30,
                         height: 30,
+                        color: Colors.white.withOpacity(0.8),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () => _pickImage(ImageSource.gallery, true),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _avatarImage != null
-                    ? FileImage(_avatarImage!)
-                    : (avatarPathController.text.isNotEmpty
-                        ? NetworkImage(
-                            '${Constants.awsUrl}${avatarPathController.text}')
-                        : const AssetImage(
-                            'assets/images/reels-test.png')) as ImageProvider,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: SvgPicture.asset(
-                    'assets/icons/photo_grey.svg',
-                    width: 30,
-                    height: 30,
+              child: Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: _avatarImage != null
+                        ? FileImage(_avatarImage!)
+                        : (avatarPathController.text.isNotEmpty
+                            ? NetworkImage(
+                                '${Constants.awsUrl}${avatarPathController.text}')
+                            : const AssetImage(
+                                'assets/images/reels-test.png')) as ImageProvider,
                   ),
-                ),
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.blue,
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 20),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 20),
-            buildTextField('Họ và tên', fullNameController),
-            buildTextField('Nickname', nickNameController),
-            buildTextField('Phone Number', phoneController),
-            buildTextField('Email', emailController, readOnly: true),
+            buildTextField(
+              'Họ và tên',
+              fullNameController,
+            ),
+            buildTextField(
+              'Tên gọi khác',
+              nickNameController,
+            ),
+            buildTextField(
+              'Số điện thoạithoại',
+              phoneController,
+            ),
+            buildTextField(
+              'Email',
+              emailController,
+              readOnly: true,
+            ),
             buildTextField(
               'Sinh nhật',
               birthController,
@@ -334,13 +357,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             const SizedBox(height: 20),
             const Text(
               'Yêu thích',
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               children: favorites.map((favorite) {
                 return Chip(
-                  label: Text(favorite.nameFavorite),
+                  label: Text(
+                    favorite.nameFavorite,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  deleteIcon: const Icon(Icons.close, size: 18),
                   onDeleted: () {
                     setState(() {
                       favorites.remove(favorite);
@@ -350,22 +381,39 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               }).toList(),
             ),
             const SizedBox(height: 5),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: _addFavorite,
-              child: const Text('Thêm mục yêu thích'),
+              icon: const Icon(Icons.add),
+              label: const Text('Thêm mục yêu thích'),
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
                 backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
             const SizedBox(height: 20),
-            const Text('About Me', style: TextStyle(fontSize: 16)),
+            const Text(
+              'Giới thiệu bản thân',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             TextField(
               controller: aboutMeController,
-              maxLines: 10,
-              decoration: const InputDecoration(
-                hintText: 'Kể về bạn',
-                border: OutlineInputBorder(),
+              maxLines: 6,
+              decoration: InputDecoration(
+                hintText: 'Kể về bạn...',
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.blue),
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],

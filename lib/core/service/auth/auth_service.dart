@@ -55,4 +55,10 @@ class AuthService {
       }
     }
   }
+
+  Future<void> logout(WidgetRef ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('access_token');
+  ref.read(userProvider.notifier).logout();
+}
 }

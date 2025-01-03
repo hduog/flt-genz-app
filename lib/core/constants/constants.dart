@@ -47,9 +47,11 @@ class Constants {
 
 String? formatDate(String? dateStr) {
   if (dateStr == null) return null;
+  
   final dateTime = DateTime.parse(dateStr);
+  final vietnamTime = dateTime.toUtc().add(const Duration(hours: 7));
   final formatter = DateFormat('dd/MM/yyyy HH:mm');
-  return formatter.format(dateTime);
+  return formatter.format(vietnamTime);
 }
 
 String? formatBirth(String? dateStr) {

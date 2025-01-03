@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
+import 'package:flutter_application_1/core/service/auth/auth_service.dart';
 import 'package:flutter_application_1/core/service/features/feature_service.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/core/service/profile/profile_service.dart';
 import 'package:flutter_application_1/ui/view/info/ImageListPage.dart';
 import 'package:flutter_application_1/ui/view/info/PostListPage.dart';
 import 'package:flutter_application_1/ui/view/info/PostShareListPage.dart';
+import 'package:flutter_application_1/ui/view/login/login.dart';
 import 'package:flutter_application_1/ui/view/profile/edit_profile_screen.dart';
 import 'package:flutter_application_1/ui/widget/feature.card.dart';
 import 'package:flutter_application_1/view-models/feature/feature.prvd.dart';
@@ -264,7 +266,34 @@ class _MenuPageState extends ConsumerState<MenuPage> {
               ),
             ),
             const SizedBox(height: 10),
-            
+
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  await AuthService().logout(ref);
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorButton,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  'Đăng xuất',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

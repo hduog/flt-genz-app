@@ -46,16 +46,20 @@ class ApiService {
     }
   }
 
-  Future<Response?> delete(String path) async {
+  Future<Response?> delete(String path, String token) async {
     try {
-      final response = await _dio.delete(path);
+      final response = await _dio.delete(
+        path,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
       return response;
     } catch (e) {
       print('Unexpected error: $e');
       return null;
     }
   }
-
   Future<Response?> uploadImage(String path, File image, String token) async {
     try {
       if (!await image.exists()) return null;
