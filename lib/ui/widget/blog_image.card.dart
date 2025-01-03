@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/core/data/models/BlogModel/CateBlog/CateBlog.dart';
 import 'package:flutter_application_1/core/data/models/HotBlogModel/HotBlogItemForGet/HotBlogItemForGet.dart';
 
 class BlogsImageCard extends StatelessWidget {
@@ -50,13 +49,13 @@ class BlogsImageCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundImage: NetworkImage('${Constants.awsUrl}${hotBlogItem.account?.avata ?? ''}'),
+                      backgroundImage: NetworkImage('${Constants.awsUrl}${hotBlogItem.account.avata ?? ''}'),
                       backgroundColor: Colors.grey[300], // Placeholder background
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        hotBlogItem.account?.fullName ?? 'Unknown Author',
+                        hotBlogItem.account.fullName ?? 'Unknown Author',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -70,7 +69,7 @@ class BlogsImageCard extends StatelessWidget {
                 const Spacer(),
                 // Blog title
                 Text(
-                  hotBlogItem.title ?? 'No Title',
+                  hotBlogItem.title,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -82,7 +81,7 @@ class BlogsImageCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Blog categories
                 Text(
-                  hotBlogItem.cateBlog.map((cate) => cate.title).join(', ') ?? '',
+                  hotBlogItem.cateBlog.map((cate) => cate.title).join(', '),
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,

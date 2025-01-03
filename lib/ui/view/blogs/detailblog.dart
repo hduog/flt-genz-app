@@ -35,17 +35,20 @@ class _BlogDetailScreenState extends ConsumerState<BlogDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorBackground,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(
           blogDetail?.blog?.title ?? 'chi tiết bài',
           style: const TextStyle(fontSize: 14),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
       body: Container(
         color: colorBackground,

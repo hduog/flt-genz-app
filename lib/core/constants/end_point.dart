@@ -27,7 +27,9 @@ class ApiEndPointConstants {
   static String apiShowAllCommentReelPostShare(String idPostShare) {
     return "$_baseUrl/comment/postshare/$idPostShare";
   }
-
+ static String apiDetailPostById(String idPost) {
+    return "$_baseUrl/post/$idPost";
+  }
   static String apiGetHotBlog = "$_baseUrl/blog/list-hot-blog";
 
   // API FOR SEND SORROW

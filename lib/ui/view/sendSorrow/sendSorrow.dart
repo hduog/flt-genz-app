@@ -10,6 +10,7 @@ import 'package:flutter_application_1/core/service/sendSorrow/send_sorrow_servic
 import 'package:flutter_application_1/ui/widget/music-player.dart';
 import 'package:flutter_application_1/view-models/sendSorrow/sendSorrow.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 const LIST_BG = [
   'assets/images/sendsorrow1.png',
@@ -222,6 +223,15 @@ class _SendSorrowState extends ConsumerState<SendSorrow>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text("Gửi muộn phiền",
             style: TextStyle(fontSize: 14, color: Colors.white)),
         backgroundColor: Colors.transparent,

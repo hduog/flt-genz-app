@@ -38,6 +38,29 @@ class PostNotifier extends StateNotifier<PostState> {
         posts: state.posts, postShares: [newPostShare, ...state.postShares]);
   }
 
+  void updateCommentCount(String postId, int newCommentCount) {
+    state = PostState(
+      posts: state.posts.map((post) {
+        if (post.id == postId) {
+          return post.copyWith(totalComment: newCommentCount);
+        }
+        return post;
+      }).toList(),
+      postShares: state.postShares,
+    );
+  }
+
+  void updateLikeStatus(String postId, bool isLiked, int newLikeCount) {
+    state = PostState(
+      posts: state.posts.map((post) {
+        if (post.id == postId) {
+          return post.copyWith(is_liked: isLiked, totalReaction: newLikeCount);
+        }
+        return post;
+      }).toList(),
+      postShares: state.postShares,
+    );
+  }
   List<DataGet> getPosts() {
     return state.posts;
   }

@@ -152,7 +152,8 @@ class _HomeState extends ConsumerState<Home> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SearchScreen(),
+                                        builder: (context) =>
+                                            SearchScreen(shouldFocus: true),
                                       ),
                                     );
                                   }),
@@ -240,9 +241,8 @@ class _HomeState extends ConsumerState<Home> {
                               itemBuilder: (context, index) {
                                 if (index < posts.length) {
                                   final post = posts[index];
-                                  final comments = post.comment_recent ?? [];
                                   return GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       if (post.is_share ?? false) {
                                         Navigator.push(
                                           context,
@@ -257,10 +257,7 @@ class _HomeState extends ConsumerState<Home> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                PostDetailPage(
-                                              postItem: post,
-                                              comments: comments,
-                                            ),
+                                                PostDetailPage(postId: post.id),
                                           ),
                                         );
                                       }

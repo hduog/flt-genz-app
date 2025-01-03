@@ -72,4 +72,8 @@ class PostRepo {
   Future getPostShareMySelf(String token) async {
     return await apiService.get(ApiEndPointConstants.apiGetPostShareMySelf, token);
   }
+
+  Future getDetailPostById(String token, String idPost) async {
+    return await apiService.get(ApiEndPointConstants.apiDetailPostById(idPost),token);
+  }
 }

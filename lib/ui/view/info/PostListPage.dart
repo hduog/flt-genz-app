@@ -35,6 +35,15 @@ class _PostListPage extends ConsumerState<PostListPage> {
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text(
           'Danh sách bài đăng',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -50,15 +59,25 @@ class _PostListPage extends ConsumerState<PostListPage> {
             final post = posts[index];
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: 10.0), // Thêm khoảng cách giữa các item
+              padding: const EdgeInsets.only(bottom: 10.0), 
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PostDetailPage(postItem: post),
+                      builder: (context) =>
+                          PostDetailPage(postId: post.id,),
                     ),
                   );
+                //   if (result != null && result.containsKey('liked')) {
+                //     ref.read(postProvider.notifier).updateLikeStatus(
+                //           post.id,
+                //           result['liked'],
+                //           result['countLike'],
+                //         );
+                        
+                //   }
+                //  setState(() {}); 
                 },
                 child: ReelCard(
                   postItem: post,

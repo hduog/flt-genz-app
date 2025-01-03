@@ -5,6 +5,7 @@ import 'package:flutter_application_1/core/data/models/PostModel/DataGet/DataGet
 import 'package:flutter_application_1/core/data/models/PostModel/UpdateReactionReelPost.dart';
 import 'package:flutter_application_1/core/service/post/post_service.dart';
 import 'package:flutter_application_1/view-models/auth/user.prvd.dart';
+import 'package:flutter_application_1/view-models/post/post.prvd.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -30,13 +31,18 @@ class _ReelCardState extends ConsumerState<ReelCard> {
   int countShare = 0;
 
   @override
-  void initState() {
-    super.initState();
-    // Set initial state
-    isLiked = widget.postItem.is_liked ?? false;
-    countLike = widget.postItem.totalReaction ?? 0;
-    countComment = widget.postItem.totalComment ?? 0;
-    countShare = widget.postItem.totalShare ?? 0;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final posts = ref.read(postProvider).posts;
+    final currentPost = posts.firstWhere((p) => p.id == widget.postItem.id);
+
+    setState(() {
+      isLiked = currentPost.is_liked ?? false;
+      countLike = currentPost.totalReaction ?? 0;
+      countComment = currentPost.totalComment ?? 0;
+      countShare = currentPost.totalShare ?? 0;
+    });
   }
 
   final TextEditingController _contentPostShareController =
@@ -44,11 +50,14 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
   Future<void> _likePost() async {
     setState(() {
-      isLiked ? countLike-- : countLike++;
       isLiked = !isLiked;
+      countLike = isLiked ? countLike + 1 : countLike - 1;
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReaction(data);
+    ref
+        .read(postProvider.notifier)
+        .updateLikeStatus(widget.postItem.id, isLiked, countLike);
   }
 
   Future<void> _likePostShare() async {
@@ -58,6 +67,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     });
     final data = UpdateReactionReelPost(widget.postItem.id);
     await postService.updateStatusReactionPostShare(data);
+    ref
+        .read(postProvider.notifier)
+        .updateLikeStatus(widget.postItem.id, isLiked, countLike);
   }
 
   void _showShareModal(BuildContext context) {
@@ -146,7 +158,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 4),
       decoration: const BoxDecoration(
         color: Colors.white,
       ),
@@ -158,138 +170,126 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
   // PostShare
   Widget _buildSharedPostContent(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 12.0, vertical: 8.0), // Điều chỉnh khoảng cách padding
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Thông tin người chia sẻ bài viết
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20.0,
-                backgroundImage: NetworkImage(
-                  '${Constants.awsUrl}${widget.postItem.account.avata}', // Hình đại diện người chia sẻ
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Thông tin người chia sẻ bài viết
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 20.0,
+              backgroundImage: NetworkImage(
+                '${Constants.awsUrl}${widget.postItem.account.avata}', // Hình đại diện người chia sẻ
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.postItem.account.fullName, // Tên người chia sẻ
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      formatDate(widget.postItem.created_at) ??
-                          "DD/MM/YYYY HH:mm", // Ngày chia sẻ
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 10),
-
-          // Nội dung bài viết chia sẻ
-          Text(
-            widget.postItem.contentText ?? "",
-            style: const TextStyle(
-              fontWeight: FontWeight.normal,
-              color: Colors.black,
             ),
-            textAlign: TextAlign.justify,
-          ),
-          const SizedBox(height: 10),
-
-          // PostSharedItem
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8.0),
-              color: Colors.grey.shade100,
-            ),
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 20.0,
-                      backgroundImage: NetworkImage(
-                        '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost?.author.avata}',
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.postItem.infoAuthorAndPost?.author
-                                    .fullName ??
-                                "",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            formatDate(widget.postItem.infoAuthorAndPost
-                                    ?.postInf.created_at) ??
-                                "DD/MM/YYYY HH:mm",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.postItem.infoAuthorAndPost?.postInf.contentText ??
-                      "Nội dung bài viết được chia sẻ",
-                  style: const TextStyle(color: Colors.black),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                if (widget.postItem.infoAuthorAndPost?.postInf.images != null &&
-                    widget
-                        .postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Image.network(
-                      '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost?.postInf.images!.first.path}',
-                      fit: BoxFit.fitWidth,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.postItem.account.fullName, // Tên người chia sẻ
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-              ],
+                  Text(
+                    formatDate(widget.postItem.created_at) ??
+                        "DD/MM/YYYY HH:mm", // Ngày chia sẻ
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+
+        const SizedBox(height: 10),
+
+        // Nội dung bài viết chia sẻ
+        Text(
+          widget.postItem.contentText ?? "",
+          style: const TextStyle(
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
           ),
-          const SizedBox(
-            height: 8,
+          textAlign: TextAlign.justify,
+        ),
+        const SizedBox(height: 10),
+        // PostSharedItem
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFF9C9B9B)),
+            borderRadius: BorderRadius.circular(8.0),
+            color: const Color.fromARGB(255, 255, 255, 255),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildReactionInfo(isLiked ? 'like_active' : 'like', countLike,
-                  onReactionTap: _likePostShare),
-              _buildReactionInfo('comment', widget.postItem.totalComment ?? 0),
-              _buildReactionInfo('icon_share', countShare,
-                  onReactionTap: () => _showShareModal(context)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 20.0,
+                    backgroundImage: NetworkImage(
+                      '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost?.author.avata}',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.postItem.infoAuthorAndPost?.author.fullName ??
+                              "",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.postItem.infoAuthorAndPost?.postInf.contentText ??
+                    "Nội dung bài viết được chia sẻ",
+                style: const TextStyle(color: Colors.black),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              // if (widget.postItem.infoAuthorAndPost?.postInf.images != null &&
+              //     widget
+              //         .postItem.infoAuthorAndPost!.postInf.images!.isNotEmpty)
+              //   Padding(
+              //     padding: const EdgeInsets.symmetric(vertical: 10),
+              //     child: Image.network(
+              //       '${Constants.awsUrl}${widget.postItem.infoAuthorAndPost?.postInf.images!.first.path}',
+              //       fit: BoxFit.fitWidth,
+              //     ),
+              //   ),
             ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildReactionInfo(isLiked ? 'like_active' : 'like', countLike,
+                onReactionTap: _likePostShare),
+            _buildReactionInfo('comment', widget.postItem.totalComment ?? 0),
+            _buildReactionInfo('icon_share', countShare,
+                onReactionTap: () => _showShareModal(context)),
+          ],
+        ),
+      ],
     );
   }
 
@@ -321,7 +321,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
                   Text(
                     formatDate(widget.postItem.created_at) ??
                         "DD/MM/YYYY HH:mm",
-                    style: const TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),

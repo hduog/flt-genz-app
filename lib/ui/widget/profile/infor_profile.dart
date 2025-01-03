@@ -12,7 +12,10 @@ class InforProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -66,7 +69,7 @@ class InforProfileScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        profile.user.nickName ?? "",
+                        profile.user.nickName ?? '',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],

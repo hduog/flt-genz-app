@@ -136,12 +136,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 : null),
         "aboutMe": aboutMeController.text,
         "avata": {
-          "isDelete": false,
-          "path": avatarUrl ?? avatarPathController.text,
+          "isDelete": _avatarImage == null && avatarPathController.text.isEmpty,
+          "path": _avatarImage != null ? avatarPathController.text : "",
         },
         "banner": {
-          "isDelete": false,
-          "path": bannerUrl ?? bannerPathController.text,
+          "isDelete": _bannerImage == null && bannerPathController.text.isEmpty,
+          "path": _bannerImage != null ? bannerPathController.text : "",
         },
         "favorite": favorites.map((fav) => fav.id).toList(),
       };
@@ -224,33 +224,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         onTap: onTap,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey,
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.red, width: 1.5),
-          ),
+          border: const UnderlineInputBorder(),
         ),
       ),
     );
@@ -260,57 +234,44 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorBackground,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 15, 
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 15,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Chỉnh sửa thông tin',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: _saveProfile,
-            child: const Text(
-              'Lưu',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.blue,
-              ),
+          title: const Center(
+            child: Text(
+              'Chỉnh sửa thông tin',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
-        ],
-      ),
-      backgroundColor: colorBackground, // Màu nền nhạt
-      body: SingleChildScrollView(
+          actions: [
+            TextButton(
+              onPressed: _saveProfile,
+              child: const Text(
+                'Lưu',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ]),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             GestureDetector(
               onTap: () => _pickImage(ImageSource.gallery, false),
               child: Container(
-                height: 180,
+                height: 200,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 6,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
                   image: DecorationImage(
                     image: _bannerImage != null
                         ? FileImage(_bannerImage!)
@@ -322,73 +283,64 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: Align(
+                child: Stack(
                   alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/photo_grey.svg',
-                      width: 30,
-                      height: 30,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: SvgPicture.asset(
+                        'assets/icons/photo_grey.svg',
+                        width: 30,
+                        height: 30,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: GestureDetector(
-                onTap: () => _pickImage(ImageSource.gallery, true),
-                child: CircleAvatar(
-                  radius: 55,
-                  backgroundImage: _avatarImage != null
-                      ? FileImage(_avatarImage!)
-                      : (avatarPathController.text.isNotEmpty
-                          ? NetworkImage(
-                              '${Constants.awsUrl}${avatarPathController.text}')
-                          : const AssetImage(
-                              'assets/images/reels-test.png')) as ImageProvider,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black54,
-                      ),
-                      padding: const EdgeInsets.all(5),
-                      child: SvgPicture.asset(
-                        'assets/icons/photo_grey.svg',
-                        width: 20,
-                        height: 20,
-                      ),
-                    ),
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () => _pickImage(ImageSource.gallery, true),
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: _avatarImage != null
+                    ? FileImage(_avatarImage!)
+                    : (avatarPathController.text.isNotEmpty
+                        ? NetworkImage(
+                            '${Constants.awsUrl}${avatarPathController.text}')
+                        : const AssetImage(
+                            'assets/images/reels-test.png')) as ImageProvider,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SvgPicture.asset(
+                    'assets/icons/photo_grey.svg',
+                    width: 30,
+                    height: 30,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            buildSectionTitle('Thông tin cá nhân'),
             buildTextField('Họ và tên', fullNameController),
-            buildTextField('Tên gọi khác', nickNameController),
-            buildTextField('Số điện thoại', phoneController),
+            buildTextField('Nickname', nickNameController),
+            buildTextField('Phone Number', phoneController),
             buildTextField('Email', emailController, readOnly: true),
             buildTextField(
-              'Ngày sinh',
+              'Sinh nhật',
               birthController,
               readOnly: true,
               onTap: () => _selectDate(context),
             ),
             const SizedBox(height: 20),
-            buildSectionTitle('Mục yêu thích'),
+            const Text(
+              'Yêu thích',
+              style: TextStyle(fontSize: 16, color: Colors.black),
+            ),
             Wrap(
               spacing: 8,
-              runSpacing: 8,
               children: favorites.map((favorite) {
                 return Chip(
                   label: Text(favorite.nameFavorite),
-                  backgroundColor: Colors.blue.shade50,
-                  labelStyle: const TextStyle(color: Colors.blue),
-                  deleteIcon: const Icon(Icons.close, size: 16),
                   onDeleted: () {
                     setState(() {
                       favorites.remove(favorite);
@@ -397,69 +349,26 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 );
               }).toList(),
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: _addFavorite,
-                icon: const Icon(Icons.add, size: 20),
-                label: const Text('Thêm mục yêu thích'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
+            const SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: _addFavorite,
+              child: const Text('Thêm mục yêu thích'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue,
               ),
             ),
             const SizedBox(height: 20),
-            buildSectionTitle('Giới thiệu bản thân'),
+            const Text('About Me', style: TextStyle(fontSize: 16)),
             TextField(
               controller: aboutMeController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: 'Kể về bạn...',
-                filled: true,
-                fillColor: const Color.fromARGB(255, 255, 255, 255),
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(12), // Tạo góc bo tròn cho viền
-                  borderSide: BorderSide(
-                    color: Colors.blueGrey, // Màu của viền
-                    width: 1.5, // Độ dày của viền
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors
-                        .blueGrey.shade200, // Màu của viền khi không có focus
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors.blue, // Màu của viền khi có focus
-                    width: 2.0, // Độ dày viền khi focus
-                  ),
-                ),
+              maxLines: 10,
+              decoration: const InputDecoration(
+                hintText: 'Kể về bạn',
+                border: OutlineInputBorder(),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
         ),
       ),
     );

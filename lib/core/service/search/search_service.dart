@@ -1,4 +1,5 @@
 import 'package:flutter_application_1/core/data/models/Search/SearchModel/SearchModel.dart';
+import 'package:flutter_application_1/core/data/models/Search/SearchPostResponse/SearchPostResponse.dart';
 import 'package:flutter_application_1/core/reponsitories/Search/Search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +29,7 @@ class SearchService {
     }
   }
 
-  Future<List<SearchPosts>> searchPosts(String? keyword) async {
+  Future<List<SearchPostResponse>> searchPosts(String? keyword) async {
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('access_token') ??
         ''; 
@@ -42,7 +43,7 @@ class SearchService {
       final response = await searchRepo.searchPosts(keyword, token);
       if (response?.statusCode == 200) {
         final List<dynamic> data = response.data;
-        return data.map((e) => SearchPosts.fromJson(e)).toList();
+        return data.map((e) => SearchPostResponse.fromJson(e)).toList();
       } else {
         throw ApiError(message: 'Không tìm thấy kết quả');
       }

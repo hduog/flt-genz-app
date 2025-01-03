@@ -30,6 +30,15 @@ class _ImageListPage extends ConsumerState<ImageListPage> {
     return Scaffold(
       backgroundColor: colorBackground,
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 15, 
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text(
           'Danh sách ảnh',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
