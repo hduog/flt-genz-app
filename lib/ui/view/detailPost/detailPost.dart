@@ -260,7 +260,9 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

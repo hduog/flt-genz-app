@@ -203,9 +203,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
             ),
           ],
         ),
-    
+
         const SizedBox(height: 10),
-    
+
         // Nội dung bài viết chia sẻ
         Text(
           widget.postItem.contentText ?? "",
@@ -219,8 +219,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
         // PostSharedItem
         Container(
           decoration: BoxDecoration(
-            border:
-                Border.all(color: const Color(0xFF9C9B9B)),
+            border: Border.all(color: const Color(0xFF9C9B9B)),
             borderRadius: BorderRadius.circular(8.0),
             color: const Color.fromARGB(255, 255, 255, 255),
           ),
@@ -243,8 +242,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.postItem.infoAuthorAndPost?.author
-                                  .fullName ??
+                          widget.postItem.infoAuthorAndPost?.author.fullName ??
                               "",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,

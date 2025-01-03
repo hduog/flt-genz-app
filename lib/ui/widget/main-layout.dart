@@ -17,18 +17,33 @@ class MainLayout extends ConsumerStatefulWidget {
 class _MainLayoutState extends ConsumerState<MainLayout> {
   int _selectedTab = 0;
 
-  _changeTab(int index) {
+  _changeTab(int index) async {
+  if (index == 2) {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreatePost()),
+    );
+    if (result == true) {
+      setState(() {
+        _selectedTab = 0;
+      });
+    }
+  } else {
     setState(() {
       _selectedTab = index;
     });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     final Map<int, Widget> routes = {
       0: Home(),
       1: const Blogs(),
-      2: CreatePost(),
+      2: CreatePost(onPostCreated: () {
+        _changeTab(0);
+      }),
       3: NotificationsPage(),
       4: MenuPage(),
     };

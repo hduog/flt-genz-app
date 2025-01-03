@@ -1,6 +1,6 @@
 class ApiEndPointConstants {
   const ApiEndPointConstants._();
-  static const String _baseUrl = "http://192.168.88.101:3003/api";
+  static const String _baseUrl = "http://192.168.1.5:3003/api";
 
   static String apiLogin = "$_baseUrl/auth/login";
   static String apiRegistration = "$_baseUrl/auth/register";
@@ -40,6 +40,8 @@ class ApiEndPointConstants {
   // API send to AI
   static String apiGetQuoteSendSorrow = "$_baseUrl/chat-bot/generate-quote";
   static String apiGetAllFeatures = "$_baseUrl/feature";
+  static String apiPostRoomMessageAI = "$_baseUrl/room-message/";
+  static String apiGetRoomMessageAI = "$_baseUrl/room-message/chat-bot";
 
   static String apiCreatePost = "$_baseUrl/post";
   static String apiUploadPostImage = "$_baseUrl/file/upload-posts";
@@ -62,4 +64,13 @@ class ApiEndPointConstants {
   static String apiSearchUser(String? keyword) {
     return "$_baseUrl/search/accounts?keyword=$keyword";
   }
+
+  // API message
+  static String apiGetMessageInRoom(String? idRoom) {
+    return "$_baseUrl/room-message/messages/$idRoom";
+  }
+  static String apiSendMessage = "$_baseUrl/room-message/send-message";
+  static String apiGetAllValidRoom = "$_baseUrl/room-message";
+  static String apiPostMessageToChatAIRoom = "$_baseUrl/chat-bot";
+  static String apiGetFollower = "$_baseUrl/follow/followers";
 }
